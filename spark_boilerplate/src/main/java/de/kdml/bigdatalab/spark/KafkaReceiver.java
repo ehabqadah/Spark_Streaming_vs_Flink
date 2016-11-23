@@ -78,7 +78,7 @@ public class KafkaReceiver {
 		try {
 			jssc.awaitTermination();
 		} catch (InterruptedException e) {
-		 System.out.println("error:"+e.getMessage());
+			System.out.println("error:" + e.getMessage());
 		}
 	}
 }
