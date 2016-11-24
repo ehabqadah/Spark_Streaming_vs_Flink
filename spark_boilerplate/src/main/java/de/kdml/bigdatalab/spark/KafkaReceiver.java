@@ -32,48 +32,66 @@ import scala.Tuple2;
  */
 public class KafkaReceiver {
 
+	private static Configs configs = Configs.getInstance();
+
 	public static void main(String[] args) {
 
 		SparkConf sparkConf = new SparkConf().setAppName("Spark Streaming Kafaka  Receiver-based Approach");
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
-		String topicName = "test", zookeeper = "localhost:2181";
-		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.seconds(20));
-		int numThreads = 1;
+
+		JavaStreamingContext jssc = new JavaStreamingContext(sc,
+				Durations.seconds(configs.getIntProp("batchDuration")));
+
 		Map<String, Integer> topicMap = new HashMap<>();
-		String[] topics = { topicName };
+		String[] topics = configs.getStringProp("topics").split(",");
 		for (String topic : topics) {
-			topicMap.put(topic, numThreads);
+			topicMap.put(topic, 1);
 		}
 
-		JavaPairReceiverInputDStream<String, String> messages = KafkaUtils.createStream(jssc, zookeeper, "mygroup",
-				topicMap, StorageLevel.MEMORY_AND_DISK_SER());
+		JavaPairReceiverInputDStream<String, String> messages = KafkaUtils.createStream(jssc,
+				configs.getStringProp("zookeeper"), configs.getStringProp("kafkaGroupId"), topicMap,
+				StorageLevel.MEMORY_AND_DISK_SER());
 
 		// Get the lines, split them into words, count the words and print
 		JavaDStream<String> lines = messages.map(new Function<Tuple2<String, String>, String>() {
+		
+			private static final long serialVersionUID = -111233293010272962L;
+
 			@Override
 			public String call(Tuple2<String, String> tuple2) {
 				return tuple2._2();
 			}
 		});
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3551637796904462300L;
+
 			@Override
 			public Iterator<String> call(String x) {
 				return Arrays.asList(x.split(" ")).iterator();
 			}
 		});
 		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+			
+			private static final long serialVersionUID = 6817408734395025461L;
+
 			@Override
 			public Tuple2<String, Integer> call(String s) {
 				return new Tuple2<>(s, 1);
 			}
 		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+			
+			private static final long serialVersionUID = 6398638714793728848L;
+
 			@Override
 			public Integer call(Integer i1, Integer i2) {
 				return i1 + i2;
 			}
 		});
 
-		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, "_out/KafkaReceiver");
+		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, configs.getStringProp("KafkaReceiver_Out"));
 
 		// Start the computation
 		jssc.start();

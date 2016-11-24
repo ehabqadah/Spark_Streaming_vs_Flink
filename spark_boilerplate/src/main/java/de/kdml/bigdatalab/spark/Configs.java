@@ -9,6 +9,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
+/**
+ * Configs 
+ * @author ehab
+ *
+ */
 public class Configs {
 
 	private Configs(Properties props) {
