@@ -5,12 +5,17 @@ import org.apache.spark.api.java.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -36,13 +41,12 @@ public class App {
 	public static final AtomicReference<JavaPairDStream<String, Integer>> wordsStream = new AtomicReference<JavaPairDStream<String, Integer>>(
 			null);
 
-	// Stats will be computed for the last window length of time.
-	private static final Duration WINDOW_LENGTH = new Duration(30 * 1000);
-	// Stats will be computed every slide interval time.
-	private static final Duration SLIDE_INTERVAL = new Duration(10 * 1000);
+
 
 	public static void main(String[] args) {
 
+	
+		System.exit(0);
 		String brokers = "localhost:9092";
 		String topics = "test";
 
