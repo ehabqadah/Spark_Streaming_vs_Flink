@@ -4,6 +4,7 @@ import org.apache.spark.api.java.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,18 +60,12 @@ public class App {
 		// ConvertToWritableTypes());
 		// result2.saveAsHadoopFile("_out/output3", Text.class,
 		// IntWritable.class, SequenceFileOutputFormat.class);
-		// JavaPairRDD<Text, IntWritable> input =
-		// sc.sequenceFile("_out/output4/part-00000", Text.class,
-		// IntWritable.class);
-		// JavaPairRDD<String, Integer> result2 = input.mapToPair(new
-		// ConvertToNativeTypes());
-		// List<Tuple2<String, Integer>> resultList = result2.collect();
-		// for (Tuple2<String, Integer> record : resultList) {
-		// System.out.println(record);
-		// }
-		//
-		// System.exit(0);
-		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.seconds(2));
+
+		
+		
+		//System.exit(0);
+
+		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.minutes(2));
 
 		Set<String> topicsSet = new HashSet<>(Arrays.asList(topics.split(",")));
 		Map<String, String> kafkaParams = new HashMap<>();
@@ -114,17 +109,8 @@ public class App {
 			}
 		});
 
-		wordCounts.foreachRDD((rdd, time) -> {
-
-			if (rdd.isEmpty())
-				return;
-
-			JavaPairRDD<Text, IntWritable> result = rdd.mapToPair(new ConvertToWritableTypes());
-			result.saveAsHadoopFile("_out/output5/" + time.toString(), Text.class, IntWritable.class,
-					SequenceFileOutputFormat.class);
-			rdd.saveAsTextFile("_out/output6");
-
-		});
+		 WordCountsUtil.aggregateWordCountsAndPrint(sc,wordCounts,"_out/output5");
+		
 
 		// Start the computation
 		jssc.start();
@@ -137,15 +123,7 @@ public class App {
 
 	}
 
-	public static class ConvertToWritableTypes implements PairFunction<Tuple2<String, Integer>, Text, IntWritable> {
-		public Tuple2<Text, IntWritable> call(Tuple2<String, Integer> record) {
-			return new Tuple2(new Text(record._1), new IntWritable(record._2));
-		}
-	}
 
-	public static class ConvertToNativeTypes implements PairFunction<Tuple2<Text, IntWritable>, String, Integer> {
-		public Tuple2<String, Integer> call(Tuple2<Text, IntWritable> record) {
-			return new Tuple2(record._1.toString(), record._2.get());
-		}
-	}
+
+
 }

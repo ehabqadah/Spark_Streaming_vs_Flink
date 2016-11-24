@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
@@ -37,7 +38,8 @@ public class KafkaDirect {
 
 		// Create context with a 2 seconds batch interval
 		SparkConf sparkConf = new SparkConf().setAppName("JavaDirectKafkaWordCount");
-		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(2));
+		JavaSparkContext sc = new JavaSparkContext(sparkConf);
+		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.seconds(2));
 
 		Set<String> topicsSet = new HashSet<>(Arrays.asList(topics.split(",")));
 		Map<String, String> kafkaParams = new HashMap<>();
@@ -72,10 +74,7 @@ public class KafkaDirect {
 			}
 		});
 
-		wordCounts.foreachRDD(rdd -> {
-
-			System.out.println(rdd.collectAsMap());
-		});
+		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, "_out/kafkaDirect");
 
 		// Start the computation
 		jssc.start();
