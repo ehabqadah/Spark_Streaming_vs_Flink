@@ -14,9 +14,15 @@ sudo bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-facto
 
 sudo bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 
+--packages org.apache.spark:spark-streaming-kafka-0-10_2.11:2.0.2 \
 mvn clean package
 spark-submit \
 --class "de.kdml.bigdatalab.spark.App" \
 --master local[4] \
 --jars spark-streaming-kafka-0-8-assembly_2.11-2.0.2.jar \
 target/spark_boilerplate-0.0.1-SNAPSHOT.jar
+
+--jars jars/spark-streaming-kafka-0-10_2.11-2.0.2.jar,jars/spark-sql-kafka-0-10_2.11-2.0.2.jar \
+
+--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2
+--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2

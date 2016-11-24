@@ -14,5 +14,5 @@ mvn clean package
 spark-submit \
 --class $className \
 --master local[4] \
---jars jars/spark-streaming-kafka-0-8-assembly_2.11-2.0.2.jar \
+--packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2 \
 target/spark_boilerplate-0.0.1-SNAPSHOT.jar
