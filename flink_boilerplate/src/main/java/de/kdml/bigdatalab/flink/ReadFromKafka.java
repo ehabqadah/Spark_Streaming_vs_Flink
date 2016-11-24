@@ -38,6 +38,7 @@ public class ReadFromKafka {
 				// create Kafka consumer data source
 				DataStream<String> messages = env.addSource(consumer);
 				
+			
 				messages.print();
 				env.execute();
 	}
