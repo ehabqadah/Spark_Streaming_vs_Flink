@@ -1,19 +1,17 @@
 package de.kdml.bigdatalab.spark;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- * Configs 
+ * Configs
+ * 
  * @author ehab
  *
  */
+
 public class Configs {
 
 	private Configs(Properties props) {
@@ -32,7 +30,7 @@ public class Configs {
 
 			try {
 				input = new FileInputStream("./target/config.properties");
-				
+
 				// load a properties file
 				props.load(input);
 				_instance = new Configs(props);

@@ -16,16 +16,29 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import scala.Tuple2;
 
+/**
+ * 
+ * @author ehab
+ *
+ */
+
 public final class NetworkWordCount {
 
-	public static void main(String[] args) throws Exception {
-		// Create the context with a 1 second batch size
-		SparkConf sparkConf = new SparkConf().setAppName("NetworkWordCount");
-		JavaStreamingContext ssc = new JavaStreamingContext(sparkConf, Durations.seconds(1));
+	private static Configs configs = Configs.getInstance();
 
-		JavaReceiverInputDStream<String> lines = ssc.socketTextStream("localhost", 9999,
-				StorageLevels.MEMORY_AND_DISK_SER);
+	public static void main(String[] args) throws Exception {
+
+		// Create the context with a configured batch size
+		SparkConf sparkConf = new SparkConf().setAppName("Network WordCount");
+		JavaStreamingContext ssc = new JavaStreamingContext(sparkConf,
+				Durations.seconds(configs.getIntProp("batchDuration")));
+
+		JavaReceiverInputDStream<String> lines = ssc.socketTextStream(configs.getStringProp("socketHost"),
+				configs.getIntProp("socketPort"), StorageLevels.MEMORY_AND_DISK_SER);
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
+
+			private static final long serialVersionUID = -3346379470526384970L;
+
 			@Override
 			public Iterator<String> call(String x) {
 				return Arrays.asList(x.split(" ")).iterator();
@@ -33,11 +46,17 @@ public final class NetworkWordCount {
 		});
 
 		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+
+			private static final long serialVersionUID = -4481967467359328639L;
+
 			@Override
 			public Tuple2<String, Integer> call(String s) {
 				return new Tuple2<>(s, 1);
 			}
 		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+
+			private static final long serialVersionUID = -4270697510664029359L;
+
 			@Override
 			public Integer call(Integer i1, Integer i2) {
 				return i1 + i2;

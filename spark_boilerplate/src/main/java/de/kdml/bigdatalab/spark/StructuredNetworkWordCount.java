@@ -7,14 +7,17 @@ import org.apache.spark.sql.streaming.StreamingQuery;
 import java.util.Arrays;
 import java.util.Iterator;
 
-
+/**
+ * 
+ * @author ehab
+ *
+ */
 public final class StructuredNetworkWordCount {
 
+	private static Configs configs = Configs.getInstance();
+	
   public static void main(String[] args) throws Exception {
  
-
-    String host = "localhost";
-    int port = 9999;
 
     SparkSession spark = SparkSession
       .builder()
@@ -25,13 +28,16 @@ public final class StructuredNetworkWordCount {
     Dataset<String> lines = spark
       .readStream()
       .format("socket")
-      .option("host", host)
-      .option("port", port)
+      .option("host", configs.getStringProp("socketHost"))
+      .option("port", configs.getIntProp("socketPort"))
       .load().as(Encoders.STRING());
 
     // Split the lines into words
     Dataset<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
-      @Override
+     
+		private static final long serialVersionUID = -7711468726452799792L;
+
+	@Override
       public Iterator<String> call(String x) {
         return Arrays.asList(x.split(" ")).iterator();
       }
