@@ -53,14 +53,8 @@ public class KafkaReceiver {
 				StorageLevel.MEMORY_AND_DISK_SER());
 
 		// Get the lines, split them into words, count the words and print
-		JavaDStream<String> lines = messages.map(new Function<Tuple2<String, String>, String>() {
-		
-			private static final long serialVersionUID = -111233293010272962L;
-
-			@Override
-			public String call(Tuple2<String, String> tuple2) {
-				return tuple2._2();
-			}
+		JavaDStream<String> lines = messages.map( tuple -> {
+			return tuple._2();
 		});
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
 			/**
