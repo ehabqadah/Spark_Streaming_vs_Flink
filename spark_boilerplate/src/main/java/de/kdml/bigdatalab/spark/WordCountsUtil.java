@@ -11,7 +11,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 
 import scala.Tuple2;
@@ -106,6 +105,9 @@ public class WordCountsUtil {
 		
 		totalPairs= totalPairs.reduceByKey(new Function2<Integer, Integer, Integer>() {
 			
+			
+			private static final long serialVersionUID = -7143103360793492209L;
+
 			@Override
 			public Integer call(Integer v1, Integer v2) throws Exception {
 				
@@ -129,12 +131,18 @@ public class WordCountsUtil {
 	
 	
 	public static class ConvertToWritableTypes implements PairFunction<Tuple2<String, Integer>, Text, IntWritable> {
+	
+		private static final long serialVersionUID = 2433095216631597709L;
+
 		public Tuple2<Text, IntWritable> call(Tuple2<String, Integer> record) {
 			return new Tuple2(new Text(record._1), new IntWritable(record._2));
 		}
 	}
 
 	public static class ConvertToNativeTypes implements PairFunction<Tuple2<Text, IntWritable>, String, Integer> {
+		
+		private static final long serialVersionUID = 476263154663174520L;
+
 		public Tuple2<String, Integer> call(Tuple2<Text, IntWritable> record) {
 			return new Tuple2(record._1.toString(), record._2.get());
 		}

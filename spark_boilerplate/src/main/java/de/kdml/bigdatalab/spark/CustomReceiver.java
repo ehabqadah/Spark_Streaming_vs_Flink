@@ -3,6 +3,8 @@ package de.kdml.bigdatalab.spark;
 import com.google.common.io.Closeables;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkContext;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
@@ -30,15 +32,18 @@ import java.util.regex.Pattern;
  *
  */
 public class CustomReceiver extends Receiver<String> {
+
+	private static final long serialVersionUID = 7261093284627313729L;
+
 	private static final Pattern SPACE = Pattern.compile(" ");
 
 	private static Configs configs = Configs.getInstance();
 
 	public static void main(String[] args) throws Exception {
 
-		// Create the context with a 1 second batch size
-		SparkConf sparkConf = new SparkConf().setAppName("CustomReceiver");
-		JavaStreamingContext ssc = new JavaStreamingContext(sparkConf,
+		
+		JavaSparkContext sc=  SparkConfigsUtils.getSparkContext("CustomReceiver");
+		JavaStreamingContext ssc = new JavaStreamingContext(sc,
 				new Duration(configs.getIntProp("batchDuration")));
 
 		// Create an input stream with the custom receiver on target ip:port and

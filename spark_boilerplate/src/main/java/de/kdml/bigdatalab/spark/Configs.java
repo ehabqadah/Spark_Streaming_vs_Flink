@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Configs
+ * Configs wrapper
  * 
  * @author ehab
  *

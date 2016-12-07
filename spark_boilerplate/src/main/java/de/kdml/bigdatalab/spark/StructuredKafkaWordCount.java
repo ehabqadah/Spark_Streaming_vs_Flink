@@ -21,7 +21,7 @@ public final class StructuredKafkaWordCount {
 
 	public static void main(String[] args) throws Exception {
 
-		SparkSession spark = SparkSession.builder().appName("StructuredKafkaWordCount").getOrCreate();
+		SparkSession spark = SparkSession.builder().master(configs.getStringProp("spark_master")).appName("StructuredKafkaWordCount").getOrCreate();
 
 		// Create DataSet representing the stream of input lines from kafka
 		Dataset<String> lines = spark.readStream().format("kafka")

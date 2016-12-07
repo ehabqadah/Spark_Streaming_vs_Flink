@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.storage.StorageLevel;
@@ -36,8 +34,7 @@ public class KafkaReceiver {
 
 	public static void main(String[] args) {
 
-		SparkConf sparkConf = new SparkConf().setAppName("Spark Streaming Kafaka  Receiver-based Approach");
-		JavaSparkContext sc = new JavaSparkContext(sparkConf);
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Spark Streaming Kafaka  Receiver-based Approach");
 
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
@@ -53,7 +50,7 @@ public class KafkaReceiver {
 				StorageLevel.MEMORY_AND_DISK_SER());
 
 		// Get the lines, split them into words, count the words and print
-		JavaDStream<String> lines = messages.map( tuple -> {
+		JavaDStream<String> lines = messages.map(tuple -> {
 			return tuple._2();
 		});
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
@@ -68,7 +65,7 @@ public class KafkaReceiver {
 			}
 		});
 		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
-			
+
 			private static final long serialVersionUID = 6817408734395025461L;
 
 			@Override
@@ -76,7 +73,7 @@ public class KafkaReceiver {
 				return new Tuple2<>(s, 1);
 			}
 		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
-			
+
 			private static final long serialVersionUID = 6398638714793728848L;
 
 			@Override
