@@ -93,7 +93,7 @@ public class KafkaDirectStateful {
 		////////////////////
 
 		// Update the cumulative count function
-
+		//	Return a new "state" count  DStream where the state for each key(word) is updated
 		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
 			@Override
 			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
