@@ -19,7 +19,6 @@ public class SparkConfigsUtils {
 	 * Get initialized spark context instance
 	 * 
 	 * @param appName
-	 * @return
 	 */
 	public static JavaSparkContext getSparkContext(String appName) {
 
