@@ -29,6 +29,7 @@ public class SparkConfigsUtils {
 		SparkConf sparkConf = new SparkConf().setMaster(configs.getStringProp("spark_master")).setAppName(appName);
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
 		sc.setLogLevel("OFF");
+		sc.setCheckpointDir(configs.getStringProp("spark_checkpoint_dir"));
 
 		return sc;
 	}
