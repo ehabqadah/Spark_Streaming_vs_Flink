@@ -39,7 +39,7 @@ public class KafkaDirect {
 	public static void main(String[] args) {
 
 		// Create context with a 3 seconds batch interval
-		SparkConf sparkConf = new SparkConf().setAppName("Java DirectKafkaWordCount");
+		SparkConf sparkConf = new SparkConf().setMaster("local[4]").setAppName("Java DirectKafkaWordCount");
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
 		
 		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));

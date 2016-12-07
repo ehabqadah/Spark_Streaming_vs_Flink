@@ -17,6 +17,7 @@ sudo ./bin/kafka-console-consumer.sh --topic test --zookeeper localhost:2181
 
 sudo ./bin/kafka-console-consumer.sh --topic test --bootstrap-server localhost:9092
 
+mvn eclipse:eclipse
 --packages org.apache.spark:spark-streaming-kafka-0-10_2.11:2.0.2 \
 mvn clean package
 spark-submit \
