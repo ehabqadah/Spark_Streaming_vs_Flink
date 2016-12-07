@@ -15,6 +15,7 @@ sudo bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-facto
 sudo bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 sudo ./bin/kafka-console-consumer.sh --topic test --zookeeper localhost:2181
 
+#new command 
 sudo ./bin/kafka-console-consumer.sh --topic test --bootstrap-server localhost:9092
 
 mvn eclipse:eclipse

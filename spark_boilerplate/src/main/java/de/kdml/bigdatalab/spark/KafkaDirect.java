@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -39,10 +40,10 @@ public class KafkaDirect {
 	public static void main(String[] args) {
 
 		// Create context with a 3 seconds batch interval
-		SparkConf sparkConf = new SparkConf().setMaster("local[4]").setAppName("Java DirectKafkaWordCount");
-		JavaSparkContext sc = new JavaSparkContext(sparkConf);
-		
-		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Java DirectKafkaWordCount");
+
+		JavaStreamingContext jssc = new JavaStreamingContext(sc,
+				Durations.seconds(configs.getIntProp("batchDuration")));
 
 		Set<String> topicsSet = new HashSet<>(Arrays.asList(configs.getStringProp("topics").split(",")));
 		Map<String, String> kafkaParams = new HashMap<>();
@@ -51,10 +52,10 @@ public class KafkaDirect {
 		// Create direct kafka stream with brokers and topics
 		JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(jssc, String.class, String.class,
 				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
-		
+
 		// Get the lines, split them into words, count the words and print
 		JavaDStream<String> lines = messages.map(new Function<Tuple2<String, String>, String>() {
-			
+
 			private static final long serialVersionUID = 6552316508278748327L;
 
 			@Override
@@ -64,7 +65,7 @@ public class KafkaDirect {
 		});
 
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
-		
+
 			private static final long serialVersionUID = 3664730157250100313L;
 
 			@Override
@@ -73,7 +74,7 @@ public class KafkaDirect {
 			}
 		}).persist();
 		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
-			
+
 			private static final long serialVersionUID = 4319033885138979261L;
 
 			@Override
@@ -81,8 +82,7 @@ public class KafkaDirect {
 				return new Tuple2<>(s, 1);
 			}
 		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
-			
-			
+
 			private static final long serialVersionUID = 1761086467757826981L;
 
 			@Override
@@ -90,8 +90,8 @@ public class KafkaDirect {
 				return i1 + i2;
 			}
 		});
-		
-		//save batch word counts and display aggregation result 
+
+		// save batch word counts and display aggregation result
 		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, configs.getStringProp("KafkaDirect_Out"));
 
 		// Start the computation
