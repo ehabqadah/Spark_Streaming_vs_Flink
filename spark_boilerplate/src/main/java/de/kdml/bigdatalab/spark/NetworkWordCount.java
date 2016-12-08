@@ -1,12 +1,16 @@
 package de.kdml.bigdatalab.spark;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.StorageLevels;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -14,6 +18,7 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
+import scala.Array;
 import scala.Tuple2;
 
 /**
@@ -29,40 +34,35 @@ public final class NetworkWordCount {
 	public static void main(String[] args) throws Exception {
 
 		// Create the context with a configured batch size
-		SparkConf sparkConf = new SparkConf().setAppName("Network WordCount");
-		JavaStreamingContext ssc = new JavaStreamingContext(sparkConf,
-				Durations.seconds(configs.getIntProp("batchDuration")));
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Network WordCount");
+		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
 
 		JavaReceiverInputDStream<String> lines = ssc.socketTextStream(configs.getStringProp("socketHost"),
 				configs.getIntProp("socketPort"), StorageLevels.MEMORY_AND_DISK_SER);
-		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
 
-			private static final long serialVersionUID = -3346379470526384970L;
+		JavaPairDStream<String, Integer> wordCounts2 = lines
+				.flatMapToPair(new PairFlatMapFunction<String, String, Integer>() {
 
-			@Override
-			public Iterator<String> call(String x) {
-				return Arrays.asList(x.split(" ")).iterator();
-			}
-		});
+					private static final long serialVersionUID = 3177427441691181201L;
 
-		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+					@Override
+					public Iterator<Tuple2<String, Integer>> call(String t) throws Exception {
 
-			private static final long serialVersionUID = -4481967467359328639L;
+						List<Tuple2<String, Integer>> tuples = new ArrayList<>();
+						// create list of tuples of words and their counts
+						for (String word : t.split(" ")) {
 
-			@Override
-			public Tuple2<String, Integer> call(String s) {
-				return new Tuple2<>(s, 1);
-			}
-		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+							tuples.add(new Tuple2<>(word, 1));
+						}
+						return tuples.iterator();
 
-			private static final long serialVersionUID = -4270697510664029359L;
+					}
+				}).reduceByKey((i1, i2) -> {
 
-			@Override
-			public Integer call(Integer i1, Integer i2) {
-				return i1 + i2;
-			}
-		});
-		wordCounts.print();
+					return i1 + i2;
+				});
+
+		wordCounts2.print();
 		ssc.start();
 		ssc.awaitTermination();
 
