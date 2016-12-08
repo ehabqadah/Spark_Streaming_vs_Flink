@@ -5,11 +5,18 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
-
+/**
+ * This an example of flink dataset api to read text file and calculate the
+ * word counts
+ * 
+ * @author Ehab Qadah
+ * 
+ *         Dec 8, 2016
+ */
 public class WordCount {
 
 	public static void main(String[] args) throws Exception {
-
+		
 		// set up the execution environment
 		final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
 

@@ -2,18 +2,22 @@ package de.kdml.bigdatalab.flink;
 
 import java.util.Properties;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.core.fs.FileSystem.WriteMode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
+
+/**
+ * This example reads stream of lines in Flink 
+ * and process the lines to find the word counts 
+ * 
+ * @author Ehab Qadah 
+ * 
+ * Dec 8, 2016
+ */
 
 public class ReadFromKafka {
 

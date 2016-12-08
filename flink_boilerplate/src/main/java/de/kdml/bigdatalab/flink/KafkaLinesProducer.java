@@ -7,6 +7,14 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
+/**
+ * This kafka's stream of lines producer using FlinkKafkaProducer09
+ * it writes a new random line every 1 second 
+ * 
+ * @author Ehab Qadah
+ * 
+ *         Dec 8, 2016
+ */
 public class KafkaLinesProducer {
 
 	public static void main(String[] args) throws Exception {
