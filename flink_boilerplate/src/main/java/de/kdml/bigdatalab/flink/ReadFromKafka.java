@@ -11,27 +11,25 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
 
 /**
- * This example reads stream of lines in Flink 
- * and process the lines to find the word counts 
+ * This example reads stream of lines in Flink and process the lines to find the
+ * word counts
  * 
- * @author Ehab Qadah 
+ * @author Ehab Qadah
  * 
- * Dec 8, 2016
+ *         Dec 8, 2016
  */
 
 public class ReadFromKafka {
 
 	public static void main(String[] args) throws Exception {
 
-		System.out.println("Working Directory = " +
-	              System.getProperty("user.dir") +"\n \n \n \n------------");
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// configure event-time characteristics
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		// generate a Watermark every second
 		env.getConfig().setAutoWatermarkInterval(1000);
-		
-		
+		env.setParallelism(3);
+
 		// configure Kafka consumer
 		Properties props = new Properties();
 		props.setProperty("zookeeper.connect", "localhost:2181"); // Zookeeper
@@ -67,7 +65,6 @@ public class ReadFromKafka {
 
 				}).keyBy(0).sum(1);
 
-		
 		counts.print();
 		env.execute();
 	}
