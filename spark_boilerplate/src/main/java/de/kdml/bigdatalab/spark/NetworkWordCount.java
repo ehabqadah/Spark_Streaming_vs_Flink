@@ -21,10 +21,12 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import scala.Array;
 import scala.Tuple2;
 
-/**
+/***
+ * This example of socket stream processing in spark 
  * 
- * @author ehab
- *
+ * @author Ehab Qadah 
+ * 
+ * Dec 8, 2016
  */
 
 public final class NetworkWordCount {
@@ -37,32 +39,27 @@ public final class NetworkWordCount {
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Network WordCount");
 		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
 
+		// create line input stream from socket
 		JavaReceiverInputDStream<String> lines = ssc.socketTextStream(configs.getStringProp("socketHost"),
 				configs.getIntProp("socketPort"), StorageLevels.MEMORY_AND_DISK_SER);
 
-		JavaPairDStream<String, Integer> wordCounts2 = lines
-				.flatMapToPair(new PairFlatMapFunction<String, String, Integer>() {
+		// build the pair (word,count) for all words in lines stream
+		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
 
-					private static final long serialVersionUID = 3177427441691181201L;
+			List<Tuple2<String, Integer>> tuples = new ArrayList<>();
+			// create list of tuples of words and their counts
+			for (String word : line.split(" ")) {
 
-					@Override
-					public Iterator<Tuple2<String, Integer>> call(String t) throws Exception {
+				tuples.add(new Tuple2<>(word, 1));
+			}
+			return tuples.iterator();
 
-						List<Tuple2<String, Integer>> tuples = new ArrayList<>();
-						// create list of tuples of words and their counts
-						for (String word : t.split(" ")) {
+		}).reduceByKey((i1, i2) -> {
+			//Aggregate the word counts 
+			return i1 + i2;
+		});
 
-							tuples.add(new Tuple2<>(word, 1));
-						}
-						return tuples.iterator();
-
-					}
-				}).reduceByKey((i1, i2) -> {
-
-					return i1 + i2;
-				});
-
-		wordCounts2.print();
+		wordCounts.print();
 		ssc.start();
 		ssc.awaitTermination();
 
