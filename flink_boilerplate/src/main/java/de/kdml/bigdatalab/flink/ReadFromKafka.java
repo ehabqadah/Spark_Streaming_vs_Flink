@@ -2,6 +2,7 @@ package de.kdml.bigdatalab.flink;
 
 import java.util.Properties;
 
+import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -25,9 +26,12 @@ public class ReadFromKafka {
 
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// configure event-time characteristics
+		env.getConfig().disableSysoutLogging();
+		env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		// generate a Watermark every second
 		env.getConfig().setAutoWatermarkInterval(1000);
+		env.enableCheckpointing(5000); // create a checkpoint every 5 seconds
 		env.setParallelism(3);
 
 		// configure Kafka consumer

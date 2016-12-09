@@ -19,7 +19,7 @@ public class WordCount {
 		
 		// set up the execution environment
 		final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-
+		env.getConfig().disableSysoutLogging();
 		// get input data
 		DataSet<String> text = env.readTextFile("/usr/local/spark/spark-2.0.1-bin-hadoop2.7/README.md");
 
