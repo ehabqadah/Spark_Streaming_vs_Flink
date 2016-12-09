@@ -1,5 +1,6 @@
 package de.kdml.bigdatalab.flink;
 
+import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -8,8 +9,8 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 /**
- * This kafka's stream of lines producer using FlinkKafkaProducer09
- * it writes a new random line every 1 second 
+ * This kafka's stream of lines producer using FlinkKafkaProducer09 it writes a
+ * new random line every 1 second
  * 
  * @author Ehab Qadah
  * 
@@ -21,6 +22,8 @@ public class KafkaLinesStreamProducer {
 		// create execution environment
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+		env.getConfig().disableSysoutLogging();
+		env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
 
 		// add a simple source which is writing some strings
 		DataStream<String> messageStream = env.addSource(new SimpleStringGenerator());
@@ -32,6 +35,11 @@ public class KafkaLinesStreamProducer {
 	}
 
 	public static class SimpleStringGenerator implements SourceFunction<String> {
+		/**
+		 * Generates a new random line every  LINE_SLIDE_TIME_MS 
+		 */
+		private static final int LINE_SLIDE_TIME_MS = 1000;
+
 		private static final long serialVersionUID = 2174904787118597072L;
 
 		boolean running = true;
@@ -42,7 +50,7 @@ public class KafkaLinesStreamProducer {
 			while (running) {
 				i++;
 				ctx.collect(randomLoremWords[i % randomLoremWords.length]);
-				Thread.sleep(1000);
+				Thread.sleep(LINE_SLIDE_TIME_MS);
 			}
 		}
 
