@@ -20,7 +20,7 @@ import org.apache.flink.util.Collector;
  *         Dec 8, 2016
  */
 
-public class ReadFromKafka {
+public class KafkaWordCounts {
 
 	public static void main(String[] args) throws Exception {
 
@@ -70,6 +70,6 @@ public class ReadFromKafka {
 				}).keyBy(0).sum(1);
 
 		counts.print();
-		env.execute();
+		env.execute("kafka word counts");
 	}
 }

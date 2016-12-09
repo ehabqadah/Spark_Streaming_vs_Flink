@@ -15,7 +15,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
  * 
  *         Dec 8, 2016
  */
-public class KafkaLinesProducer {
+public class KafkaLinesStreamProducer {
 
 	public static void main(String[] args) throws Exception {
 		// create execution environment
@@ -28,7 +28,7 @@ public class KafkaLinesProducer {
 		// // write stream to Kafka
 		messageStream.addSink(new FlinkKafkaProducer09<String>("localhost:9092", "test", new SimpleStringSchema()));
 
-		env.execute();
+		env.execute("kafka stream of random lines every 1 second!");
 	}
 
 	public static class SimpleStringGenerator implements SourceFunction<String> {
