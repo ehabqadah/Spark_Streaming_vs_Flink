@@ -69,7 +69,7 @@ public class KafkaWordCounts {
 
 				}).keyBy(0).sum(1);
 
-		counts.print();
+		counts.print().setParallelism(1);//TODO:chek effect 
 		env.execute("kafka word counts");
 	}
 }

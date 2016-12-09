@@ -49,7 +49,8 @@ public class KafkaLinesStreamProducer {
 		public void run(SourceContext<String> ctx) throws Exception {
 			while (running) {
 				i++;
-				ctx.collect(randomLoremWords[i % randomLoremWords.length]);
+				//get a random line from the 
+				ctx.collect(loremLines[i % loremLines.length]);
 				Thread.sleep(LINE_SLIDE_TIME_MS);
 			}
 		}
@@ -69,7 +70,7 @@ public class KafkaLinesStreamProducer {
 
 				+ "\n Cras molestie ligula sed mi iaculis venenatis. \n Quisque imperdiet \n vestibulum elit, sit amet ultricies tellus mattis non. Fusce quis interdum eros.\n  Etiam elit metus, varius in risus eget, placerat blandit mauris. Proin diam nisi, pharetra id nulla eu, volutpat rhoncus purus. Fusce turpis ex, elementum quis scelerisque ac, dapibus nec est. Proin diam nisl, condimentum a finibus ac, rhoncus id lectus. Quisque volutpat suscipit odio eu bibendum. Cras quis sollicitudin lectus, suscipit porta metus. Etiam vel diam massa. Quisque cursus maximus orci quis varius. Vivamus accumsan tortor id \n neque feugiat dignissim. Cras vestibulum, tellus \n sed ullamcorper sagittis, turpis nunc sollicitudin lacus, et placerat magna erat nec nisi. \n Mauris aliquam justo sed porttitor tincidunt.";
 
-		private static String[] randomLoremWords = randomLoremText.split("\n");
+		private static String[] loremLines = randomLoremText.split("\n");
 	}
 
 }
