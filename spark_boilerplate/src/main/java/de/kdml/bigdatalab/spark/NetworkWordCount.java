@@ -43,6 +43,7 @@ public final class NetworkWordCount {
 		JavaReceiverInputDStream<String> lines = ssc.socketTextStream(configs.getStringProp("socketHost"),
 				configs.getIntProp("socketPort"), StorageLevels.MEMORY_AND_DISK_SER);
 
+		//// Count each word in each batch
 		// build the pair (word,count) for all words in lines stream
 		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
 

@@ -59,11 +59,15 @@ public class WordCountsUtil {
 	 */
 	public static void aggregateWordCountsAndPrint(JavaSparkContext sc ,JavaPairDStream<String, Integer> newWordCounts,String outputDir){
 		
+		// Apply the inner function to each RDD in this newWordCounts DStream
 		newWordCounts.foreachRDD((rdd, time) -> {
 
-			if (rdd.isEmpty())
+	
+			if (rdd.count()==0)
+			{
+				  System.out.println("No words in this time interval: " +time);
 				return;
-
+			}
 			JavaPairRDD<Text, IntWritable> result = rdd.mapToPair(new ConvertToWritableTypes());
 			result.saveAsHadoopFile(outputDir+"/" + time.toString(), Text.class, IntWritable.class,
 					SequenceFileOutputFormat.class);

@@ -7,6 +7,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
@@ -24,13 +25,19 @@ public class KafkaWordCounts {
 
 	public static void main(String[] args) throws Exception {
 
-		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();
 		// configure event-time characteristics
 		env.getConfig().disableSysoutLogging();
+
+		// n case of a failure the system tries to restart the job 4 times and
+		// waits 10 seconds in-between successive restart attempts.
 		env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		// generate a Watermark every second
 		env.getConfig().setAutoWatermarkInterval(1000);
+
+		// Enables checkpointing for the streaming job. The distributed state of
+		// the streaming dataflow will be periodically snapshotted
 		env.enableCheckpointing(5000); // create a checkpoint every 5 seconds
 		env.setParallelism(3);
 
@@ -69,7 +76,20 @@ public class KafkaWordCounts {
 
 				}).keyBy(0).sum(1);
 
-		counts.print().setParallelism(1);//TODO:chek effect 
+		counts.print().setParallelism(1);
+
+		// implement simple sink function
+		counts.addSink(new SinkFunction<Tuple2<String, Integer>>() {
+
+			@Override
+			public void invoke(Tuple2<String, Integer> value) throws Exception {
+
+				System.out.println(value.toString());
+
+			}
+		});
+
+		// Trigger program execution
 		env.execute("kafka word counts");
 	}
 }
