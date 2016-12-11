@@ -1,14 +1,13 @@
 package de.kdml.bigdatalab.spark;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -28,7 +27,7 @@ import scala.Tuple2;
  * @author ehab
  *
  */
-public class KafkaReceiver {
+public class KafkaReceiverStateful {
 
 	private static Configs configs = Configs.getInstance();
 
@@ -49,40 +48,48 @@ public class KafkaReceiver {
 				configs.getStringProp("zookeeper"), configs.getStringProp("kafkaGroupId"), topicMap,
 				StorageLevel.MEMORY_AND_DISK_SER());
 
-		// Get the lines, split them into words, count the words and print
+		// Get the lines from kafka messages
 		JavaDStream<String> lines = messages.map(tuple -> {
 			return tuple._2();
 		});
-		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -3551637796904462300L;
 
-			@Override
-			public Iterator<String> call(String x) {
-				return Arrays.asList(x.split(" ")).iterator();
+		/// Count each word in each batch
+		// build the pair (word,count) for all words in lines stream
+		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
+
+			List<Tuple2<String, Integer>> tuples = new ArrayList<>();
+			// create list of tuples of words and their counts
+			for (String word : line.split(" ")) {
+
+				tuples.add(new Tuple2<>(word, 1));
 			}
-		});
-		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+			return tuples.iterator();
 
-			private static final long serialVersionUID = 6817408734395025461L;
-
-			@Override
-			public Tuple2<String, Integer> call(String s) {
-				return new Tuple2<>(s, 1);
-			}
-		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
-
-			private static final long serialVersionUID = 6398638714793728848L;
-
-			@Override
-			public Integer call(Integer i1, Integer i2) {
-				return i1 + i2;
-			}
+		}).reduceByKey((i1, i2) -> {
+			// Aggregate the word counts
+			return i1 + i2;
 		});
 
-		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, configs.getStringProp("KafkaReceiver_Out"));
+		// Return a new "state" count DStream where the state for each key(word)
+		// is updated
+		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
+
+			private static final long serialVersionUID = -76088662409004569L;
+
+			@Override
+			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
+
+				int sum = state.or(0);
+				for (long i : values) {
+					sum += i;
+				}
+				return Optional.of(sum);
+			}
+		};
+		// update running word counts with new batch data
+		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
+
+		stateDstream.print(100);
 
 		// Start the computation
 		jssc.start();

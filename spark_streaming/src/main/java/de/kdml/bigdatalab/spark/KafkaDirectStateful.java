@@ -1,26 +1,19 @@
 package de.kdml.bigdatalab.spark;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.Function3;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.State;
-import org.apache.spark.streaming.StateSpec;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaMapWithStateDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -38,9 +31,6 @@ public class KafkaDirectStateful {
 		// Create context with a 3 seconds batch interval
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Java DirectKafkaWordCount with update state by key");
 
-		List<Tuple2<String, Integer>> tuples = Arrays.asList(new Tuple2<>("ehab", 1));
-		JavaPairRDD<String, Integer> initialRDD = sc.parallelizePairs(tuples);
-
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
@@ -52,49 +42,36 @@ public class KafkaDirectStateful {
 		JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(jssc, String.class, String.class,
 				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
 
-		// Get the lines, split them into words, count the words and print
-		JavaDStream<String> lines = messages.map(new Function<Tuple2<String, String>, String>() {
-
-			private static final long serialVersionUID = 6552316508278748327L;
-
-			@Override
-			public String call(Tuple2<String, String> tuple2) {
-				return tuple2._2();
-			}
+		// Get the lines from kafka messages 
+		JavaDStream<String> lines = messages.map(tuple -> {
+			return tuple._2();
 		});
 
-		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
+		/// Count each word in each batch
+		// build the pair (word,count) for all words in lines stream
+		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
 
-			private static final long serialVersionUID = 3664730157250100313L;
+			List<Tuple2<String, Integer>> tuples = new ArrayList<>();
+			// create list of tuples of words and their counts
+			for (String word : line.split(" ")) {
 
-			@Override
-			public Iterator<String> call(String x) {
-				return Arrays.asList(x.split(" ")).iterator();
+				tuples.add(new Tuple2<>(word, 1));
 			}
-		}).persist();
-		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+			return tuples.iterator();
 
-			private static final long serialVersionUID = 4319033885138979261L;
-
-			@Override
-			public Tuple2<String, Integer> call(String s) {
-				return new Tuple2<>(s, 1);
-			}
-		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
-
-			private static final long serialVersionUID = 1761086467757826981L;
-
-			@Override
-			public Integer call(Integer i1, Integer i2) {
-				return i1 + i2;
-			}
+		}).reduceByKey((i1, i2) -> {
+			// Aggregate the word counts
+			return i1 + i2;
 		});
 
 		////////////////////
 
 		// Update the cumulative count function
-		//	Return a new "state" count  DStream where the state for each key(word) is updated
+		// Return a new "state" count DStream where the state for each key(word) is updated
 		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
+		
+			private static final long serialVersionUID = -76088662409004569L;
+
 			@Override
 			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
 
@@ -106,6 +83,7 @@ public class KafkaDirectStateful {
 			}
 		};
 
+		//update running word counts with new batch data
 		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
 
 		stateDstream.print(100);

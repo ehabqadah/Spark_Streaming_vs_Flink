@@ -1,9 +1,11 @@
 package de.kdml.bigdatalab.spark;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,14 +56,8 @@ public class KafkaDirect {
 				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
 
 		// Get the lines, split them into words, count the words and print
-		JavaDStream<String> lines = messages.map(new Function<Tuple2<String, String>, String>() {
-
-			private static final long serialVersionUID = 6552316508278748327L;
-
-			@Override
-			public String call(Tuple2<String, String> tuple2) {
-				return tuple2._2();
-			}
+		JavaDStream<String> lines = messages.map(tuple -> {
+			return tuple._2();
 		});
 
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
@@ -73,22 +69,22 @@ public class KafkaDirect {
 				return Arrays.asList(x.split(" ")).iterator();
 			}
 		}).persist();
-		JavaPairDStream<String, Integer> wordCounts = words.mapToPair(new PairFunction<String, String, Integer>() {
+		
+		/// Count each word in each batch
+		// build the pair (word,count) for all words in lines stream
+		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
 
-			private static final long serialVersionUID = 4319033885138979261L;
+			List<Tuple2<String, Integer>> tuples = new ArrayList<>();
+			// create list of tuples of words and their counts
+			for (String word : line.split(" ")) {
 
-			@Override
-			public Tuple2<String, Integer> call(String s) {
-				return new Tuple2<>(s, 1);
+				tuples.add(new Tuple2<>(word, 1));
 			}
-		}).reduceByKey(new Function2<Integer, Integer, Integer>() {
+			return tuples.iterator();
 
-			private static final long serialVersionUID = 1761086467757826981L;
-
-			@Override
-			public Integer call(Integer i1, Integer i2) {
-				return i1 + i2;
-			}
+		}).reduceByKey((i1, i2) -> {
+			// Aggregate the word counts
+			return i1 + i2;
 		});
 
 		// save batch word counts and display aggregation result

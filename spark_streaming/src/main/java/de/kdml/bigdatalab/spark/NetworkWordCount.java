@@ -1,32 +1,23 @@
 package de.kdml.bigdatalab.spark;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.StorageLevels;
-import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
-import scala.Array;
 import scala.Tuple2;
 
 /***
- * This example of socket stream processing in spark 
+ * This example of socket stream processing in spark
  * 
- * @author Ehab Qadah 
+ * @author Ehab Qadah
  * 
- * Dec 8, 2016
+ *         Dec 8, 2016
  */
 
 public final class NetworkWordCount {
@@ -36,7 +27,7 @@ public final class NetworkWordCount {
 	public static void main(String[] args) throws Exception {
 
 		// Create the context with a configured batch size
-		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Network WordCount");
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Network spark WordCount");
 		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
 
 		// create line input stream from socket
@@ -56,7 +47,7 @@ public final class NetworkWordCount {
 			return tuples.iterator();
 
 		}).reduceByKey((i1, i2) -> {
-			//Aggregate the word counts 
+			// Aggregate the word counts
 			return i1 + i2;
 		});
 

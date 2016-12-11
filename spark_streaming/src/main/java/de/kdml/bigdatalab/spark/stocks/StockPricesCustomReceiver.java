@@ -1,25 +1,23 @@
-package de.kdml.bigdatalab.spark;
+package de.kdml.bigdatalab.spark.stocks;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.receiver.Receiver;
 
 import com.google.common.io.Closeables;
 
-import scala.Tuple2;
+import de.kdml.bigdatalab.spark.Configs;
+import de.kdml.bigdatalab.spark.SparkConfigsUtils;
+import scala.Tuple3;
 
 /**
  * his a example of the Spark stream custom receiver 
@@ -29,7 +27,7 @@ import scala.Tuple2;
  * 
  * Dec 10, 2016
  */
-public class NetworkCustomReceiver {
+public class StockPricesCustomReceiver {
 
 
 
@@ -47,25 +45,14 @@ public class NetworkCustomReceiver {
 		CustomStreamReceiver customStreamReceiver = new CustomStreamReceiver(configs.getStringProp("socketHost"),
 				configs.getIntProp("socketPort"));
 
-		JavaReceiverInputDStream<String> lines = ssc.receiverStream(customStreamReceiver);
+		JavaReceiverInputDStream<Tuple3<String, Integer, Integer>> prices = ssc.receiverStream(customStreamReceiver);
 
 		
-		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
+		
+ //TODO
+			
 
-			List<Tuple2<String, Integer>> tuples = new ArrayList<>();
-			// create list of tuples of words and their counts
-			for (String word : line.split(" ")) {
-
-				tuples.add(new Tuple2<>(word, 1));
-			}
-			return tuples.iterator();
-
-		}).reduceByKey((i1, i2) -> {
-			// Aggregate the word counts
-			return i1 + i2;
-		});
-
-		wordCounts.print();
+		prices.print();
 		ssc.start();
 		ssc.awaitTermination();
 	}
@@ -77,7 +64,7 @@ public class NetworkCustomReceiver {
 	 * 
 	 * Dec 10, 2016
 	 */
-	public static class CustomStreamReceiver extends Receiver<String> {
+	public static class CustomStreamReceiver extends Receiver<Tuple3<String, Integer, Integer>> {
 		// ============= 
 		// ==============
 			private static long count=0;
@@ -124,7 +111,9 @@ public class NetworkCustomReceiver {
 					// Until stopped or connection broken continue reading
 					while (!isStopped() && (userInput = reader.readLine()) != null) {
 						System.out.println(++count+" > Received data '" + userInput + "'");
-						store(userInput);
+						String[] priceData = userInput.split(",");
+						Tuple3<String, Integer, Integer> userInputTuple= new Tuple3<String, Integer, Integer>(priceData[0], Integer.valueOf(priceData[1]),Integer.valueOf(priceData[1]));
+						store(userInputTuple);
 					}
 				} finally {
 					Closeables.close(reader, /* swallowIOException = */ true);
@@ -142,3 +131,4 @@ public class NetworkCustomReceiver {
 		}
 	}
 }
+
