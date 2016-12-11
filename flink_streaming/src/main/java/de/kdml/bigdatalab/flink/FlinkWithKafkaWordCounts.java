@@ -21,7 +21,7 @@ import org.apache.flink.util.Collector;
  *         Dec 8, 2016
  */
 
-public class KafkaWordCounts {
+public class FlinkWithKafkaWordCounts {
 
 	public static void main(String[] args) throws Exception {
 
@@ -43,15 +43,11 @@ public class KafkaWordCounts {
 
 		// configure Kafka consumer
 		Properties props = new Properties();
-		props.setProperty("zookeeper.connect", "localhost:2181"); // Zookeeper
-																	// default
-																	// host:port
-		props.setProperty("bootstrap.servers", "localhost:9092"); // Broker
-																	// default
-																	// host:port
+		props.setProperty("zookeeper.connect", "localhost:2181");
+		props.setProperty("bootstrap.servers", "localhost:9092");
 		props.setProperty("group.id", "myGroup"); // Consumer group ID
-		props.setProperty("auto.offset.reset", "earliest"); // Always read topic
-															// from start
+		// Always read topicfrom start
+		props.setProperty("auto.offset.reset", "earliest");
 
 		// create a Kafka consumer
 		FlinkKafkaConsumer09<String> kafkaConsumer = new FlinkKafkaConsumer09<>("test", new SimpleStringSchema(),
@@ -81,6 +77,8 @@ public class KafkaWordCounts {
 		// implement simple sink function
 		counts.addSink(new SinkFunction<Tuple2<String, Integer>>() {
 
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void invoke(Tuple2<String, Integer> value) throws Exception {
 
@@ -90,6 +88,6 @@ public class KafkaWordCounts {
 		});
 
 		// Trigger program execution
-		env.execute("kafka word counts");
+		env.execute("flink streaming word counts");
 	}
 }
