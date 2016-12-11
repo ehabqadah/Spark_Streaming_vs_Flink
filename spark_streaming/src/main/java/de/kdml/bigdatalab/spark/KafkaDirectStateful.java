@@ -42,7 +42,7 @@ public class KafkaDirectStateful {
 		JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(jssc, String.class, String.class,
 				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
 
-		// Get the lines from kafka messages 
+		// Get the lines from kafka messages
 		JavaDStream<String> lines = messages.map(tuple -> {
 			return tuple._2();
 		});
@@ -67,9 +67,10 @@ public class KafkaDirectStateful {
 		////////////////////
 
 		// Update the cumulative count function
-		// Return a new "state" count DStream where the state for each key(word) is updated
+		// Return a new "state" count DStream where the state for each key(word)
+		// is updated
 		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
-		
+
 			private static final long serialVersionUID = -76088662409004569L;
 
 			@Override
@@ -83,7 +84,7 @@ public class KafkaDirectStateful {
 			}
 		};
 
-		//update running word counts with new batch data
+		// update running word counts with new batch data
 		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
 
 		stateDstream.print(100);
