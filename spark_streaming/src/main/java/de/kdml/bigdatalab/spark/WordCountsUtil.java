@@ -71,7 +71,7 @@ public class WordCountsUtil {
 			JavaPairRDD<Text, IntWritable> result = rdd.mapToPair(new ConvertToWritableTypes());
 			result.saveAsHadoopFile(outputDir+"/" + time.toString(), Text.class, IntWritable.class,
 					SequenceFileOutputFormat.class);
-			
+			//Print the aggregation word counts 
 			printAllWordCounts(sc, outputDir);
 
 		});

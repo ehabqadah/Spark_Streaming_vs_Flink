@@ -76,6 +76,7 @@ public class KafkaDirectStateful {
 			@Override
 			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
 
+				// get state sum and add new values to it
 				int sum = state.or(0);
 				for (long i : values) {
 					sum += i;
@@ -87,7 +88,9 @@ public class KafkaDirectStateful {
 		// update running word counts with new batch data
 		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
 
-		stateDstream.print(100);
+		stateDstream.foreachRDD(rdd -> {
+			System.out.println(rdd.take(100));
+		});
 		// Start the computation
 		jssc.start();
 		try {
