@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.receiver.Receiver;
@@ -31,10 +32,11 @@ import scala.Tuple3;
 public class StockPricesCustomReceiver {
 
 	private static Configs configs = Configs.getInstance();
+	private static final double PRICE_CHANGE_THRESHOLD = 2.0;
 
 	public static void main(String[] args) throws Exception {
 
-		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("CustomReceiver");
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Price change detecation");
 		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
 
 		// Create an input stream with the custom receiver
@@ -44,9 +46,11 @@ public class StockPricesCustomReceiver {
 
 		JavaReceiverInputDStream<Tuple3<String, Double, Double>> prices = ssc.receiverStream(customStreamReceiver);
 
-		// TODO
+		// find the stocks with price change above the threshold
+		JavaDStream<Tuple3<String, Double, Double>> changedPrices = prices
+				.filter(stockPrice -> Math.abs(stockPrice._2() - stockPrice._3()) > PRICE_CHANGE_THRESHOLD);
 
-		prices.print();
+		changedPrices.print();
 		ssc.start();
 		ssc.awaitTermination();
 	}
@@ -68,10 +72,10 @@ public class StockPricesCustomReceiver {
 		String host = null;
 		int port = -1;
 
-		public CustomStreamReceiver(String host_, int port_) {
+		public CustomStreamReceiver(String host, int port) {
 			super(StorageLevel.MEMORY_AND_DISK_2());
-			host = host_;
-			port = port_;
+			this.host = host;
+			this.port = port;
 		}
 
 		public void onStart() {
@@ -85,8 +89,6 @@ public class StockPricesCustomReceiver {
 		}
 
 		public void onStop() {
-			// There is nothing much to do as the thread calling receive()
-			// is designed to stop by itself isStopped() returns false
 		}
 
 		/**
@@ -96,26 +98,26 @@ public class StockPricesCustomReceiver {
 			try {
 				Socket socket = null;
 				BufferedReader reader = null;
-				String userInput = null;
+				String stockPriceLine = null;
 				try {
 					// connect to the server
 					socket = new Socket(host, port);
 					reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 					// Until stopped or connection broken continue reading
-					while (!isStopped() && (userInput = reader.readLine()) != null) {
-						System.out.println("> Received data '" + userInput + "'");
+					while (!isStopped() && (stockPriceLine = reader.readLine()) != null) {
+						System.out.println("> Received data '" + stockPriceLine + "'");
 
-						String[] priceData = userInput.split(",");// stock,price
+						String[] priceData = stockPriceLine.split(",");// stock,price
 						if (priceData.length == 2) {
 
 							String stockId = priceData[0];
 							Double price = Double.valueOf(priceData[1]);
 							Double lastPrice = lastPrices.getOrDefault(stockId, price);
-							//update stock price
+							// update stock price
 							lastPrices.put(stockId, price);
 							Tuple3<String, Double, Double> stockTuple = new Tuple3<String, Double, Double>(stockId,
 									price, lastPrice);
-							
+
 							// store received data into Spark's memory
 							store(stockTuple);
 						}
