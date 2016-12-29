@@ -22,7 +22,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
  * 
  *         Dec 8, 2016
  */
-public class TestKafkastreamPartitions {
+public class DatacornKafkaStreamProducer {
 
 	public static void main(String[] args) throws Exception {
 		// create execution environment
