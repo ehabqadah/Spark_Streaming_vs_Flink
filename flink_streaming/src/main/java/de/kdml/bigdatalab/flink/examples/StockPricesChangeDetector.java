@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.flink;
+package de.kdml.bigdatalab.flink.examples;
 
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

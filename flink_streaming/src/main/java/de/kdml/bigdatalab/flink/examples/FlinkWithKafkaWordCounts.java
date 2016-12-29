@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.flink;
+package de.kdml.bigdatalab.flink.examples;
 
 import java.util.Properties;
 

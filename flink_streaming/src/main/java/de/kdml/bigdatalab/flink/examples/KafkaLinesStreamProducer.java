@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.flink;
+package de.kdml.bigdatalab.flink.examples;
 
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.streaming.api.TimeCharacteristic;
