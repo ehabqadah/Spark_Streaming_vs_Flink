@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark;
+package de.kdml.bigdatalab.spark.examples;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,9 @@ import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 
+import de.kdml.bigdatalab.spark.Configs;
+import de.kdml.bigdatalab.spark.SparkConfigsUtils;
+import de.kdml.bigdatalab.spark.WordCountsUtil;
 import kafka.serializer.StringDecoder;
 import scala.Tuple2;
 

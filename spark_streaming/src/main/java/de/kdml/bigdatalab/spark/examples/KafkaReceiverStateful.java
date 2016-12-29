@@ -1,46 +1,54 @@
-package de.kdml.bigdatalab.spark;
+package de.kdml.bigdatalab.spark.examples;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
-import org.apache.spark.streaming.api.java.JavaPairInputDStream;
+import org.apache.spark.streaming.api.java.JavaPairReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 
-import kafka.serializer.StringDecoder;
+import de.kdml.bigdatalab.spark.Configs;
+import de.kdml.bigdatalab.spark.SparkConfigsUtils;
 import scala.Tuple2;
 
-public class KafkaDirectStateful {
+/**
+ * This approach uses a Receiver to receive the data. The Receiver is
+ * implemented using the Kafka high-level consumer API. As with all receivers,
+ * the data received from Kafka through a Receiver is stored in Spark executors,
+ * and then jobs launched by Spark Streaming processes the data
+ * 
+ * @author ehab
+ *
+ */
+public class KafkaReceiverStateful {
 
 	private static Configs configs = Configs.getInstance();
 
 	public static void main(String[] args) {
 
-		// Create context with a 3 seconds batch interval
-		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Java DirectKafkaWordCount with update state by key");
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Spark Streaming Kafaka  Receiver-based Approach");
 
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
-		Set<String> topicsSet = new HashSet<>(Arrays.asList(configs.getStringProp("topics").split(",")));
-		Map<String, String> kafkaParams = new HashMap<>();
-		kafkaParams.put("metadata.broker.list", configs.getStringProp("brokers"));
+		Map<String, Integer> topicMap = new HashMap<>();
+		String[] topics = configs.getStringProp("topics").split(",");
+		for (String topic : topics) {
+			topicMap.put(topic, 1);
+		}
 
-		// Create direct kafka stream with brokers and topics
-		JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(jssc, String.class, String.class,
-				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
+		JavaPairReceiverInputDStream<String, String> messages = KafkaUtils.createStream(jssc,
+				configs.getStringProp("zookeeper"), configs.getStringProp("kafkaGroupId"), topicMap,
+				StorageLevel.MEMORY_AND_DISK_SER());
 
 		// Get the lines from kafka messages
 		JavaDStream<String> lines = messages.map(tuple -> {
@@ -64,9 +72,6 @@ public class KafkaDirectStateful {
 			return i1 + i2;
 		});
 
-		////////////////////
-
-		// Update the cumulative count function
 		// Return a new "state" count DStream where the state for each key(word)
 		// is updated
 		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
@@ -76,7 +81,6 @@ public class KafkaDirectStateful {
 			@Override
 			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
 
-				// get state sum and add new values to it
 				int sum = state.or(0);
 				for (long i : values) {
 					sum += i;
@@ -84,13 +88,11 @@ public class KafkaDirectStateful {
 				return Optional.of(sum);
 			}
 		};
-
 		// update running word counts with new batch data
 		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
 
-		stateDstream.foreachRDD(rdd -> {
-			System.out.println(rdd.take(100));
-		});
+		stateDstream.print(100);
+
 		// Start the computation
 		jssc.start();
 		try {
