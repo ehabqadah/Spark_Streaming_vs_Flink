@@ -22,14 +22,13 @@ import de.kdml.bigdatalab.spark.SparkConfigsUtils;
 import scala.Tuple3;
 
 /**
- * his a example of the Spark stream custom receiver Please refer to
- * {@linkplain https://spark.apache.org/docs/2.0.2/streaming-custom-receivers.html#spark-streaming-custom-receivers}
+ * This a example of prices change detection using custom receiver 
  * 
  * @author Ehab Qadah
  * 
  *         Dec 10, 2016
  */
-public class StockPricesCustomReceiver {
+public class StockPricesChangeDetector {
 
 	private static Configs configs = Configs.getInstance();
 	private static final double PRICE_CHANGE_THRESHOLD = 2.0;

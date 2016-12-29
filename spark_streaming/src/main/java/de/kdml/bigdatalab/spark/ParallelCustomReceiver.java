@@ -129,6 +129,7 @@ public class ParallelCustomReceiver {
 					// Until stopped or connection broken continue reading
 					while (!isStopped() && (userInput = reader.readLine()) != null) {
 						System.out.println(" Received data '" + userInput + "' from " + host + ":" + port);
+						
 						store(userInput);
 					}
 				} finally {

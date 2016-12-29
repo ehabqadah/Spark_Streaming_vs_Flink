@@ -1,12 +1,7 @@
 package de.kdml.bigdatalab.flink;
 
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.util.Collector;
-
-import de.kdml.bigdatalab.flink.NetworkWordCount.WordWithCount;
-import scala.Tuple3;
 
 /**
  * Price Changes detector in flink
@@ -41,13 +36,18 @@ public class StockPricesChangeDetector {
 			}
 			return null;
 		}).keyBy("stock").reduce((oldPrice, newPrice) -> {
+			System.out.println(oldPrice +"\n newPrice="+ newPrice);
+			
 			return new StockWithPrice(oldPrice.stock, newPrice.price, oldPrice.price);
-		}).filter(stockPrice -> {
+		});
+		
+	
+		DataStream<StockWithPrice> filterPrices=prices.filter(stockPrice -> {
 			return Math.abs(stockPrice.price - stockPrice.lastPrice) > PRICE_CHANGE_THRESHOLD;
 
 		});
 		// print the results with a single thread, rather than in parallel
-		prices.print().setParallelism(1);
+		filterPrices.print().setParallelism(1);
 
 		env.execute("price change detection in flink");
 	}

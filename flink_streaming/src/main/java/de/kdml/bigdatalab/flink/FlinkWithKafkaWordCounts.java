@@ -25,9 +25,9 @@ public class FlinkWithKafkaWordCounts {
 
 	public static void main(String[] args) throws Exception {
 
-		StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();
+		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		// configure event-time characteristics
-		env.getConfig().disableSysoutLogging();
+		//env.getConfig().disableSysoutLogging();
 
 		// n case of a failure the system tries to restart the job 4 times and
 		// waits 10 seconds in-between successive restart attempts.
@@ -39,23 +39,24 @@ public class FlinkWithKafkaWordCounts {
 		// Enables checkpointing for the streaming job. The distributed state of
 		// the streaming dataflow will be periodically snapshotted
 		env.enableCheckpointing(5000); // create a checkpoint every 5 seconds
-		env.setParallelism(3);
+		env.setParallelism(4);
 
 		// configure Kafka consumer
 		Properties props = new Properties();
 		props.setProperty("zookeeper.connect", "localhost:2181");
-		props.setProperty("bootstrap.servers", "localhost:9092");
+		props.setProperty("bootstrap.servers", "localhost:9092,localhost:9093");
 		props.setProperty("group.id", "myGroup"); // Consumer group ID
 		// Always read topicfrom start
 		props.setProperty("auto.offset.reset", "earliest");
 
 		// create a Kafka consumer
-		FlinkKafkaConsumer09<String> kafkaConsumer = new FlinkKafkaConsumer09<>("test", new SimpleStringSchema(),
+		FlinkKafkaConsumer09<String> kafkaConsumer = new FlinkKafkaConsumer09<>("datacorn", new SimpleStringSchema(),
 				props);
 
+	
 		// create Kafka consumer data source
 		DataStream<String> messages = env.addSource(kafkaConsumer);
-
+		
 		DataStream<Tuple2<String, Integer>> counts = // split up the lines in
 														// pairs (2-tuples)
 														// containing: (word,1)
@@ -82,12 +83,12 @@ public class FlinkWithKafkaWordCounts {
 			@Override
 			public void invoke(Tuple2<String, Integer> value) throws Exception {
 
-				System.out.println(value.toString());
+				//System.out.println(value.toString());
 
 			}
 		});
 
 		// Trigger program execution
 		env.execute("flink streaming word counts");
-	}
+			}
 }
