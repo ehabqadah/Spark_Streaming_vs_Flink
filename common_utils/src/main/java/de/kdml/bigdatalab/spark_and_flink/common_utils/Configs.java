@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark_and_flink.spark_project;
+package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.Properties;
 
 public class Configs {
 
+	
 	private Configs(Properties props) {
 		this.props = props;
 	}
@@ -29,7 +30,7 @@ public class Configs {
 			InputStream input = null;
 
 			try {
-				input = new FileInputStream("./target/config.properties");
+				input = Configs.class.getResourceAsStream("/config.properties");
 
 				// load a properties file
 				props.load(input);

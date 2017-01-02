@@ -14,6 +14,8 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.connectors.kafka.partitioner.KafkaPartitioner;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
+import de.kdml.bigdatalab.spark_and_flink.common_utils.*;
+
 
 /**
  * This kafka's stream of lines producer using FlinkKafkaProducer09 it writes a
@@ -25,6 +27,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
  */
 public class DatacornKafkaStreamProducer {
 
+	private static Configs configs = Configs.getInstance();
 	public static void main(String[] args) throws Exception {
 		
 		// create execution environment
@@ -38,11 +41,11 @@ public class DatacornKafkaStreamProducer {
 		DataStream<String> messageStream = env.addSource(new SimpleStringGenerator());
 
 		Properties producerConfig = new Properties();
-		producerConfig.put("bootstrap.servers","localhost:9092,localhost:9093");
+		producerConfig.put("bootstrap.servers",configs.getStringProp("bootstrap.servers"));
 		// // write stream to Kafka
-		messageStream.addSink(new FlinkKafkaProducer09<String>("datacorn", new SimpleStringSchema(),producerConfig,new TestPartitioner()));
+		messageStream.addSink(new FlinkKafkaProducer09<String>(configs.getStringProp("topicId"), new SimpleStringSchema(),producerConfig,new TestPartitioner()));
 
-		env.execute("kafka stream of random lines every 1 second!");
+		env.execute("kafka stream ");
 	}
 	
 	public static class TestPartitioner extends KafkaPartitioner<String> implements Serializable {

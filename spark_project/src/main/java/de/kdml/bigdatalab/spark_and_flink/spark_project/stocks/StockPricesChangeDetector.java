@@ -17,7 +17,7 @@ import org.apache.spark.streaming.receiver.Receiver;
 
 import com.google.common.io.Closeables;
 
-import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import scala.Tuple3;
 
