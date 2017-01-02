@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark.examples;
+package de.kdml.bigdatalab.spark_and_flink.spark_project.examples;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
-import de.kdml.bigdatalab.spark.Configs;
-import de.kdml.bigdatalab.spark.SparkConfigsUtils;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import scala.Tuple2;
 
 /***

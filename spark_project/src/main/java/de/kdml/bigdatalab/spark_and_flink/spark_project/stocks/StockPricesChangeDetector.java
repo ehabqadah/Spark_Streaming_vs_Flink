@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark.stocks;
+package de.kdml.bigdatalab.spark_and_flink.spark_project.stocks;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,8 +17,8 @@ import org.apache.spark.streaming.receiver.Receiver;
 
 import com.google.common.io.Closeables;
 
-import de.kdml.bigdatalab.spark.Configs;
-import de.kdml.bigdatalab.spark.SparkConfigsUtils;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import scala.Tuple3;
 
 /**

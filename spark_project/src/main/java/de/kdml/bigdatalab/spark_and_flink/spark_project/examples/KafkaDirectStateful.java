@@ -1,21 +1,16 @@
-package de.kdml.bigdatalab.spark.examples;
+package de.kdml.bigdatalab.spark_and_flink.spark_project.examples;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Level;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
@@ -23,29 +18,19 @@ import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 
-import de.kdml.bigdatalab.spark.Configs;
-import de.kdml.bigdatalab.spark.SparkConfigsUtils;
-import de.kdml.bigdatalab.spark.WordCountsUtil;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import kafka.serializer.StringDecoder;
 import scala.Tuple2;
 
-/**
- * This approach periodically queries Kafka for the latest offsets in each
- * topic+partition, and accordingly defines the offset ranges to process in each
- * batch
- * 
- * @author ehab
- *
- */
-
-public class KafkaDirect {
+public class KafkaDirectStateful {
 
 	private static Configs configs = Configs.getInstance();
 
 	public static void main(String[] args) {
 
 		// Create context with a 3 seconds batch interval
-		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Java DirectKafkaWordCount");
+		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Java DirectKafkaWordCount with update state by key");
 
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
@@ -58,21 +43,11 @@ public class KafkaDirect {
 		JavaPairInputDStream<String, String> messages = KafkaUtils.createDirectStream(jssc, String.class, String.class,
 				StringDecoder.class, StringDecoder.class, kafkaParams, topicsSet);
 
-		// Get the lines, split them into words, count the words and print
+		// Get the lines from kafka messages
 		JavaDStream<String> lines = messages.map(tuple -> {
 			return tuple._2();
 		});
 
-		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
-
-			private static final long serialVersionUID = 3664730157250100313L;
-
-			@Override
-			public Iterator<String> call(String x) {
-				return Arrays.asList(x.split(" ")).iterator();
-			}
-		}).persist();
-		
 		/// Count each word in each batch
 		// build the pair (word,count) for all words in lines stream
 		JavaPairDStream<String, Integer> wordCounts = lines.flatMapToPair(line -> {
@@ -90,9 +65,33 @@ public class KafkaDirect {
 			return i1 + i2;
 		});
 
-		// save batch word counts and display aggregation result
-		WordCountsUtil.aggregateWordCountsAndPrint(sc, wordCounts, configs.getStringProp("KafkaDirect_Out"));
+		////////////////////
 
+		// Update the cumulative count function
+		// Return a new "state" count DStream where the state for each key(word)
+		// is updated
+		Function2<List<Integer>, Optional<Integer>, Optional<Integer>> updateFunction = new Function2<List<Integer>, Optional<Integer>, Optional<Integer>>() {
+
+			private static final long serialVersionUID = -76088662409004569L;
+
+			@Override
+			public Optional<Integer> call(List<Integer> values, Optional<Integer> state) {
+
+				// get state sum and add new values to it
+				int sum = state.or(0);
+				for (long i : values) {
+					sum += i;
+				}
+				return Optional.of(sum);
+			}
+		};
+
+		// update running word counts with new batch data
+		JavaPairDStream<String, Integer> stateDstream = wordCounts.updateStateByKey(updateFunction);
+
+		stateDstream.foreachRDD(rdd -> {
+			System.out.println(rdd.take(100));
+		});
 		// Start the computation
 		jssc.start();
 		try {

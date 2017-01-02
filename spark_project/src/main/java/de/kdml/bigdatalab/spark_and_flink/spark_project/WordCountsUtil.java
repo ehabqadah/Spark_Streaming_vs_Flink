@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark;
+package de.kdml.bigdatalab.spark_and_flink.spark_project;
 
 import java.io.File;
 import java.util.ArrayList;

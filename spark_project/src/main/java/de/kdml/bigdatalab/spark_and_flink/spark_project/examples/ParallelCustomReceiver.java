@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark.examples;
+package de.kdml.bigdatalab.spark_and_flink.spark_project.examples;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,9 +19,9 @@ import org.apache.spark.streaming.receiver.Receiver;
 
 import com.google.common.io.Closeables;
 
-import de.kdml.bigdatalab.spark.Configs;
-import de.kdml.bigdatalab.spark.SparkConfigsUtils;
-import de.kdml.bigdatalab.spark.examples.NetworkCustomReceiver.CustomStreamReceiver;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.examples.NetworkCustomReceiver.CustomStreamReceiver;
 import scala.Tuple2;
 
 /**

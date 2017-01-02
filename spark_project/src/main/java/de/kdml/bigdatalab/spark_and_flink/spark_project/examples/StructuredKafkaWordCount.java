@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.spark.examples;
+package de.kdml.bigdatalab.spark_and_flink.spark_project.examples;
 
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.sql.Dataset;
@@ -7,7 +7,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.streaming.StreamingQuery;
 
-import de.kdml.bigdatalab.spark.Configs;
+import de.kdml.bigdatalab.spark_and_flink.spark_project.Configs;
 
 import java.util.Arrays;
 import java.util.Iterator;
