@@ -66,7 +66,7 @@ public class DatacornKafkaStreamProducer {
 		@Override
 		public int partition(String next, byte[] serializedKey, byte[] serializedValue, int numPartitions) {
 			if (targetPartition >= 0) {
-				System.out.println("part="+targetPartition +" next="+next +" value="+new String(serializedValue) );
+				//System.out.println("part="+targetPartition +" next="+next +" value="+new String(serializedValue) );
 				return targetPartition;
 			} else {
 				throw new RuntimeException("The partitioner has not been initialized properly");
@@ -97,6 +97,18 @@ public class DatacornKafkaStreamProducer {
 						//ctx.collect(loremLines[i % loremLines.length]);
 						ctx.collect(line);
 						Thread.sleep(LINE_SLIDE_TIME_MS);
+						ctx.collect(line);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
+						ctx.collect(line);
+						
+						Thread.sleep(5000);
+						ctx.collect(line);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
+						ctx.collect(line);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
+						ctx.collect(line);
+						
+						Thread.sleep(10000);
 				    }
 				}catch (Exception e) {
 				
