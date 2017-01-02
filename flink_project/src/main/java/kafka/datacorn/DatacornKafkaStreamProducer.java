@@ -14,6 +14,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.connectors.kafka.partitioner.KafkaPartitioner;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
+
 /**
  * This kafka's stream of lines producer using FlinkKafkaProducer09 it writes a
  * new random line every 1 second
@@ -25,6 +26,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 public class DatacornKafkaStreamProducer {
 
 	public static void main(String[] args) throws Exception {
+		
 		// create execution environment
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
