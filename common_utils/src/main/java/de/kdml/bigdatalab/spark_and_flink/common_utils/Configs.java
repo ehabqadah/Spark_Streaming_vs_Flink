@@ -1,6 +1,5 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;

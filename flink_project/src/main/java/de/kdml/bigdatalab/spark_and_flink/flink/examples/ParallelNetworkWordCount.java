@@ -1,4 +1,4 @@
-package de.kdml.bigdatalab.flink.examples;
+package de.kdml.bigdatalab.spark_and_flink.flink.examples;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
