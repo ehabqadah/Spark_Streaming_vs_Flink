@@ -4,7 +4,7 @@
 <booleanAttribute key="org.eclipse.ant.ui.DEFAULT_VM_INSTALL" value="false"/>
 <stringAttribute key="org.eclipse.debug.core.ATTR_REFRESH_SCOPE" value="${project}"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/spark_streaming"/>
+<listEntry value="/spark_project"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
@@ -15,7 +15,7 @@
 <booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="spark_streaming"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="spark_project"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_BUILD_SCOPE" value="${working_set:&lt;?xml version='1.0'?&gt;&lt;launchConfigurationWorkingSet editPageId='org.eclipse.ui.resourceWorkingSetPage' factoryID='org.eclipse.ui.internal.WorkingSetFactory' label='workingSet' name='workingSet'&gt;&lt;item factoryID='org.eclipse.ui.internal.model.ResourceFactory' path='spark_boilerplate' type='4'/&gt;&lt;/launchConfigurationWorkingSet&gt;}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${build_project}/maven-eclipse.xml"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="full,incremental,auto,clean"/>

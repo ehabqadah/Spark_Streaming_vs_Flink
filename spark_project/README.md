@@ -32,13 +32,3 @@ target/spark_boilerplate-0.0.1-SNAPSHOT.jar
 --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2
 --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.0.2
 
-
-# new kafka setup 2 servers / 4 partitions
-sudo bin/zookeeper-server-start.sh config/zookeeper.properties
-sudo bin/kafka-server-start.sh config/server1.properties
-sudo bin/kafka-server-start.sh config/server2.properties
-sudo bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic datacorn
-
-sudo bin/kafka-console-producer.sh --broker-list localhost:9092,localhost:9093 --topic datacorn
-
-sudo ./bin/kafka-console-consumer.sh --topic datacorn --bootstrap-server localhost:9092,localhost:9093

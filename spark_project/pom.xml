@@ -11,8 +11,8 @@
 	</parent>
 
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Spark project</name>
-	<description>testing project for spark streaming </description>
+	<name>Spark Project</name>
+	<description>spark streaming project</description>
 	<artifactId>spark_project</artifactId>
 
 	<properties>
