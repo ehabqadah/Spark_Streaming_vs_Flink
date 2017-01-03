@@ -61,6 +61,7 @@ public class TrajectoriesStatistics {
 		kafkaParams.put("enable.auto.commit", false);
 
 		// Create direct kafka stream
+		//Create multiple stream and union them 
 		JavaInputDStream<ConsumerRecord<String, String>> dataStream = KafkaUtils.createDirectStream(jssc,
 				LocationStrategies.PreferConsistent(),
 				ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
