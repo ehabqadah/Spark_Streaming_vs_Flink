@@ -12,7 +12,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.Function3;
 import org.apache.spark.streaming.Durations;
+import org.apache.spark.streaming.State;
+import org.apache.spark.streaming.StateSpec;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -76,6 +79,11 @@ public class TrajectoriesStatistics {
 		// update the stream state
 		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesStreamFunction);
+
+		// NOTE: mapWithState is still in the experimental phase
+		// JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories =
+		// trajectories
+		// .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
 		runningTrajectories.print();
 		jssc.start();
 		try {
@@ -115,6 +123,37 @@ public class TrajectoriesStatistics {
 			}
 
 			return Optional.of(result);
+		}
+	};
+
+	/**
+	 * * Return a new "state" DStream where the state for each key is updated by
+	 * applying the given function on the previous state of the key and the new
+	 * values for the key
+	 * 
+	 * To be used with mapWithState
+	 */
+	public static Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>> updateTrajectoriesStreamFunction2 = new Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>>() {
+
+		@Override
+		public Tuple2<String, Iterable<Trajectory>> call(String id, Optional<Iterable<Trajectory>> values,
+				State<Iterable<Trajectory>> state) throws Exception {
+			List<Trajectory> result = new ArrayList<>();
+			// add old state
+			for (Trajectory trajectory : (state.exists() ? state.get() : new ArrayList<Trajectory>())) {
+				result.add(trajectory);
+			}
+
+			// aggergate new values
+
+			for (Trajectory val : values.orElse(new ArrayList<Trajectory>())) {
+
+				result.add(val);
+
+			}
+
+			state.update(result);
+			return new Tuple2<>(id, result);
 		}
 	};
 }
