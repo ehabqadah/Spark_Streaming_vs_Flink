@@ -12,6 +12,7 @@ public class Trajectory implements Serializable {
 	private double longtitude;
 	private double altitude;
 	private String type;
+	private TrajectoryStatisticsWrapper statistics;
 
 	public Trajectory() {
 	}
@@ -69,8 +70,8 @@ public class Trajectory implements Serializable {
 	@Override
 	public String toString() {
 
-		return "Type:ID" + this.getType() + ":" + getID() + " (lat,long,alt):(" + getLatitude() + "," + getLongtitude()
-				+ "," + getAltitude() + ")\n";
+		return "Type:ID " + this.getType() + ":" + getID() + " (lat,long,alt):(" + getLatitude() + "," + getLongtitude()
+				+ "," + getAltitude() + ") \t " + (getStatistics() != null ? getStatistics() : " ") + "\n";
 	}
 
 	/**
@@ -85,7 +86,7 @@ public class Trajectory implements Serializable {
 		String[] attributes = line.split(",");
 
 		Trajectory trajectory = new Trajectory();
-		if (attributes.length >5) {
+		if (attributes.length > 5) {
 			trajectory.setType(attributes[0] + attributes[1]);
 			trajectory.setID(attributes[4]);
 
@@ -99,6 +100,14 @@ public class Trajectory implements Serializable {
 		}
 		return trajectory;
 
+	}
+
+	public TrajectoryStatisticsWrapper getStatistics() {
+		return statistics;
+	}
+
+	public void setStatistics(TrajectoryStatisticsWrapper statistics) {
+		this.statistics = statistics;
 	}
 
 }

@@ -24,6 +24,7 @@ import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import scala.Tuple2;
@@ -61,7 +62,7 @@ public class TrajectoriesStatistics {
 		kafkaParams.put("enable.auto.commit", false);
 
 		// Create direct kafka stream
-		//Create multiple stream and union them 
+		// Create multiple stream and union them
 		JavaInputDStream<ConsumerRecord<String, String>> dataStream = KafkaUtils.createDirectStream(jssc,
 				LocationStrategies.PreferConsistent(),
 				ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
@@ -108,22 +109,22 @@ public class TrajectoriesStatistics {
 		public Optional<Iterable<Trajectory>> call(List<Iterable<Trajectory>> values,
 				Optional<Iterable<Trajectory>> state) {
 
-			List<Trajectory> result = new ArrayList<>();
+			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
 			// add old state
 			for (Trajectory trajectory : state.orElse(new ArrayList<>())) {
-				result.add(trajectory);
+				aggregatedTrajectories.add(trajectory);
 			}
 
 			// aggergate new values
 
 			for (Iterable<Trajectory> val : values) {
 				for (Trajectory trajectory : val) {
-					result.add(trajectory);
+					aggregatedTrajectories.add(trajectory);
 				}
 
 			}
 
-			return Optional.of(result);
+			return Optional.of(StatisticsUtils.computeStatistics(aggregatedTrajectories));
 		}
 	};
 
@@ -135,6 +136,8 @@ public class TrajectoriesStatistics {
 	 * To be used with mapWithState
 	 */
 	public static Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>> updateTrajectoriesStreamFunction2 = new Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>>() {
+
+		private static final long serialVersionUID = -1393453967261881632L;
 
 		@Override
 		public Tuple2<String, Iterable<Trajectory>> call(String id, Optional<Iterable<Trajectory>> values,

@@ -17,6 +17,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 
@@ -92,8 +93,9 @@ public class TrajectoriesStatistics {
 			Tuple2<String, List<Trajectory>> reduced = new Tuple2<>(tuple1.f0, trajectories);
 			return reduced;
 		}).map(tuple -> {
-			//TODO: add statistics computation
-			return tuple;
+			// compute statistics for each new trajectory
+			return new Tuple2<String, List<Trajectory>>(tuple.f0, StatisticsUtils.computeStatistics(tuple.f1));
+
 		});
 		;
 
