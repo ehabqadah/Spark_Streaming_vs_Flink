@@ -1,6 +1,9 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * 
@@ -27,7 +30,11 @@ public class StatisticsUtils {
 				minLongtitude = longtitude;
 			}
 		}
-
+		//java 8 stream 
+		Stream<Trajectory> ordered = trajectories.stream().sorted((t1, t2) -> {
+			return Double.compare(t1.getLongtitude(), t2.getLongtitude());
+		});
+		Arrays.asList(ordered.toArray());
 		TrajectoryStatisticsWrapper trajectoryStatisticsWrapper = new TrajectoryStatisticsWrapper();
 		trajectoryStatisticsWrapper.setMinLong(minLongtitude);
 
