@@ -29,6 +29,8 @@ public class SparkConfigsUtils {
 		Logger.getRootLogger().setLevel(Level.OFF);
 
 		SparkConf sparkConf = new SparkConf().setMaster(configs.getStringProp("spark_master")).setAppName(appName);
+		//parallelism for each operation high enough ( i.e number of partitions for RDDs)
+		sparkConf.set("spark.default.parallelism", "4");
 		JavaSparkContext sc = new JavaSparkContext(sparkConf);
 		sc.setLogLevel("OFF");
 		sc.setCheckpointDir(configs.getStringProp("spark_checkpoint_dir"));
