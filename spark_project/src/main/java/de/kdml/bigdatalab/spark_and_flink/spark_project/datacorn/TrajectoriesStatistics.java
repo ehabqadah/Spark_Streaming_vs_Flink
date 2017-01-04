@@ -1,6 +1,7 @@
 package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,10 +10,12 @@ import java.util.Set;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.Function3;
+import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.State;
 import org.apache.spark.streaming.StateSpec;
@@ -42,6 +45,8 @@ public class TrajectoriesStatistics {
 
 	private static Configs configs = Configs.getInstance();
 
+	static Broadcast<JavaRDD<String>> broadcastedRdd;
+
 	public static void main(String[] args) {
 
 		// configure spark streaming context
@@ -49,6 +54,8 @@ public class TrajectoriesStatistics {
 
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
+
+		broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab", "qadah")));
 
 		Set<String> topicsSet = new HashSet<String>();
 		topicsSet.add(configs.getStringProp("topicId"));
@@ -87,6 +94,19 @@ public class TrajectoriesStatistics {
 		// trajectories
 		// .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
 		runningTrajectories.print();
+		
+		//to update broadcasted rdd in the driver 
+		runningTrajectories.foreachRDD(line -> {
+
+			if (line.isEmpty())
+				return;
+			if (!broadcastedRdd.getValue().collect().contains("test")) {
+				broadcastedRdd.unpersist();
+
+				broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab1", "qadah1", "test")));
+			}
+		});
+		
 		jssc.start();
 		try {
 			jssc.awaitTermination();
