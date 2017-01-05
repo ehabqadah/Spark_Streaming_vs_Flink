@@ -14,3 +14,7 @@ sudo bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-facto
 sudo bin/kafka-console-producer.sh --broker-list localhost:9092,localhost:9093 --topic datacorn
 
 sudo ./bin/kafka-console-consumer.sh --topic datacorn --bootstrap-server localhost:9092,localhost:9093
+
+
+#delete topic
+sudo bin/kafka-topics.sh --zookeeper localhost:2181 --delete --topic datacorn
