@@ -1,11 +1,13 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Utils;
 
 public class Trajectory implements Serializable {
 
+	private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss.SSS";
 	private static final long serialVersionUID = 1013765199466780042L;
 	private String ID;
 	private double latitude;
@@ -13,6 +15,7 @@ public class Trajectory implements Serializable {
 	private double altitude;
 	private String type;
 	private TrajectoryStatisticsWrapper statistics;
+	private LocalDateTime createdDateTime;
 
 	public Trajectory() {
 	}
@@ -70,8 +73,10 @@ public class Trajectory implements Serializable {
 	@Override
 	public String toString() {
 
-		return "Type:ID " + this.getType() + ":" + getID() + " (lat,long,alt):(" + getLatitude() + "," + getLongtitude()
-				+ "," + getAltitude() + ") \t " + (getStatistics() != null ? getStatistics() : " ") + "\n";
+		//TODO: use string builder
+		return "\n" + getCreatedDateTime() + " Type:ID " + this.getType() + ":" + getID() + " (lat,long,alt):("
+				+ getLatitude() + "," + getLongtitude() + "," + getAltitude() + ") \t "
+				+ (getStatistics() != null ? getStatistics() : " ");
 	}
 
 	/**
@@ -89,6 +94,8 @@ public class Trajectory implements Serializable {
 		if (attributes.length > 5) {
 			trajectory.setType(attributes[0] + attributes[1]);
 			trajectory.setID(attributes[4]);
+			trajectory.setCreatedDateTime(
+					DateTimeUtils.parseDateTime(attributes[6] + " " + attributes[7], DATE_TIME_FORMAT));
 
 		}
 
@@ -108,6 +115,14 @@ public class Trajectory implements Serializable {
 
 	public void setStatistics(TrajectoryStatisticsWrapper statistics) {
 		this.statistics = statistics;
+	}
+
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
+	}
+
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 
 }
