@@ -6,7 +6,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StatisticsUtils;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 

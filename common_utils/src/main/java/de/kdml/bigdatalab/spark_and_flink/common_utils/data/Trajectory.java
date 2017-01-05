@@ -3,6 +3,7 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import de.kdml.bigdatalab.spark_and_flink.common_utils.DateTimeUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Utils;
 
 public class Trajectory implements Serializable {

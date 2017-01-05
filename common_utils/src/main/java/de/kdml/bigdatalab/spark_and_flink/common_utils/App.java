@@ -1,7 +1,5 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.DateTimeUtils;
-
 /**
  * Hello world!
  *

@@ -1,9 +1,12 @@
-package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
+package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.TrajectoryStatisticsWrapper;
 
 /**
  * 
