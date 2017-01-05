@@ -2,14 +2,8 @@ package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
@@ -18,13 +12,8 @@ import org.apache.spark.api.java.function.Function3;
 import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.State;
-import org.apache.spark.streaming.StateSpec;
-import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.spark.streaming.kafka010.ConsumerStrategies;
-import org.apache.spark.streaming.kafka010.KafkaUtils;
-import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StatisticsUtils;
@@ -56,46 +45,21 @@ public class TrajectoriesStatistics {
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
 		broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab", "qadah")));
-
-		Set<String> topicsSet = new HashSet<String>();
-		topicsSet.add(configs.getStringProp("topicId"));
-
-		Map<String, Object> kafkaParams = new HashMap<>();
-		kafkaParams.put("bootstrap.servers", configs.getStringProp("bootstrap.servers"));
-		kafkaParams.put("key.deserializer", StringDeserializer.class);
-		kafkaParams.put("value.deserializer", StringDeserializer.class);
-		kafkaParams.put("group.id", configs.getStringProp("kafkaGroupId"));
-		kafkaParams.put("auto.offset.reset", "latest");
-		kafkaParams.put("enable.auto.commit", false);
-
-		// Create direct kafka stream
-		// Create multiple stream and union them
-		JavaInputDStream<ConsumerRecord<String, String>> dataStream = KafkaUtils.createDirectStream(jssc,
-				LocationStrategies.PreferConsistent(),
-				ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
-
 		// Start the computation
 
-		JavaPairDStream<String, Iterable<Trajectory>> trajectories = dataStream.mapToPair(record -> {
-
-			Trajectory trajectory = Trajectory.parseDataInput(record.value());
-			return new Tuple2<>(trajectory.getID(), trajectory);
-		}).filter(tuple -> {
-			// get only msg2 & msg3 types
-			return ("MSG2".equals(tuple._2.getType()) || "MSG3".equals(tuple._2.getType()));
-		}).groupByKey();
-
+		JavaPairDStream<String, Iterable<Trajectory>> trajectories = TrajectoriesStreamUtils
+				.getTrajectoriesStream(jssc);
 		// update the stream state
 		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
-				.updateStateByKey(updateTrajectoriesStreamFunction);
+				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
 		// NOTE: mapWithState is still in the experimental phase
 		// JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories =
 		// trajectories
 		// .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
 		runningTrajectories.print();
-		
-		//to update broadcasted rdd in the driver 
+
+		// to update broadcasted rdd in the driver
 		runningTrajectories.foreachRDD(line -> {
 
 			if (line.isEmpty())
@@ -106,7 +70,7 @@ public class TrajectoriesStatistics {
 				broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab1", "qadah1", "test")));
 			}
 		});
-		
+
 		jssc.start();
 		try {
 			jssc.awaitTermination();
@@ -121,7 +85,7 @@ public class TrajectoriesStatistics {
 	 * values for the key
 	 * 
 	 */
-	public static Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>> updateTrajectoriesStreamFunction = new Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>>() {
+	public static Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>> updateTrajectoriesAndComputeStatistics = new Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>>() {
 
 		private static final long serialVersionUID = -76088662409004569L;
 
