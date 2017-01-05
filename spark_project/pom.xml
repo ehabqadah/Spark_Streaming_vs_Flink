@@ -20,6 +20,8 @@
 	</properties>
 
 	<dependencies>
+		
+
 		<dependency>
 			<groupId>de.kdml.bigdatalab.spark_and_flink</groupId>
 			<artifactId>common_utils</artifactId>
@@ -100,7 +102,7 @@
 
 		</pluginManagement>
 
-		
+
 
 	</build>
 
