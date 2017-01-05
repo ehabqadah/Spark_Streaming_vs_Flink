@@ -15,7 +15,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * 
  *         Jan 5, 2017
  */
-public class SectorUtils {
+public class GeoUtils {
 
 	public static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 
@@ -51,7 +51,7 @@ public class SectorUtils {
 	 */
 	public static boolean isPointInPolygon(Polygon polygon, double longtitude, double latitude) {
 
-		Coordinate coord = new Coordinate(-2.933349609375, 55.24155203565249);
+		Coordinate coord = new Coordinate(longtitude, latitude);
 		Point point = geometryFactory.createPoint(coord);
 
 		return polygon.intersection(point).equals(point);

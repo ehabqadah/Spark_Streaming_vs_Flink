@@ -1,15 +1,22 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
+
 /**
  * Hello world!
  *
  */
-public class App 
-{
-	public static void main(String[] args)
-    {
-        System.out.println( "Hello World!" );
-        
-        DateTimeUtils.parseDateTime("2015/08/13 15:41:37.181","yyyy/MM/dd HH:mm:ss.SSS");
-    }
+public class App {
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
+
+		DateTimeUtils.parseDateTime("2015/08/13 15:41:37.181", "yyyy/MM/dd HH:mm:ss.SSS");
+
+		Sector sector = Sector.parseSectorData(
+				"\"\"EGCCAOI\";\"_\";\"1\";\"AOI\";\"084EG\";\"0\";\"999\";\"POLYGON ((-12.2936111111111 61.9175, -2.76472222222222 62.1208333333333, -0.871388888888889 63.5422222222222, 0.154722222222222 63.5422222222222, 1.5425 62.0097222222222, 2.26722222222222 61.9694444444444, 2.20305555555556 60.4486111111111, 7.0025 57.3383333333333, 6.85472222222222 54.7111111111111, 5.23333333333333 52.9, 5.18638888888889 52.8913888888889, 4.58333333333333 52.7833333333333, 3.58333333333333 51.6, 3.6225 51.1019444444444, 3.68277777777778 50.3375, 3.16944444444444 50.225, 3.14444444444444 50.0452777777778, 0.181111111111111 48.9283333333333, -0.25 48.9297222222222, -1.80472222222222 48.9347222222222, -6.14333333333333 48.0941666666667, -9.61472222222222 47.2925, -9.72833333333333 51.4641666666667, -7.29666666666667 52.8352777777778, -7.27861111111111 53.14, -9.56861111111111 53.5716666666667, -11.8047222222222 53.1127777777778, -12.2936111111111 61.9175))");
+		System.out.println(sector);
+
+		System.out.println(GeoUtils.isPointInPolygon(sector.getPolygon(), -2.8564453125, 54.97761367069628));// true
+		System.out.println(GeoUtils.isPointInPolygon(sector.getPolygon(), 15.3369140625, 62.79493487887006));// false
+	}
 }
