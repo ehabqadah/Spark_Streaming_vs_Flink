@@ -79,6 +79,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-contrib_2.10</artifactId>
+			<version>${flink.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-connector-wikiedits_2.10</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
@@ -342,6 +347,6 @@
 			</plugins>
 		</pluginManagement>
 
-		
+
 	</build>
 </project>
