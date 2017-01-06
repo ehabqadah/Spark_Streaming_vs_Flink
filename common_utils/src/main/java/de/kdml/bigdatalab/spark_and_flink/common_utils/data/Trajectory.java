@@ -8,7 +8,6 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.Utils;
 
 public class Trajectory implements Serializable {
 
-	private static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss.SSS";
 	private static final long serialVersionUID = 1013765199466780042L;
 	private String ID;
 	private double latitude;
@@ -17,6 +16,8 @@ public class Trajectory implements Serializable {
 	private String type;
 	private TrajectoryStatisticsWrapper statistics;
 	private LocalDateTime createdDateTime;
+	private Sector sector;
+	private boolean isNew;
 
 	public Trajectory() {
 	}
@@ -74,40 +75,10 @@ public class Trajectory implements Serializable {
 	@Override
 	public String toString() {
 
-		//TODO: use string builder
-		return "\n" + getCreatedDateTime() + " Type:ID " + this.getType() + ":" + getID() + " (lat,long,alt):("
-				+ getLatitude() + "," + getLongtitude() + "," + getAltitude() + ") \t "
-				+ (getStatistics() != null ? getStatistics() : " ");
-	}
-
-	/**
-	 * Generate a trajectory from input data string in format of
-	 * (MSG,3,,,34324E,,2015/08/03,01:05:03.844,2015/08/03,01:05:07.058,,30050,,,45.69032,5.54741,,,0,0,0,0)
-	 * 
-	 * @param line
-	 * @return
-	 */
-	public static Trajectory parseDataInput(String line) {
-
-		String[] attributes = line.split(",");
-
-		Trajectory trajectory = new Trajectory();
-		if (attributes.length > 5) {
-			trajectory.setType(attributes[0] + attributes[1]);
-			trajectory.setID(attributes[4]);
-			trajectory.setCreatedDateTime(
-					DateTimeUtils.parseDateTime(attributes[6] + " " + attributes[7], DATE_TIME_FORMAT));
-
-		}
-
-		if (attributes.length > 11) {
-			// get location coordinates
-			trajectory.setAltitude(Utils.parseDoubleOrElse(attributes[11], 0.0));
-			trajectory.setLongtitude(Utils.parseDoubleOrElse(attributes[15], 0.0));
-			trajectory.setLatitude(Utils.parseDoubleOrElse(attributes[14], 0.0));
-		}
-		return trajectory;
-
+		// TODO: use string builder
+		return "\n " + isNew() + getCreatedDateTime() + " Type:ID " + this.getType() + ":" + getID()
+				+ " (lat,long,alt):(" + getLatitude() + "," + getLongtitude() + "," + getAltitude() + ") \t "
+				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
 	}
 
 	public TrajectoryStatisticsWrapper getStatistics() {
@@ -124,6 +95,22 @@ public class Trajectory implements Serializable {
 
 	public void setCreatedDateTime(LocalDateTime createdDateTime) {
 		this.createdDateTime = createdDateTime;
+	}
+
+	public Sector getSector() {
+		return sector;
+	}
+
+	public void setSector(Sector sector) {
+		this.sector = sector;
+	}
+
+	public boolean isNew() {
+		return isNew;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
 	}
 
 }
