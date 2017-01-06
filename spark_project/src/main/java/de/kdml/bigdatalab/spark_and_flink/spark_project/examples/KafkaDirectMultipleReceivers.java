@@ -87,6 +87,7 @@ public class KafkaDirectMultipleReceivers {
 			System.out.println(time+"stream1 data:" + rdd.collect());
 		});
 		
+		
 
 		JavaPairDStream<String, String> unionStream = messages.union(messages1);
 		

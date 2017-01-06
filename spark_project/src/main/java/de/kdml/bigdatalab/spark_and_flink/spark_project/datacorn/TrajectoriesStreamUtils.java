@@ -1,12 +1,15 @@
 package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -43,11 +46,24 @@ public class TrajectoriesStreamUtils {
 		kafkaParams.put("auto.offset.reset", "latest");
 		kafkaParams.put("enable.auto.commit", false);
 
-		// Create direct kafka stream
-		// Create multiple stream and union them
-		JavaInputDStream<ConsumerRecord<String, String>> dataStream = KafkaUtils.createDirectStream(jssc,
-				LocationStrategies.PreferConsistent(),
-				ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
+		List<JavaDStream<ConsumerRecord<String, String>>> kafkaStreams = new ArrayList<>();
+
+		// to create parallel receivers for the same topic with same group to
+		// scale with kafka partitions
+		int numParallelKafkaStream = configs.getIntProp("numberOfKafkParallelStreams");
+		for (int i = 0; i < numParallelKafkaStream; i++) {
+			// Create direct kafka stream
+			// Create multiple stream and union them
+			JavaDStream<ConsumerRecord<String, String>> dataStreami = KafkaUtils.createDirectStream(jssc,
+					LocationStrategies.PreferConsistent(),
+					ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
+
+			kafkaStreams.add(dataStreami);
+		}
+
+		// union all kafka streams
+		JavaDStream<ConsumerRecord<String, String>> dataStream = numParallelKafkaStream == 1 ? kafkaStreams.get(0)
+				: jssc.union(kafkaStreams.get(0), kafkaStreams.subList(1, kafkaStreams.size()));
 
 		// Start the computation
 
