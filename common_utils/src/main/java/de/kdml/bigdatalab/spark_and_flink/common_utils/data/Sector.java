@@ -72,14 +72,39 @@ public class Sector implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder("");
-		str.append("Sector-name:");
-		str.append(getName());
-		str.append(" block-name:");
-		str.append(getAirBlockName());
+		str.append(getNameAndAirBlock());
 		str.append(" ");
 		str.append(getPolygon());
 
 		return str.toString();
+	}
+
+	public String getNameAndAirBlock() {
+		StringBuilder str = new StringBuilder("");
+		str.append("Sector-name:");
+		str.append(getName());
+		str.append(" block-name:");
+		str.append(getAirBlockName());
+		return str.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !(obj instanceof Sector)) {
+			return false;
+		}
+
+		Sector other = (Sector) obj;
+		if (this.getName().equals(other.getName())) {
+
+			if (this.getAirBlockName().equals(other.getAirBlockName())) {
+				if (this.getPolygon().equals(other.getPolygon())) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
