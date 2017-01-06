@@ -16,7 +16,6 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.*;
 
-
 /**
  * This kafka's stream of lines producer using FlinkKafkaProducer09 it writes a
  * new random line every 1 second
@@ -28,8 +27,9 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.*;
 public class DatacornKafkaStreamProducer {
 
 	private static Configs configs = Configs.getInstance();
+
 	public static void main(String[] args) throws Exception {
-		
+
 		// create execution environment
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
@@ -41,13 +41,14 @@ public class DatacornKafkaStreamProducer {
 		DataStream<String> messageStream = env.addSource(new SimpleStringGenerator());
 
 		Properties producerConfig = new Properties();
-		producerConfig.put("bootstrap.servers",configs.getStringProp("bootstrap.servers"));
+		producerConfig.put("bootstrap.servers", configs.getStringProp("bootstrap.servers"));
 		// // write stream to Kafka
-		messageStream.addSink(new FlinkKafkaProducer09<String>(configs.getStringProp("topicId"), new SimpleStringSchema(),producerConfig,new TestPartitioner()));
+		messageStream.addSink(new FlinkKafkaProducer09<String>(configs.getStringProp("topicId"),
+				new SimpleStringSchema(), producerConfig, new TestPartitioner()));
 
 		env.execute("kafka stream ");
 	}
-	
+
 	public static class TestPartitioner extends KafkaPartitioner<String> implements Serializable {
 		private static final long serialVersionUID = 1627268846962918126L;
 
@@ -58,15 +59,17 @@ public class DatacornKafkaStreamProducer {
 			if (parallelInstanceId < 0 || parallelInstances <= 0 || partitions.length == 0) {
 				throw new IllegalArgumentException();
 			}
-			
-			System.out.println("parallelInstanceId="+parallelInstanceId+" parallelInstances "+parallelInstances + "partions"+partitions.length);
+
+			System.out.println("parallelInstanceId=" + parallelInstanceId + " parallelInstances " + parallelInstances
+					+ "partions" + partitions.length);
 			this.targetPartition = partitions[parallelInstanceId % partitions.length];
 		}
 
 		@Override
 		public int partition(String next, byte[] serializedKey, byte[] serializedValue, int numPartitions) {
 			if (targetPartition >= 0) {
-				//System.out.println("part="+targetPartition +" next="+next +" value="+new String(serializedValue) );
+				// System.out.println("part="+targetPartition +" next="+next +"
+				// value="+new String(serializedValue) );
 				return targetPartition;
 			} else {
 				throw new RuntimeException("The partitioner has not been initialized properly");
@@ -76,7 +79,7 @@ public class DatacornKafkaStreamProducer {
 
 	public static class SimpleStringGenerator implements SourceFunction<String> {
 		/**
-		 * Generates a new random line every  LINE_SLIDE_TIME_MS 
+		 * Generates a new random line every LINE_SLIDE_TIME_MS
 		 */
 		private static final int LINE_SLIDE_TIME_MS = 1000;
 
@@ -90,31 +93,32 @@ public class DatacornKafkaStreamProducer {
 			while (running) {
 				i++;
 				try (BufferedReader br = new BufferedReader(new FileReader("../data/ADSBHUB.1439503200353"))) {
-				    String line;
-				    while ((line = br.readLine()) != null) {
-				       // process the line.
-				    	//get a random line from the 
-						//ctx.collect(loremLines[i % loremLines.length]);
+					String line;
+					while ((line = br.readLine()) != null) {
+						// process the line.
+						// get a random line from the
+						// ctx.collect(loremLines[i % loremLines.length]);
 						ctx.collect(line);
 						Thread.sleep(LINE_SLIDE_TIME_MS);
 						ctx.collect(line);
 						Thread.sleep(LINE_SLIDE_TIME_MS);
 						ctx.collect(line);
-						
-						Thread.sleep(5000);
-						ctx.collect(line);
-						Thread.sleep(LINE_SLIDE_TIME_MS);
-						ctx.collect(line);
-						Thread.sleep(LINE_SLIDE_TIME_MS);
-						ctx.collect(line);
-						
-						Thread.sleep(10000);
-				    }
-				}catch (Exception e) {
-				
-					System.out.println("exp"+e);
+
+						// Thread.sleep(5000);
+						// ctx.collect(line);
+						// Thread.sleep(LINE_SLIDE_TIME_MS);
+						// ctx.collect(line);
+						// Thread.sleep(LINE_SLIDE_TIME_MS);
+						// ctx.collect(line);
+						//
+						// Thread.sleep(10000);
+					}
+				} catch (Exception e) {
+
+					System.out.println("exp" + e);
 				}
-			
+				running = false;
+
 			}
 		}
 
