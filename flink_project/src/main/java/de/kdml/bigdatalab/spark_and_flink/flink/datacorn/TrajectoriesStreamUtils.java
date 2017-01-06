@@ -12,6 +12,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 
 /**
@@ -65,9 +66,10 @@ public class TrajectoriesStreamUtils {
 		 * will go to the same reducer.)
 		 * 
 		 **/
-		
+
 		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = dataLines.map(line -> {
-			Trajectory trajectory = Trajectory.parseDataInput(line);
+			// TODO: add the sector assigning here
+			Trajectory trajectory = TrajectoriesUtils.parseDataInput(line);
 			return new Tuple2<>(trajectory.getID(), Arrays.asList(trajectory));
 
 		}).filter(tuple -> {

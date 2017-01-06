@@ -15,6 +15,7 @@ import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import scala.Tuple2;
 
@@ -65,7 +66,7 @@ public class TrajectoriesStreamUtils {
 		 */
 		JavaPairDStream<String, Iterable<Trajectory>> trajectories = dataStream.mapToPair(record -> {
 
-			Trajectory trajectory = Trajectory.parseDataInput(record.value());
+			Trajectory trajectory = TrajectoriesUtils.parseDataInput(record.value());
 			return new Tuple2<>(trajectory.getID(), trajectory);
 		}).filter(tuple -> {
 			// get only msg2 & msg3 types
