@@ -145,7 +145,7 @@
 	<classpathentry kind="var" path="M2_REPO/oro/oro/2.0.8/oro-2.0.8.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/razorvine/pyrolite/4.13/pyrolite-4.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/py4j/py4j/0.10.3/py4j-0.10.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/spark/spark-streaming_2.11/2.0.2/spark-streaming_2.11-2.0.2.jar" sourcepath="M2_REPO/org/apache/spark/spark-streaming_2.11/2.0.2/spark-streaming_2.11-2.0.2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/spark/spark-streaming_2.11/2.0.2/spark-streaming_2.11-2.0.2.jar" sourcepath="/M2_REPO/org/apache/spark/spark-streaming_2.11/2.0.2/spark-streaming_2.11-2.0.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/spark/spark-streaming-kafka-0-8_2.11/2.0.2/spark-streaming-kafka-0-8_2.11-2.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/kafka/kafka_2.11/0.8.2.1/kafka_2.11-0.8.2.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/yammer/metrics/metrics-core/2.2.0/metrics-core-2.2.0.jar"/>
