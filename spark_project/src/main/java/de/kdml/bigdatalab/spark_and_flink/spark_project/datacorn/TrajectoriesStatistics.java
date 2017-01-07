@@ -3,6 +3,7 @@ package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.calcite.rel.rules.AggregateReduceFunctionsRule;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
@@ -15,6 +16,7 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 import scala.Tuple2;
@@ -67,7 +69,7 @@ public class TrajectoriesStatistics {
 
 		//latencies.print();
 
-		runningTrajectories.print();
+		runningTrajectories.print(1000);
 
 		jssc.start();
 		try {
@@ -132,22 +134,23 @@ public class TrajectoriesStatistics {
 		@Override
 		public Tuple2<String, Iterable<Trajectory>> call(String id, Optional<Iterable<Trajectory>> values,
 				State<Iterable<Trajectory>> state) throws Exception {
-			List<Trajectory> result = new ArrayList<>();
+			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
 			// add old state
 			for (Trajectory trajectory : (state.exists() ? state.get() : new ArrayList<Trajectory>())) {
-				result.add(trajectory);
+				aggregatedTrajectories.add(trajectory);
 			}
 
 			// aggergate new values
 
 			for (Trajectory val : values.orElse(new ArrayList<Trajectory>())) {
 
-				result.add(val);
+				aggregatedTrajectories.add(val);
 
 			}
 
-			state.update(result);
-			return new Tuple2<>(id, result);
+			aggregatedTrajectories=TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
+			state.update(aggregatedTrajectories);
+			return new Tuple2<>(id, aggregatedTrajectories);
 		}
 	};
 }

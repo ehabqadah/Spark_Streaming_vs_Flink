@@ -45,7 +45,7 @@ public class TrajectoriesStreamUtils {
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
 		kafkaParams.put("group.id", configs.getStringProp("kafkaGroupId"));
 		kafkaParams.put("auto.offset.reset", "latest");
-		kafkaParams.put("enable.auto.commit", false);
+		//kafkaParams.put("enable.auto.commit", false);
 
 		List<JavaDStream<ConsumerRecord<String, String>>> kafkaStreams = new ArrayList<>();
 

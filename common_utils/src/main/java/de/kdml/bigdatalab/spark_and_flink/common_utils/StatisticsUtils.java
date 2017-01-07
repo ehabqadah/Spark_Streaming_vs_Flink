@@ -27,7 +27,10 @@ public class StatisticsUtils {
 		double minLongtitude = Double.MAX_VALUE, minLatitude = Double.MAX_VALUE, minAltitude = Double.MAX_VALUE;
 		double maxLongtitude = Double.MIN_VALUE, maxLatitude = Double.MIN_VALUE, maxAltitude = Double.MIN_VALUE;
 
+		Trajectory prevTrajectory = null;
 		for (Trajectory trajectory : trajectories) {
+
+			TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(prevTrajectory, trajectory);
 
 			double longtitude = trajectory.getLongitude(), lat = trajectory.getLatitude(),
 					altit = trajectory.getAltitude();
@@ -42,6 +45,7 @@ public class StatisticsUtils {
 			// update max latitude
 			maxLatitude = Math.max(maxLatitude, lat);
 			maxAltitude = Math.max(maxAltitude, altit);
+			prevTrajectory=trajectory;
 
 		}
 
