@@ -3,15 +3,13 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 import java.io.Serializable;
 
 /**
- *  Trajectory statistics wrapper 
- *  
- * @author Ehab Qadah 
+ * Trajectory statistics wrapper
  * 
- * Jan 3, 2017
+ * @author Ehab Qadah
+ * 
+ *         Jan 3, 2017
  */
 public class TrajectoryStatisticsWrapper implements Serializable {
-
-
 
 	public static final long serialVersionUID = 686131645808716203L;
 
@@ -42,24 +40,26 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 	private double median_difftime;
 
 	private double minDate;
-	
+
 	private double maxDate;
 
 	private double minLong;
 
 	private double maxLong;
-	
+
+	private double maxAltitude;
+
+	private double minAltitude;
+
 	private double minLat;
 
 	private double maxLat;
-
-	
 
 	public TrajectoryStatisticsWrapper() {
 	}
 
 	public TrajectoryStatisticsWrapper(//
-			String id,//
+			String id, //
 			int id_c, //
 			long nr_points, //
 			double min_speed, //
@@ -71,19 +71,18 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 			double avg_acceleration, //
 			double median_acceleration, //
 			double min_difftime, //
-			double max_difftime, //			
+			double max_difftime, //
 			double avg_difftime, //
 			double median_difftime, //
 			double min_date, //
 			double max_date, //
 			double min_X, //
-			double max_X, //			
+			double max_X, //
 			double min_Y, //
 			double max_Y) {
-		
+
 		super();
-		
-		
+
 		this.setNumPoints(nr_points);
 		this.setMinSpeed(min_speed);
 		this.setMaxSpeed(max_speed);
@@ -105,13 +104,11 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 		this.setMaxLat(max_Y);
 	}
 
-	
-	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Statistics ");
-	
+
 		builder.append("[ nr_points=");
 		builder.append(getNumPoints());
 		builder.append(", min_speed=");
@@ -304,6 +301,22 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 
 	public void setMaxLat(double maxLat) {
 		this.maxLat = maxLat;
+	}
+
+	public double getMaxAltitude() {
+		return maxAltitude;
+	}
+
+	public void setMaxAltitude(double maxAltitude) {
+		this.maxAltitude = maxAltitude;
+	}
+
+	public double getMinAltitude() {
+		return minAltitude;
+	}
+
+	public void setMinAltitude(double minAltitude) {
+		this.minAltitude = minAltitude;
 	}
 
 }

@@ -8,7 +8,7 @@ public class Trajectory implements Serializable {
 	private static final long serialVersionUID = 1013765199466780042L;
 	private String ID;
 	private double latitude;
-	private double longtitude;
+	private double longitude;
 	private double altitude;
 	private String type;
 	private TrajectoryStatisticsWrapper statistics;
@@ -24,7 +24,7 @@ public class Trajectory implements Serializable {
 
 		this.ID = id;
 		this.setLatitude(latitude);
-		this.setLongtitude(longtitude);
+		this.setLongitude(longtitude);
 		this.setAltitude(altitude);
 		this.setType(type);
 
@@ -46,12 +46,12 @@ public class Trajectory implements Serializable {
 		this.latitude = latitude;
 	}
 
-	public double getLongtitude() {
-		return longtitude;
+	public double getLongitude() {
+		return longitude;
 	}
 
-	public void setLongtitude(double longtitude) {
-		this.longtitude = longtitude;
+	public void setLongitude(double longtitude) {
+		this.longitude = longtitude;
 	}
 
 	public double getAltitude() {
@@ -75,7 +75,7 @@ public class Trajectory implements Serializable {
 
 		// TODO: use string builder
 		return "\n " + isNew() + getCreatedDateTime() + " Type:ID " + this.getType() + ":" + getID()
-				+ " (lat,long,alt):(" + getLatitude() + "," + getLongtitude() + "," + getAltitude() + ") \t "
+				+ " (lat,long,alt):(" + getLatitude() + "," + getLongitude() + "," + getAltitude() + ") \t "
 				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
 	}
 

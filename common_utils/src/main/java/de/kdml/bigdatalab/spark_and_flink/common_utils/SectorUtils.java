@@ -24,7 +24,7 @@ public class SectorUtils {
 
 		for (Sector sector : sectors) {
 
-			if (GeoUtils.isPointInPolygon(sector.getPolygon(), trajectory.getLongtitude(), trajectory.getLatitude())) {
+			if (GeoUtils.isPointInPolygon(sector.getPolygon(), trajectory.getLongitude(), trajectory.getLatitude())) {
 				return sector;
 
 			}

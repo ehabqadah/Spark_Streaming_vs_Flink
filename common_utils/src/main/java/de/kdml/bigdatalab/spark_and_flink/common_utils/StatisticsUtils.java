@@ -24,29 +24,41 @@ public class StatisticsUtils {
 	 */
 	public static List<Trajectory> computeStatistics(List<Trajectory> trajectories) {
 
-		double minLongtitude = Double.MAX_VALUE;
+		double minLongtitude = Double.MAX_VALUE, minLatitude = Double.MAX_VALUE, minAltitude = Double.MAX_VALUE;
+		double maxLongtitude = Double.MIN_VALUE, maxLatitude = Double.MIN_VALUE, maxAltitude = Double.MIN_VALUE;
 
 		for (Trajectory trajectory : trajectories) {
 
-			double longtitude = trajectory.getLongtitude();
-			if (longtitude < minLongtitude) {
-				minLongtitude = longtitude;
-			}
+			double longtitude = trajectory.getLongitude(), lat = trajectory.getLatitude(),
+					altit = trajectory.getAltitude();
+			// update min longitude
+			minLongtitude = Math.min(minLongtitude, longtitude);
+			// update min latitude
+			minLatitude = Math.min(minLatitude, lat);
+			minAltitude = Math.min(minAltitude, altit);
+
+			// update max longitude
+			maxLongtitude = Math.max(maxLongtitude, longtitude);
+			// update max latitude
+			maxLatitude = Math.max(maxLatitude, lat);
+			maxAltitude = Math.max(maxAltitude, altit);
+
 		}
-		//java 8 stream 
-		Stream<Trajectory> ordered = trajectories.stream().sorted((t1, t2) -> {
-			return Double.compare(t1.getLongtitude(), t2.getLongtitude());
-		});
-		Arrays.asList(ordered.toArray());
-		TrajectoryStatisticsWrapper trajectoryStatisticsWrapper = new TrajectoryStatisticsWrapper();
-		trajectoryStatisticsWrapper.setMinLong(minLongtitude);
+
+		TrajectoryStatisticsWrapper statistics = new TrajectoryStatisticsWrapper();
+		statistics.setMinLong(minLongtitude);
+		statistics.setMinLat(minLatitude);
+		statistics.setMinAltitude(minAltitude);
+		statistics.setMaxLong(maxLongtitude);
+		statistics.setMaxLat(maxLatitude);
+		statistics.setMaxAltitude(maxAltitude);
 
 		for (Trajectory trajectory : trajectories) {
 
 			// just update new trajectories
 			if (trajectory.getStatistics() == null) {
 
-				trajectory.setStatistics(trajectoryStatisticsWrapper);
+				trajectory.setStatistics(statistics);
 			}
 
 		}

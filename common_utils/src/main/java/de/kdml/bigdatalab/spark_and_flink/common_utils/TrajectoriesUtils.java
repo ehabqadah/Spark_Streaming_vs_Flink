@@ -40,7 +40,7 @@ public class TrajectoriesUtils {
 		if (attributes.length > 11) {
 			// get location coordinates
 			trajectory.setAltitude(Utils.parseDoubleOrElse(attributes[11], 0.0));
-			trajectory.setLongtitude(Utils.parseDoubleOrElse(attributes[15], 0.0));
+			trajectory.setLongitude(Utils.parseDoubleOrElse(attributes[15], 0.0));
 			trajectory.setLatitude(Utils.parseDoubleOrElse(attributes[14], 0.0));
 		}
 		return trajectory;
