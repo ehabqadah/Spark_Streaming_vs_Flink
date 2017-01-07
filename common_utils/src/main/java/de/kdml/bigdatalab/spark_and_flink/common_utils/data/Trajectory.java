@@ -18,6 +18,7 @@ public class Trajectory implements Serializable {
 	private LocalDateTime createdDateTime;
 	private Sector sector;
 	private boolean isNew;
+	private long streamedTime;
 
 	public Trajectory() {
 	}
@@ -111,6 +112,14 @@ public class Trajectory implements Serializable {
 
 	public void setNew(boolean isNew) {
 		this.isNew = isNew;
+	}
+
+	public long getStreamedTime() {
+		return streamedTime;
+	}
+
+	public void setStreamedTime(long streamedTime) {
+		this.streamedTime = streamedTime;
 	}
 
 }
