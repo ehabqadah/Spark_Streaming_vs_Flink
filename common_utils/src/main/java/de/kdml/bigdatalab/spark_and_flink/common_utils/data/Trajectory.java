@@ -3,9 +3,6 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.DateTimeUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.Utils;
-
 public class Trajectory implements Serializable {
 
 	private static final long serialVersionUID = 1013765199466780042L;
@@ -17,7 +14,7 @@ public class Trajectory implements Serializable {
 	private TrajectoryStatisticsWrapper statistics;
 	private LocalDateTime createdDateTime;
 	private Sector sector;
-	private boolean isNew;
+	private Boolean isNew=null;
 	private long streamedTime;
 
 	public Trajectory() {
@@ -106,11 +103,11 @@ public class Trajectory implements Serializable {
 		this.sector = sector;
 	}
 
-	public boolean isNew() {
+	public Boolean isNew() {
 		return isNew;
 	}
 
-	public void setNew(boolean isNew) {
+	public void setNew(Boolean isNew) {
 		this.isNew = isNew;
 	}
 
