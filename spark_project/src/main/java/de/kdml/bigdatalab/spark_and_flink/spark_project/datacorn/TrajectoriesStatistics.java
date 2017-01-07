@@ -1,17 +1,15 @@
 package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.Function3;
-import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.State;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
@@ -34,8 +32,6 @@ public class TrajectoriesStatistics {
 
 	private static Configs configs = Configs.getInstance();
 
-	static Broadcast<JavaRDD<String>> broadcastedRdd;
-
 	public static void main(String[] args) {
 
 		// configure spark streaming context
@@ -44,7 +40,6 @@ public class TrajectoriesStatistics {
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
-		broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab", "qadah")));
 		// Start the computation
 
 		JavaPairDStream<String, Iterable<Trajectory>> trajectories = TrajectoriesStreamUtils
@@ -53,23 +48,26 @@ public class TrajectoriesStatistics {
 		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
-		// NOTE: mapWithState is still in the experimental phase
-		// JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories =
-		// trajectories
-		// .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
-		runningTrajectories.print();
+		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
 
-		// to update broadcasted rdd in the driver
-		runningTrajectories.foreachRDD(line -> {
+			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
 
-			if (line.isEmpty())
-				return;
-			if (!broadcastedRdd.getValue().collect().contains("test")) {
-				broadcastedRdd.unpersist();
-
-				broadcastedRdd = sc.broadcast(sc.parallelize(Arrays.asList("ehab1", "qadah1", "test")));
+			Iterable<Trajectory> trajectoriesList = trajectoryTuple._2;
+			for (Trajectory trajectory : trajectoriesList) {
+				if (trajectory.isNew()) {
+					sumLatency += currentTime - trajectory.getStreamedTime();
+					count++;
+				}
 			}
+			return count == 0 ? 0 : new Long(sumLatency / count);
+
+		}).filter(latency -> {
+			return latency > 0;
 		});
+
+		//latencies.print();
+
+		runningTrajectories.print();
 
 		jssc.start();
 		try {
@@ -96,13 +94,16 @@ public class TrajectoriesStatistics {
 			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
 			// add old state
 			for (Trajectory trajectory : state.orElse(new ArrayList<>())) {
+				trajectory.setNew(false);
 				aggregatedTrajectories.add(trajectory);
+
 			}
 
 			// aggergate new values
 
 			for (Iterable<Trajectory> val : values) {
 				for (Trajectory trajectory : val) {
+					trajectory.setNew(true);
 					aggregatedTrajectories.add(trajectory);
 				}
 
@@ -113,6 +114,11 @@ public class TrajectoriesStatistics {
 	};
 
 	/**
+	 * NOTE: mapWithState is still in the experimental phase
+	 * JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories =
+	 * trajectories
+	 * .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
+	 * 
 	 * * Return a new "state" DStream where the state for each key is updated by
 	 * applying the given function on the previous state of the key and the new
 	 * values for the key
