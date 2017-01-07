@@ -46,8 +46,18 @@ public class TrajectoriesStatistics {
 					return new Tuple2<String, List<Trajectory>>(tuple.f0, StatisticsUtils.computeStatistics(tuple.f1));
 
 				});
-		;
 
+		DataStream<Long> latencies = trajectoriesStream.map(tuple -> {
+
+			long currentTime = System.currentTimeMillis();
+			// get last entered item
+			Trajectory trajectory = tuple.f1.get(tuple.f1.size() - 1);
+
+			return new Long(currentTime - trajectory.getStreamedTime());
+
+		});
+
+		// latancies.print().setParallelism(1);
 		trajectoriesStream.print().setParallelism(1);
 
 		env.execute(" Flink Trajectories Statistics Computation");
