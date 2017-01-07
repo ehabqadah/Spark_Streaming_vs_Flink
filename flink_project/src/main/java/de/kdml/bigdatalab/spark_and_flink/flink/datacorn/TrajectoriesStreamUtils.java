@@ -13,6 +13,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 
 /**
@@ -68,8 +69,9 @@ public class TrajectoriesStreamUtils {
 		 **/
 
 		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = dataLines.map(line -> {
-			// TODO: add the sector assigning here
-			Trajectory trajectory = TrajectoriesUtils.parseDataInput(line);
+
+			StreamRecord streamRecord = StreamRecord.parseData(line);
+			Trajectory trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			return new Tuple2<>(trajectory.getID(), Arrays.asList(trajectory));
 
 		}).filter(tuple -> {

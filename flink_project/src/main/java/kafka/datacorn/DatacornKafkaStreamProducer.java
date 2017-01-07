@@ -15,6 +15,7 @@ import org.apache.flink.streaming.connectors.kafka.partitioner.KafkaPartitioner;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.*;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
 
 /**
  * This kafka's stream of lines producer using FlinkKafkaProducer09 it writes a
@@ -35,7 +36,7 @@ public class DatacornKafkaStreamProducer {
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 		env.getConfig().disableSysoutLogging();
 		env.getConfig().setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000));
-		env.setParallelism(2);
+		env.setParallelism(4);
 
 		// add a simple source which is writing some strings
 		DataStream<String> messageStream = env.addSource(new SimpleStringGenerator());
@@ -95,23 +96,10 @@ public class DatacornKafkaStreamProducer {
 				try (BufferedReader br = new BufferedReader(new FileReader("../data/ADSBHUB.1439503200353"))) {
 					String line;
 					while ((line = br.readLine()) != null) {
-						// process the line.
-						// get a random line from the
-						// ctx.collect(loremLines[i % loremLines.length]);
-						ctx.collect(line);
-						Thread.sleep(LINE_SLIDE_TIME_MS);
-						ctx.collect(line);
-						Thread.sleep(LINE_SLIDE_TIME_MS);
-						ctx.collect(line);
 
-						// Thread.sleep(5000);
-						// ctx.collect(line);
-						// Thread.sleep(LINE_SLIDE_TIME_MS);
-						// ctx.collect(line);
-						// Thread.sleep(LINE_SLIDE_TIME_MS);
-						// ctx.collect(line);
-						//
-						// Thread.sleep(10000);
+						line = new StreamRecord(line).toString();
+						ctx.collect(line);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
 					}
 				} catch (Exception e) {
 
