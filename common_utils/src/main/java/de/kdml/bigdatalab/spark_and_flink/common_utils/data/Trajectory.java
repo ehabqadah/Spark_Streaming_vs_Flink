@@ -14,8 +14,10 @@ public class Trajectory implements Serializable {
 	private TrajectoryStatisticsWrapper statistics;
 	private LocalDateTime createdDateTime;
 	private Sector sector;
-	private Boolean isNew=null;
+	private Boolean isNew = null;
 	private long streamedTime;
+	private Double ditance = null;
+	private Double speed = null;
 
 	public Trajectory() {
 	}
@@ -74,9 +76,9 @@ public class Trajectory implements Serializable {
 	public String toString() {
 
 		// TODO: use string builder
-		return "\n " + isNew() + getCreatedDateTime() + " Type:ID " + this.getType() + ":" + getID()
-				+ " (lat,long,alt):(" + getLatitude() + "," + getLongitude() + "," + getAltitude() + ") \t "
-				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
+		return "|" + isNew() + getCreatedDateTime() + " ID : " + getID() + " (lat,long,alt):(" + getLatitude() + ","
+				+ getLongitude() + "," + getAltitude() + ") |" + " speed=" + getSpeed() + " Distance" + getDistance()
+				+ "|" + (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
 	}
 
 	public TrajectoryStatisticsWrapper getStatistics() {
@@ -117,6 +119,22 @@ public class Trajectory implements Serializable {
 
 	public void setStreamedTime(long streamedTime) {
 		this.streamedTime = streamedTime;
+	}
+
+	public Double getDistance() {
+		return ditance;
+	}
+
+	public void setDistance(Double ditance) {
+		this.ditance = ditance;
+	}
+
+	public Double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(Double speed) {
+		this.speed = speed;
 	}
 
 }

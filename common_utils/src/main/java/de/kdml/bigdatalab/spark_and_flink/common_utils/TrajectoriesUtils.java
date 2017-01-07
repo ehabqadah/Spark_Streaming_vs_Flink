@@ -1,7 +1,10 @@
 package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
 import com.google.common.collect.Lists;
 
@@ -57,10 +60,43 @@ public class TrajectoriesUtils {
 
 		Iterator<Trajectory> sortedTrajectories = trajectories.stream().sorted((trajectory1, trajector2) -> {
 
-			return trajectory1.getCreatedDateTime().compareTo(trajector2.getCreatedDateTime());
+			return -1 * trajectory1.getCreatedDateTime().compareTo(trajector2.getCreatedDateTime());
 		}).iterator();
 
 		return Lists.newArrayList(sortedTrajectories);
+
+	}
+
+	/**
+	 * Calculate Speed and distance of trajectory
+	 * 
+	 * @param prevTrajectory
+	 * @param trajectory
+	 */
+	public static void calculateDistanceAndSpeedOfTrajectory(Trajectory prevTrajectory, Trajectory trajectory) {
+
+		if (trajectory.getSpeed() != null && trajectory.getDistance() != null) {
+			return;
+		}
+		double distance = prevTrajectory == null ? 0
+				: GeoUtils.greatCircleDistance(prevTrajectory.getLatitude(), prevTrajectory.getLongitude(),
+						trajectory.getLatitude(), trajectory.getLongitude()),
+				speed = 0.0, diffTime;
+
+		if (prevTrajectory != null) {
+
+			long diff = Duration.between(prevTrajectory.getCreatedDateTime(), trajectory.getCreatedDateTime())
+					.toMillis();
+			diffTime = ((double) (diff)) / (1000 * 60 * 60);
+
+			if (diffTime != 0.0) {
+				speed = distance / diffTime;
+			}
+
+		}
+
+		trajectory.setSpeed(speed);
+		trajectory.setDistance(distance);
 
 	}
 }
