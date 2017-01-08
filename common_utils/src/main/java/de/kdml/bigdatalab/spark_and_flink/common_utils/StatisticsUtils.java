@@ -24,8 +24,10 @@ public class StatisticsUtils {
 	 */
 	public static List<Trajectory> computeStatistics(List<Trajectory> trajectories) {
 
-		double minLongtitude = Double.MAX_VALUE, minLatitude = Double.MAX_VALUE, minAltitude = Double.MAX_VALUE;
-		double maxLongtitude = Double.MIN_VALUE, maxLatitude = Double.MIN_VALUE, maxAltitude = Double.MIN_VALUE;
+		double minLongtitude = Double.MAX_VALUE, minLatitude = Double.MAX_VALUE, minAltitude = Double.MAX_VALUE,
+				minSpeed = Double.MAX_VALUE, minAcceleration = Double.MAX_VALUE;
+		double maxLongtitude = Double.MIN_VALUE, maxLatitude = Double.MIN_VALUE, maxAltitude = Double.MIN_VALUE,
+				maxSpeed = Double.MIN_VALUE, maxAcceleration = Double.MIN_VALUE;
 
 		Trajectory prevTrajectory = null;
 		for (Trajectory trajectory : trajectories) {
@@ -33,19 +35,24 @@ public class StatisticsUtils {
 			TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(prevTrajectory, trajectory);
 
 			double longtitude = trajectory.getLongitude(), lat = trajectory.getLatitude(),
-					altit = trajectory.getAltitude();
+					altit = trajectory.getAltitude(), speed = trajectory.getSpeed(),
+					acceleration = trajectory.getAcceleration();
 			// update min longitude
 			minLongtitude = Math.min(minLongtitude, longtitude);
 			// update min latitude
 			minLatitude = Math.min(minLatitude, lat);
 			minAltitude = Math.min(minAltitude, altit);
-
+			minAcceleration = Math.min(minAcceleration, acceleration);
+			minSpeed = Math.min(minSpeed, speed);
 			// update max longitude
 			maxLongtitude = Math.max(maxLongtitude, longtitude);
 			// update max latitude
 			maxLatitude = Math.max(maxLatitude, lat);
 			maxAltitude = Math.max(maxAltitude, altit);
-			prevTrajectory=trajectory;
+			maxSpeed = Math.max(maxSpeed, speed);
+			maxAcceleration = Math.max(maxAcceleration, acceleration);
+
+			prevTrajectory = trajectory;
 
 		}
 
@@ -56,6 +63,10 @@ public class StatisticsUtils {
 		statistics.setMaxLong(maxLongtitude);
 		statistics.setMaxLat(maxLatitude);
 		statistics.setMaxAltitude(maxAltitude);
+		statistics.setMaxAcceleration(maxAcceleration);
+		statistics.setMinAcceleration(minAcceleration);
+		statistics.setMaxSpeed(maxSpeed);
+		statistics.setMinSpeed(minSpeed);
 
 		for (Trajectory trajectory : trajectories) {
 
