@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 
@@ -43,7 +44,9 @@ public class TrajectoriesStatistics {
 		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = TrajectoriesStreamUtils
 				.getTrajectoriesStream(env).map(tuple -> {
 					// compute statistics for each new trajectory
-					return new Tuple2<String, List<Trajectory>>(tuple.f0, StatisticsUtils.computeStatistics(tuple.f1));
+					List<Trajectory> sortedTrajectories = TrajectoriesUtils.sortTrajectories(tuple.f1);
+					return new Tuple2<String, List<Trajectory>>(tuple.f0,
+							StatisticsUtils.computeStatistics(sortedTrajectories));
 
 				});
 
