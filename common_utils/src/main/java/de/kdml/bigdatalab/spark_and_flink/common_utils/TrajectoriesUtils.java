@@ -81,7 +81,7 @@ public class TrajectoriesUtils {
 		double distance = prevTrajectory == null ? 0
 				: GeoUtils.greatCircleDistance(prevTrajectory.getLatitude(), prevTrajectory.getLongitude(),
 						trajectory.getLatitude(), trajectory.getLongitude()),
-				speed = 0.0, diffTime;
+				speed = 0.0, diffTime, acceleration = 0.0;
 
 		if (prevTrajectory != null) {
 
@@ -91,12 +91,14 @@ public class TrajectoriesUtils {
 
 			if (diffTime != 0.0) {
 				speed = distance / diffTime;
+				acceleration = (speed - prevTrajectory.getSpeed()) / diffTime;
 			}
 
 		}
 
 		trajectory.setSpeed(speed);
 		trajectory.setDistance(distance);
+		trajectory.setAcceleration(acceleration);
 
 	}
 }
