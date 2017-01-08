@@ -18,6 +18,7 @@ public class Trajectory implements Serializable {
 	private long streamedTime;
 	private Double ditance = null;
 	private Double speed = null;
+	private Double acceleration;
 
 	public Trajectory() {
 	}
@@ -135,6 +136,14 @@ public class Trajectory implements Serializable {
 
 	public void setSpeed(Double speed) {
 		this.speed = speed;
+	}
+
+	public Double getAcceleration() {
+		return acceleration;
+	}
+
+	public void setAcceleration(Double acceleration) {
+		this.acceleration = acceleration;
 	}
 
 }
