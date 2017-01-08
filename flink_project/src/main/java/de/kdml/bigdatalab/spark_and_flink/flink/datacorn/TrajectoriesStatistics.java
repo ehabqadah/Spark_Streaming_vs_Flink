@@ -57,7 +57,7 @@ public class TrajectoriesStatistics {
 
 		});
 
-		// latancies.print().setParallelism(1);
+		// latencies.print().setParallelism(1);
 		trajectoriesStream.print().setParallelism(1);
 
 		env.execute(" Flink Trajectories Statistics Computation");

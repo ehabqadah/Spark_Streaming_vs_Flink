@@ -101,7 +101,7 @@ public class TrajectoriesStatistics {
 
 			}
 
-			// aggergate new values
+			// aggregate new values
 
 			for (Iterable<Trajectory> val : values) {
 				for (Trajectory trajectory : val) {
@@ -111,6 +111,7 @@ public class TrajectoriesStatistics {
 
 			}
 
+			aggregatedTrajectories = TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
 			return Optional.of(StatisticsUtils.computeStatistics(aggregatedTrajectories));
 		}
 	};
@@ -126,31 +127,35 @@ public class TrajectoriesStatistics {
 	 * values for the key
 	 * 
 	 * To be used with mapWithState
+	 * 
+	 * public static Function3<String, Optional<Iterable<Trajectory>>,
+	 * State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>>
+	 * updateTrajectoriesStreamFunction2 = new Function3<String,
+	 * Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>,
+	 * Tuple2<String, Iterable<Trajectory>>>() {
+	 * 
+	 * private static final long serialVersionUID = -1393453967261881632L;
+	 * 
+	 * @Override public Tuple2<String, Iterable<Trajectory>> call(String id,
+	 *           Optional<Iterable<Trajectory>> values,
+	 *           State<Iterable<Trajectory>> state) throws Exception {
+	 *           List<Trajectory> aggregatedTrajectories = new ArrayList<>(); //
+	 *           add old state for (Trajectory trajectory : (state.exists() ?
+	 *           state.get() : new ArrayList<Trajectory>())) {
+	 *           aggregatedTrajectories.add(trajectory); }
+	 * 
+	 *           // aggergate new values
+	 * 
+	 *           for (Trajectory val : values.orElse(new
+	 *           ArrayList<Trajectory>())) {
+	 * 
+	 *           aggregatedTrajectories.add(val);
+	 * 
+	 *           }
+	 * 
+	 *           aggregatedTrajectories =
+	 *           TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
+	 *           state.update(aggregatedTrajectories); return new Tuple2<>(id,
+	 *           aggregatedTrajectories); } };
 	 */
-	public static Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>> updateTrajectoriesStreamFunction2 = new Function3<String, Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>>() {
-
-		private static final long serialVersionUID = -1393453967261881632L;
-
-		@Override
-		public Tuple2<String, Iterable<Trajectory>> call(String id, Optional<Iterable<Trajectory>> values,
-				State<Iterable<Trajectory>> state) throws Exception {
-			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
-			// add old state
-			for (Trajectory trajectory : (state.exists() ? state.get() : new ArrayList<Trajectory>())) {
-				aggregatedTrajectories.add(trajectory);
-			}
-
-			// aggergate new values
-
-			for (Trajectory val : values.orElse(new ArrayList<Trajectory>())) {
-
-				aggregatedTrajectories.add(val);
-
-			}
-
-			aggregatedTrajectories=TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
-			state.update(aggregatedTrajectories);
-			return new Tuple2<>(id, aggregatedTrajectories);
-		}
-	};
 }
