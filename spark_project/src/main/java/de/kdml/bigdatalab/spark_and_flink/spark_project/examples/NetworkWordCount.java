@@ -30,7 +30,8 @@ public final class NetworkWordCount {
 
 		// Create the context with a configured batch size
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Network spark WordCount");
-		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(configs.getIntProp("batchDuration")));
+		int batchTime = configs.getIntProp("batchDuration");
+		JavaStreamingContext ssc = new JavaStreamingContext(sc, Durations.seconds(batchTime));
 
 		// create line input stream from socket
 		JavaReceiverInputDStream<String> lines = ssc.socketTextStream(configs.getStringProp("socketHost"),
@@ -53,7 +54,12 @@ public final class NetworkWordCount {
 			return i1 + i2;
 		});
 
-		wordCounts.print();
+		//wordCounts.print();
+		//print throughput
+		wordCounts.foreachRDD(rdd -> {
+			long count = rdd.count();
+			System.out.println("Current throughput = " + ( (double)count / (double)batchTime) + " records / second");
+		});
 		ssc.start();
 		ssc.awaitTermination();
 
