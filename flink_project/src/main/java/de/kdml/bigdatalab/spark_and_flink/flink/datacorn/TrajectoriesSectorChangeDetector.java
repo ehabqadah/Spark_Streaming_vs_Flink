@@ -1,11 +1,11 @@
 package de.kdml.bigdatalab.spark_and_flink.flink.datacorn;
 
-import java.util.List;
-
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
@@ -26,7 +26,7 @@ public class TrajectoriesSectorChangeDetector {
 	public static void main(String[] args) throws Exception {
 
 		StreamExecutionEnvironment env = FlinkUtils.getInitializedEnv();
-		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = TrajectoriesStreamUtils
+		KeyedStream<Tuple2<String, Trajectory>, Tuple> trajectoriesStream = TrajectoriesStreamUtils
 				.getTrajectoriesStream(env);
 
 		DataSet<Sector> sectorsDataSet = getSectorDataSet();
@@ -34,33 +34,19 @@ public class TrajectoriesSectorChangeDetector {
 		// assign sector for each trajectory, then check if there is change in
 		// the sector between two consecutive trajectories
 		DataStream<String> trajectoriesStreamWithSectors = trajectoriesStream
-				.map(new TrajectorySectorMapper(sectorsDataSet.collect())).filter(tuple -> {
-					// sort trajectories
-					List<Trajectory> trajectories = tuple.f1;
-					if (trajectories != null && trajectories.size() > 1) {
-
-						// check for change between trajectories with respect to
-						// sectors
-						int i = trajectories.size() - 1;
-						Trajectory trajectoryi = trajectories.get(i - 1);
-						Trajectory trajectoryi1 = trajectories.get(i);
-
-						if ((!trajectoryi.getSector().equals(trajectoryi1.getSector()))) {
-
-							return true;
-						}
-
+				.reduce(new TrajectoriesSectorsReducer(sectorsDataSet.collect())).filter(tuple -> {
+					Trajectory trajectory = tuple.f1;
+					if (trajectory.getPrevSector() != null
+							&& !trajectory.getSector().equals(trajectory.getPrevSector())) {
+						return true;
 					}
 					return false;
 				}).map(tuple -> {
 
 					// print the sector transition
-					List<Trajectory> trajectories = tuple.f1;
-					int i = trajectories.size() - 1;
-					Trajectory trajectoryi = trajectories.get(i - 1);
-					Trajectory trajectoryi1 = trajectories.get(i);
-					return tuple.f0 + ": " + trajectoryi.getSector().getNameAndAirBlock() + " --> "
-							+ trajectoryi1.getSector().getNameAndAirBlock();
+					Trajectory trajectory = tuple.f1;
+					return tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
+							+ trajectory.getSector().getNameAndAirBlock();
 
 				});
 
