@@ -1,13 +1,10 @@
 package de.kdml.bigdatalab.spark_and_flink.flink.datacorn;
 
-import java.util.List;
-
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 
@@ -25,44 +22,47 @@ public class TrajectoriesStatistics {
 		StreamExecutionEnvironment env = FlinkUtils.getInitializedEnv();
 
 		/**
-		 * 1- map each data line to Tuple2<id,list of Trajectories>
-		 * 
-		 * 2-Filter messages based on type 3 &2
-		 * 
-		 * 3- keyBy- Logically partitions a stream into disjoint partitions,
-		 * each partition containing elements of the same key (0-> trajectory
-		 * ID) (keyBy Internally is implemented using Partitioner based on the
-		 * hash value of a key)
-		 * 
-		 * 4- Group the same trajectories using the reduce function on
-		 * KeyedStream reduce(Applies a reduce transformation on the grouped
-		 * data stream grouped on by the given key position. it receives input
-		 * values based on the key value. Only input values with the same key
-		 * will go to the same reducer.)
+		 * Reduce the trajectories by aggregate the statics from the previous
+		 * trajectory record and keep the new record, the further aggregation
+		 * and discard old record.
 		 * 
 		 **/
-		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = TrajectoriesStreamUtils
-				.getTrajectoriesStream(env).map(tuple -> {
-					// compute statistics for each new trajectory
-					List<Trajectory> sortedTrajectories = TrajectoriesUtils.sortTrajectories(tuple.f1);
-					return new Tuple2<String, List<Trajectory>>(tuple.f0,
-							StatisticsUtils.computeStatistics(sortedTrajectories));
 
+		DataStream<Tuple2<String, Trajectory>> trajectoriesStream = TrajectoriesStreamUtils.getTrajectoriesStream(env)
+				.reduce((Tuple2<String, Trajectory> tuple1, Tuple2<String, Trajectory> tuple2) -> {
+					// compute & aggregate statistics for the new trajectory
+					// based on the statistics of old trajectory
+					// discard the old trajectory and just keep the new one
+					Tuple2<String, Trajectory> oldTuple = tuple2.f1.isNew() ? tuple1 : tuple2;
+					Tuple2<String, Trajectory> newTuple = tuple2.f1.isNew() ? tuple2 : tuple1;
+					StatisticsUtils.computeStatistics(oldTuple.f1, newTuple.f1);
+					newTuple.f1.setNew(false);
+					return newTuple;
 				});
 
+		// showLatecies(trajectoriesStream);
+		trajectoriesStream.print().setParallelism(1);
+
+		env.execute(" Flink Trajectories Statistics Computation");
+	}
+
+	/**
+	 * Show latencies of processed trajectories based on the time deference
+	 * between streamed time and finished time
+	 * 
+	 * @param trajectoriesStream
+	 */
+	private static void showLatecies(DataStream<Tuple2<String, Trajectory>> trajectoriesStream) {
 		DataStream<Long> latencies = trajectoriesStream.map(tuple -> {
 
 			long currentTime = System.currentTimeMillis();
 			// get last entered item
-			Trajectory trajectory = tuple.f1.get(tuple.f1.size() - 1);
+			Trajectory trajectory = tuple.f1;
 
 			return new Long(currentTime - trajectory.getStreamedTime());
 
 		});
 
-		// latencies.print().setParallelism(1);
-		trajectoriesStream.print().setParallelism(1);
-
-		env.execute(" Flink Trajectories Statistics Computation");
+		latencies.print().setParallelism(1);
 	}
 }
