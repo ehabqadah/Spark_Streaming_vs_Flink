@@ -77,7 +77,7 @@ public class Trajectory implements Serializable {
 	public String toString() {
 
 		// TODO: use string builder
-		return "|" + isNew() + getCreatedDateTime() + " ID : " + getID() + " (lat,long,alt):(" + getLatitude() + ","
+		return "|" + isNew() + getCreatedDateTime() + ":(" + getLatitude() + ","
 				+ getLongitude() + "," + getAltitude() + ") |" + " speed=" + getSpeed() + " Distance" + getDistance()
 				+ "|" + (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
 	}
