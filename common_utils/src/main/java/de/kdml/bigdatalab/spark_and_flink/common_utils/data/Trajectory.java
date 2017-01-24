@@ -14,6 +14,7 @@ public class Trajectory implements Serializable {
 	private TrajectoryStatisticsWrapper statistics;
 	private LocalDateTime createdDateTime;
 	private Sector sector;
+	private Sector prevSector;
 	private Boolean isNew = null;
 	private long streamedTime;
 	private Double ditance = null;
@@ -77,9 +78,9 @@ public class Trajectory implements Serializable {
 	public String toString() {
 
 		// TODO: use string builder
-		return "|" + isNew() + getCreatedDateTime() + ":(" + getLatitude() + ","
-				+ getLongitude() + "," + getAltitude() + ") |" + " speed=" + getSpeed() + " Distance" + getDistance()
-				+ "|" + (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
+		return "|" + isNew() + getCreatedDateTime() + ":(" + getLatitude() + "," + getLongitude() + "," + getAltitude()
+				+ ") |" + " speed=" + getSpeed() + " Distance" + getDistance() + "|"
+				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
 	}
 
 	public TrajectoryStatisticsWrapper getStatistics() {
@@ -144,6 +145,14 @@ public class Trajectory implements Serializable {
 
 	public void setAcceleration(Double acceleration) {
 		this.acceleration = acceleration;
+	}
+
+	public Sector getPrevSector() {
+		return prevSector;
+	}
+
+	public void setPrevSector(Sector prevSector) {
+		this.prevSector = prevSector;
 	}
 
 }
