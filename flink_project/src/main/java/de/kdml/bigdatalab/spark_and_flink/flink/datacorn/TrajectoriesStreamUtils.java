@@ -1,12 +1,11 @@
 package de.kdml.bigdatalab.spark_and_flink.flink.datacorn;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
+import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
@@ -33,7 +32,7 @@ public class TrajectoriesStreamUtils {
 	 * @param env
 	 * @return
 	 */
-	public static DataStream<Tuple2<String, List<Trajectory>>> getTrajectoriesStream(StreamExecutionEnvironment env) {
+	public static KeyedStream<Tuple2<String, Trajectory>, Tuple> getTrajectoriesStream(StreamExecutionEnvironment env) {
 
 		// configure Kafka consumer
 		Properties props = new Properties();
@@ -68,34 +67,19 @@ public class TrajectoriesStreamUtils {
 		 * 
 		 **/
 
-		DataStream<Tuple2<String, List<Trajectory>>> trajectoriesStream = dataLines.map(line -> {
+		KeyedStream<Tuple2<String, Trajectory>, Tuple> trajectoriesStream = dataLines.map(line -> {
 
 			StreamRecord streamRecord = StreamRecord.parseData(line);
 			Trajectory trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
-			return new Tuple2<>(trajectory.getID(), Arrays.asList(trajectory));
+			trajectory.setNew(true);
+			return new Tuple2<>(trajectory.getID(), trajectory);
 
 		}).filter(tuple -> {
 
-			return tuple.f1.get(0) != null
-					&& ("MSG2".equals(tuple.f1.get(0).getType()) || "MSG3".equals(tuple.f1.get(0).getType()));
+			return tuple.f1 != null && ("MSG2".equals(tuple.f1.getType()) || "MSG3".equals(tuple.f1.getType()));
 
-		}).keyBy(0).reduce((Tuple2<String, List<Trajectory>> tuple1, Tuple2<String, List<Trajectory>> tuple2) -> {
-
-			// f0 -> trajectory ID f1-> list of trajectories
-
-			List<Trajectory> trajectories = new ArrayList<>();
-			if (!tuple1.f1.isEmpty()) {
-				trajectories.addAll(tuple1.f1);
-			}
-
-			if (!tuple2.f1.isEmpty()) {
-				trajectories.addAll(tuple2.f1);
-			}
-
-			Tuple2<String, List<Trajectory>> reduced = new Tuple2<>(tuple1.f0, trajectories);
-			return reduced;
-		});
+		}).keyBy(0);
 
 		return trajectoriesStream;
 	}
