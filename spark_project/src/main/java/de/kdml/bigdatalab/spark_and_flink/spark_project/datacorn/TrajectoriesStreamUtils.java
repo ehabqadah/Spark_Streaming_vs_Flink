@@ -86,6 +86,7 @@ public class TrajectoriesStreamUtils {
 			StreamRecord streamRecord = StreamRecord.parseData(record.value());
 			Trajectory trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
+			trajectory.setNew(true);
 			
 			return new Tuple2<>(trajectory.getID(), trajectory);
 		}).filter(tuple -> {
