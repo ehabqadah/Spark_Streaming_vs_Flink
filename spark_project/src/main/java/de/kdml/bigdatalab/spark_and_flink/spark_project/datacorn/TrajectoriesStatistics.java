@@ -3,13 +3,10 @@ package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.calcite.rel.rules.AggregateReduceFunctionsRule;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.Function3;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.State;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -19,7 +16,6 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
-import scala.Tuple2;
 
 /**
  * 
@@ -50,6 +46,19 @@ public class TrajectoriesStatistics {
 		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
+		printLatencies(runningTrajectories);
+
+		runningTrajectories.print(1000);
+
+		jssc.start();
+		try {
+			jssc.awaitTermination();
+		} catch (InterruptedException e) {
+			System.out.println("Error:" + e.getMessage());
+		}
+	}
+
+	private static void printLatencies(JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories) {
 		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
 
 			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
@@ -67,16 +76,7 @@ public class TrajectoriesStatistics {
 			return latency > 0;
 		});
 
-		//latencies.print();
-
-		runningTrajectories.print(1000);
-
-		jssc.start();
-		try {
-			jssc.awaitTermination();
-		} catch (InterruptedException e) {
-			System.out.println("Error:" + e.getMessage());
-		}
+		// latencies.print();
 	}
 
 	/**
@@ -93,26 +93,37 @@ public class TrajectoriesStatistics {
 		public Optional<Iterable<Trajectory>> call(List<Iterable<Trajectory>> values,
 				Optional<Iterable<Trajectory>> state) {
 
+			Trajectory lastOldTrajectory = null;
 			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
-			// add old state
-			for (Trajectory trajectory : state.orElse(new ArrayList<>())) {
-				trajectory.setNew(false);
-				aggregatedTrajectories.add(trajectory);
-
+			// get last old trajectory to be used in statistics computation
+			Iterable<Trajectory> stateTrajectories = state.orElse(new ArrayList<>());
+			for (Trajectory trajectory : stateTrajectories) {
+				lastOldTrajectory = trajectory;
+				lastOldTrajectory.setNew(false);
 			}
-
+			
 			// aggregate new values
-
 			for (Iterable<Trajectory> val : values) {
 				for (Trajectory trajectory : val) {
-					trajectory.setNew(true);
 					aggregatedTrajectories.add(trajectory);
 				}
 
 			}
-
+			if(aggregatedTrajectories.size()==0)
+			{
+				return Optional.of(stateTrajectories);
+			}
+			
 			aggregatedTrajectories = TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
-			return Optional.of(StatisticsUtils.computeStatistics(aggregatedTrajectories));
+
+			for (Trajectory trajectory : aggregatedTrajectories) {
+				// compute statistics for each trajectory
+				StatisticsUtils.computeStatistics(lastOldTrajectory, trajectory);
+				lastOldTrajectory = trajectory;
+
+			}
+			// update state
+			return Optional.of(aggregatedTrajectories);
 		}
 	};
 

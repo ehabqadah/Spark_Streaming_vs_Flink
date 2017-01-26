@@ -144,25 +144,40 @@ public class TrajectoriesSectorChangeDetector {
 		public Optional<Iterable<Trajectory>> call(List<Iterable<Trajectory>> values,
 				Optional<Iterable<Trajectory>> state) {
 
-			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
-			// add old state
-			for (Trajectory trajectory : state.orElse(new ArrayList<>())) {
-				trajectory.setNew(false);
-				appendTrajectory(aggregatedTrajectories, trajectory);
+			Trajectory lastOldTrajectory = null;
+
+			// get last old trajectory to be used in statistics computation
+			Iterable<Trajectory> stateTrajectories = state.orElse(new ArrayList<>());
+			for (Trajectory trajectory : stateTrajectories) {
+				lastOldTrajectory = trajectory;
+				lastOldTrajectory.setNew(false);
 			}
-
+			List<Trajectory> newTrajectories = new ArrayList<>();
 			// aggregate new values
-
 			for (Iterable<Trajectory> val : values) {
 				for (Trajectory trajectory : val) {
-
-					trajectory.setNew(true);
-					appendTrajectory(aggregatedTrajectories, trajectory);
-
+					newTrajectories.add(trajectory);
 				}
 
 			}
-			// sort trajectories
+
+			// no new trajectories were received
+			if (newTrajectories.size() == 0) {
+				return Optional.of(stateTrajectories);
+			}
+
+			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
+			// append only the last old trajectory
+			if (lastOldTrajectory != null) {
+				appendTrajectoryAndAssignSector(aggregatedTrajectories, lastOldTrajectory);
+			}
+
+			for (Trajectory trajectory : newTrajectories) {
+				trajectory.setNew(true);
+				appendTrajectoryAndAssignSector(aggregatedTrajectories, trajectory);
+
+			}
+			// update state
 			return Optional.of(TrajectoriesUtils.sortTrajectories(aggregatedTrajectories));
 		}
 
@@ -172,7 +187,7 @@ public class TrajectoriesSectorChangeDetector {
 		 * @param aggregatedTrajectories
 		 * @param trajectory
 		 */
-		private void appendTrajectory(List<Trajectory> aggregatedTrajectories, Trajectory trajectory) {
+		private void appendTrajectoryAndAssignSector(List<Trajectory> aggregatedTrajectories, Trajectory trajectory) {
 
 			// assign sector for trajectory
 			if (trajectory.getSector() == null) {

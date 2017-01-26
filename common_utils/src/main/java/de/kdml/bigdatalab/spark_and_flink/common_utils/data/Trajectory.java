@@ -80,7 +80,7 @@ public class Trajectory implements Serializable {
 		// TODO: use string builder
 		return "|" + isNew() + getCreatedDateTime() + ":(" + getLatitude() + "," + getLongitude() + "," + getAltitude()
 				+ ") |" + " speed=" + getSpeed() + " Distance" + getDistance() + "|"
-				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ");
+				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ") + "\n";
 	}
 
 	public TrajectoryStatisticsWrapper getStatistics() {
