@@ -86,6 +86,10 @@ public class StatisticsUtils {
 	 */
 	public static void computeStatistics(Trajectory oldTrajectory, Trajectory newTrajectory) {
 
+		if (oldTrajectory == null) {
+			intitStaticsForOldTrajectory(newTrajectory);
+			return;
+		}
 		intitStaticsForOldTrajectory(oldTrajectory);// initialize statics for
 													// the first trajectory only
 		double minLongtitude, minLatitude, minAltitude, minSpeed, minAcceleration;
@@ -146,7 +150,9 @@ public class StatisticsUtils {
 			statistics.setMinSpeed(0);
 
 			oldTrajectory.setStatistics(statistics);
-
+			oldTrajectory.setSpeed(0.0);
+			oldTrajectory.setAcceleration(0.0);
+			oldTrajectory.setDistance(0.0);
 		}
 
 	}
