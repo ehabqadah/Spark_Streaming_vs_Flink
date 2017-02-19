@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  19 FEB 2017 14:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  19 FEB 2017 17:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -189,35 +189,35 @@ LaTeX Warning: No \author given.
 
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./paper.toc)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./paper.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 3.
+)
 \tf@toc=\write4
 \openout4 = `paper.toc'.
 
  [2]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 29.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 29.
-
-[3]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 55.
- [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 55.
+[3] [4]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 65.
+ [5]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 65.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 55.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 55.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 65.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 65.
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: C27E4E8F2AFDF3062E031DD2EB9B0EC4;271.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 55.
+(rerunfilecheck)             Checksum: 6CFB6FAFAC3C450F46E2B2DEF40008DA;332.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 65.
  ) 
 Here is how much of TeX's memory you used:
- 4259 strings out of 494953
- 63782 string characters out of 6180978
+ 4267 strings out of 494953
+ 63863 string characters out of 6180978
  140809 words of memory out of 5000000
- 7547 multiletter control sequences out of 15000+600000
- 8363 words of font info for 30 fonts, out of 8000000 for 9000
+ 7551 multiletter control sequences out of 15000+600000
+ 8670 words of font info for 31 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 29i,8n,28p,611b,319s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,8n,28p,612b,413s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
@@ -227,10 +227,10 @@ fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmtt8.pfb>
-Output written on paper.pdf (4 pages, 102926 bytes).
+Output written on paper.pdf (5 pages, 107921 bytes).
 PDF statistics:
- 97 PDF objects out of 1000 (max. 8388607)
- 81 compressed objects within 1 object stream
- 14 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 110 PDF objects out of 1000 (max. 8388607)
+ 93 compressed objects within 1 object stream
+ 18 named destinations out of 1000 (max. 500000)
+ 49 words of extra memory for PDF output out of 10000 (max. 10000000)
 
