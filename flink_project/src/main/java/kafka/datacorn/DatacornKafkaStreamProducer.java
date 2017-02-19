@@ -82,7 +82,7 @@ public class DatacornKafkaStreamProducer {
 		/**
 		 * Generates a new random line every LINE_SLIDE_TIME_MS
 		 */
-		private static final int LINE_SLIDE_TIME_MS = 1000;
+		private static final int LINE_SLIDE_TIME_MS = 2*1000;
 
 		private static final long serialVersionUID = 2174904787118597072L;
 
@@ -100,6 +100,13 @@ public class DatacornKafkaStreamProducer {
 						line = new StreamRecord(line).toString();
 						ctx.collect(line);
 						Thread.sleep(LINE_SLIDE_TIME_MS);
+						ctx.collect(line);
+
+						Thread.sleep(LINE_SLIDE_TIME_MS);
+
+						ctx.collect(line);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
+						
 					}
 				} catch (Exception e) {
 
