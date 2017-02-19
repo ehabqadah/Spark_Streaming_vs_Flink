@@ -45,11 +45,15 @@ provides and compares the performance results of the different workloads. Finall
 
 \subsection{Apache Flink}
 
-Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming (as finite data stream) \cite{flink}.
+Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming applications \cite{flink}.
 It offers programming API in Java, Scala. Its stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
 
 The main data abstraction of Flink are DataStream and DataSet that represents read-only collection of elements of the same type. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
 
+
+\subsection{Apache Kafka}
+Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
+It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream.
 
 
 \section{Experiment Setup and Implementation}
@@ -75,6 +79,10 @@ Zaharia, Matei, et al. "Resilient distributed datasets: A fault-tolerant abstrac
 
 \bibitem[4]{flink} 
 Apache Flink. Available: https://flink.apache.org/ [Accessed February 2017].
+
+\bibitem[5]{kafka} 
+Apache Kafka. Available: https://kafka.apache.org/ [Accessed February 2017].
+
 
 %
 \end{thebibliography}
