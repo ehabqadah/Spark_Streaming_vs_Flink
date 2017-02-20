@@ -1,5 +1,6 @@
 \documentclass[]{article}
 \usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
 %opening
 \title{Comparative Evaluation of Spark and Flink Stream Processing}
 
@@ -53,11 +54,27 @@ The main data abstraction of Flink are DataStream and DataSet that represents re
 
 \subsection{Apache Kafka}
 Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
-It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream.
+It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. It's widely  adopted, for example, 
+Spark and Flink can receive data stream from Kafka. 
 
 
 \section{Experiment Setup and Implementation}
-This section describes the experiment workloads and their implementation in each framework.
+This section describes the data stream setup, design of evaluation streaming workloads, and implementation details in Spark and Flink.
+
+\subsection{Data Stream Setup}
+Our streaming workloads read input data stream from Kafka. In order to simulate real-world uses cases we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircrafts position.
+In our experiment a data stream producer component reads the ADS-B datasets, then publish it to Kafka cluster to be consumed by the workloads in Spark and Flink. Figure 1 illustrates the data producer and the Kafka cluster setup.
+The data stream is portioned into four portions over two server, while the data producer publish the stream records randomly to Kafka partitions.
+
+
+\begin{figure}[h]
+ 
+  \centering
+    \includegraphics[width=.9\textwidth, height=.2\textheight]{kafka.png}
+     \caption{Data Stream Producer \& Kafka Cluster Setup.}
+\end{figure} 
+
+
 \section{Performance Results}
 
 This section provides and compares the performance results of the different workloads.
