@@ -65,10 +65,9 @@ Spark and Flink can receive data stream from Kafka.
 This section describes the data stream setup, design of evaluation streaming workloads, and implementation details in Spark and Flink.
 
 \subsection{Data Stream Setup}
-Our streaming workloads read input data stream from Kafka. In order to simulate real-world uses cases we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircrafts position.
-In our experiment a data stream producer component reads the ADS-B datasets, then publish it to Kafka cluster to be consumed by the workloads in Spark and Flink. Figure 1 illustrates the data producer and the Kafka cluster setup.
+Our streaming workloads read input data stream from Kafka. In order to simulate real-world uses cases we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircrafts position over time, comprise 22 fields of data such as AircraftID, Date message generated, longitude, latitude, and altitude.
+\par In our experiment a data stream producer component reads the ADS-B datasets, then publish it to Kafka cluster to be consumed by the workloads in Spark and Flink. Figure 1 illustrates the data producer and the Kafka cluster setup.
 The data stream is portioned into four portions over two server, while the data producer publish the stream records randomly to Kafka partitions.
-
 
 \begin{figure}[h]
  
@@ -77,7 +76,23 @@ The data stream is portioned into four portions over two server, while the data 
      \caption{Data Stream Producer \& Kafka Cluster Setup.}
 \end{figure} 
 
+\subsection{Workloads Design}
+In our experimental evaluation, we developed two streaming processing workloads that read the ADS-B messages stream from Kafka to perform basic trajectories analysis methods. In our design choice, we try to cover key main points related to the streaming processing, to evaluate how  does each framework perform. The following are general key aspects of  streaming data processing were covered by our workloads design: 
 
+\begin{itemize}
+\item Handling parallel input streams.
+\item How to aggregate the state of input stream records.
+\item Mange the order of stream records.
+\item How to provide and update global data model in stream processing task.
+\item Evaluate the performance by measuring  the latency and throughput.
+\end{itemize}
+We give  in Section 3.3 how Spark and Flink are handling these key aspects and related issues, then we discuss the performance evaluation in Section 4.
+
+\subsubsection{Statistics Computation per Trajectory}
+In first stream processing workload, we perform statistics calculation for each trajectory (i.e.,  messages of the same ID) in ADS-B messages stream. As example of computed statistics indexes speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we try to cover 
+the parallel receiving of input data stream, state-full stream aggregation, and preserve the order of stream records.
+
+\subsection{Workloads Implementation}
 \section{Performance Results}
 
 This section provides and compares the performance results of the different workloads.

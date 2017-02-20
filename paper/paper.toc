@@ -5,5 +5,8 @@
 \contentsline {subsection}{\numberline {2.3}Apache Kafka}{4}{subsection.2.3}
 \contentsline {section}{\numberline {3}Experiment Setup and Implementation}{5}{section.3}
 \contentsline {subsection}{\numberline {3.1}Data Stream Setup}{5}{subsection.3.1}
-\contentsline {section}{\numberline {4}Performance Results}{5}{section.4}
-\contentsline {section}{\numberline {5}Conclusion}{5}{section.5}
+\contentsline {subsection}{\numberline {3.2}Workloads Design}{5}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Statistics Computation per Trajectory}{6}{subsubsection.3.2.1}
+\contentsline {subsection}{\numberline {3.3}Workloads Implementation}{6}{subsection.3.3}
+\contentsline {section}{\numberline {4}Performance Results}{6}{section.4}
+\contentsline {section}{\numberline {5}Conclusion}{6}{section.5}
