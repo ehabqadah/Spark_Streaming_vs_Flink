@@ -32,6 +32,7 @@ In this paper, we provide a performance comparison of streaming data processing 
 
 \par The processing models of Big Data are Batch and Stream processing, Batch processing is a way to handle large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
 
+\par TODO: add paragraph about Yahoo benchmark and why do we still need evaluation 1- continuous dev of frameworks 2- explore more complex operation like groupby that shuffle the data.
 \par The purpose of this paper is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads we try to cover the main programming API differences between the both frameworks. Informally,  this work aims to help developer to determine which platform to choose in production. 
 
 \par The rest of this paper is organized as follows: Section 2
