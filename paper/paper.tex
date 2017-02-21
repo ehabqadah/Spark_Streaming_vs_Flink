@@ -47,7 +47,7 @@ provides and compares the performance results of the different workloads. Finall
 
 \par The main data abstraction in Spark is the Resilient Distributed Datasets (RDDs), which is a in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs supports two categories of operations: transformations that drive new RDDs from the operated ones (e.g., map).  And actions which return a value (e.g., count).
 
-//TODO: DStreams
+//TODO: DStreams, streaming model
 
 \subsection{Apache Flink}
 
@@ -59,7 +59,7 @@ The main data abstraction of Flink are DataStream and DataSet that represents re
 
 \subsection{Apache Kafka}
 Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
-It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. It's widely  adopted, for example, 
+It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. It has been widely  adopted, for example, 
 Spark and Flink can receive data stream from Kafka. 
 
 
@@ -138,7 +138,7 @@ The statistics computation of trajectories stream is solved in Flink by performi
 
 \end{itemize}
 
-\subsubsection{Sector of Trajectory Change Detection}
+\subsubsection{Air Sector Change Detection}
 
 The goal of sector change detection workload is to detect the  enter or leaving of aircraft from one air sector to other, by processing the trajectories stream. Given that the dataset of sectors (i.e., polygons) available as reference to check against it, also it used to assign the corresponding sector for certain aircraft position. In this workload, providing the  global model of data (sectors dataset) in streaming processing workload is tested.Moreover, preserving the stream records order and parallel streams consuming are covered.
  
@@ -153,7 +153,7 @@ The goal of sector change detection workload is to detect the  enter or leaving 
  \item identify the  change of sector per trajectory if exist
  \end{enumerate*}
  
- figure 4 shows the Spark streaming APIs used to implement trajectory's sector change detection workload. First, the trajectories stream is built using \texttt{mapToPair}, \texttt{filter}, and \texttt{groupByKey} APIs as was discussed in statistics computation workload. Second,  \texttt{updateStateByKey} API is used to assign corresponding sector for all new aircraft positions in  micro batch  and aggregate last position in previous batch. Finally, the detection of sector change is done by extra filtering transformation using \texttt{filter} API, by identifying the change of sectors in each trajectory.  
+ figure 4 shows the Spark streaming APIs used to implement trajectory's sector change detection workload. First, the trajectories stream is built using \texttt{mapToPair}, \texttt{filter}, and \texttt{groupByKey} APIs as was discussed in statistics computation workload. Second,  \texttt{updateStateByKey} API is used to assign corresponding sector for all new aircraft positions in  micro batch  and aggregate last position in previous batch. Finally, the detection of sector change is done by extra filtering transformation using \texttt{filter} API, by identifying the change of sectors in each trajectory. While the sector data set is provided using the \texttt{Broadcast} feature in Spark.
  \begin{figure}[h]
   
    \centering
@@ -163,6 +163,8 @@ The goal of sector change detection workload is to detect the  enter or leaving 
  
   
  \item {\bf{Implementation in Flink }}
+ 
+ The Flink implementation of sector change detection workload, uses the \texttt{FlinkKafkaConsumer09} that read the ADS-B messages stream from Kafka, which used to construct \texttt{DataStream} instance. The \texttt{DataStream} records are parsed to tuples of aircraft ID and aircraft position, by a configured \texttt{map} function. The irrelevant tuples are filtered based on the message type using a \texttt{filter} operation. Afterward, the tuples with common IDs are grouped together by the \texttt{keyBy} operator. Since the Flink streaming processes the stream records as it come, a defined \texttt{reduce} operator assign corresponding sector of new tuple, and the old tuple with same ID is used to retrieve the previous sector to attach it to the new tuple, while the old tuple is discarded. Finally, the tuples with different previous and current sector that represent change in sector case, they are filtered using defined \texttt{filter} transformation.
  \end{itemize}
 \section{Performance Results}
 

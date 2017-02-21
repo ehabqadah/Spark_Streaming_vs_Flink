@@ -7,6 +7,6 @@
 \BOOKMARK [2][-]{subsection.3.1}{Data Stream Setup}{section.3}% 7
 \BOOKMARK [2][-]{subsection.3.2}{Evaluation Streaming Workloads}{section.3}% 8
 \BOOKMARK [3][-]{subsubsection.3.2.1}{Statistics Computation per Trajectory}{subsection.3.2}% 9
-\BOOKMARK [3][-]{subsubsection.3.2.2}{Sector of Trajectory Change Detection}{subsection.3.2}% 10
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Air Sector Change Detection}{subsection.3.2}% 10
 \BOOKMARK [1][-]{section.4}{Performance Results}{}% 11
 \BOOKMARK [1][-]{section.5}{Conclusion}{}% 12

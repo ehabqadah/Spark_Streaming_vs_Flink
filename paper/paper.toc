@@ -7,6 +7,6 @@
 \contentsline {subsection}{\numberline {3.1}Data Stream Setup}{5}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Evaluation Streaming Workloads}{5}{subsection.3.2}
 \contentsline {subsubsection}{\numberline {3.2.1}Statistics Computation per Trajectory}{6}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}Sector of Trajectory Change Detection}{7}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.2}Air Sector Change Detection}{7}{subsubsection.3.2.2}
 \contentsline {section}{\numberline {4}Performance Results}{8}{section.4}
 \contentsline {section}{\numberline {5}Conclusion}{8}{section.5}
