@@ -78,7 +78,7 @@ The data stream is portioned into four portions over two server, while the data 
      \caption{Data Stream Producer \& Kafka Cluster Setup.}
 \end{figure} 
 
-\subsection{Evaluation Workloads}
+\subsection{Evaluation Streaming Workloads}
 In our experimental evaluation, we developed two streaming processing workloads that read the ADS-B messages stream from Kafka to perform basic trajectories analysis methods. In our design choice, we try to cover key main points related to the streaming processing, to evaluate how  does each framework perform. The following are general key aspects of  streaming data processing were covered by our workloads design: 
 
 \begin{itemize}
@@ -93,7 +93,7 @@ We present how Spark and Flink are handling these key aspects and related issues
 \subsubsection{Statistics Computation per Trajectory}
 In first stream processing workload, we perform statistics calculation for each trajectory (i.e.,  messages of the same ID) in ADS-B messages stream. As example of computed statistics indexes speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we try to cover 
 the parallel receiving of input data stream, state-full stream aggregation, and preserve the order of stream records.
-The implementation details of this workload in Spark and Flink, are presented in the following: 
+The implementation details of this workload in Spark and Flink are presented in the following: 
 \begin{itemize}
 \item {\bf{Implementation in Spark }}
 
@@ -134,14 +134,36 @@ The statistics computation of trajectories stream is solved in Flink by performi
 \end{figure}
 
 
-//TODO: discuss differences between flink and spark.
+//TODO: discuss differences between Flink and Spark.
 
 \end{itemize}
 
 \subsubsection{Sector of Trajectory Change Detection}
 
-The goal of sector change detection workload is to detect the  enter or leaving of aircraft from one air sector to other, by processing the trajectories stream. Given that the dataset of sectors (i.e., polygons) available as reference to  check against it, also it used to assign the corresponding sector for certain aircraft position. In this workload, providing the  global model of data (sectors dataset) in streaming processing workload is tested.Moreover, preserving the stream records order and parallel streams consuming are covered.
+The goal of sector change detection workload is to detect the  enter or leaving of aircraft from one air sector to other, by processing the trajectories stream. Given that the dataset of sectors (i.e., polygons) available as reference to check against it, also it used to assign the corresponding sector for certain aircraft position. In this workload, providing the  global model of data (sectors dataset) in streaming processing workload is tested.Moreover, preserving the stream records order and parallel streams consuming are covered.
  
+ The implementation details of this workload in Spark and Flink are presented in the following: 
+ \begin{itemize}
+ \item {\bf{Implementation in Spark }}
+ 
+ we implement this workload, based on the following operation stages: 
+ \begin{enumerate*}[label={\alph*)}]
+ \item receive and build the trajectories stream 
+ \item manage the aggregate state and assign the sector for each trajectory.
+ \item identify the  change of sector per trajectory if exist
+ \end{enumerate*}
+ 
+ figure 4 shows the Spark streaming APIs used to implement trajectory's sector change detection workload. First, the trajectories stream is built using \texttt{mapToPair}, \texttt{filter}, and \texttt{groupByKey} APIs as was discussed in statistics computation workload. Second,  \texttt{updateStateByKey} API is used to assign corresponding sector for all new aircraft positions in  micro batch  and aggregate last position in previous batch. Finally, the detection of sector change is done by extra filtering transformation using \texttt{filter} API, by identifying the change of sectors in each trajectory.  
+ \begin{figure}[h]
+  
+   \centering
+   
+      \caption{Spark streaming implementation of sector change detection workload.}
+ \end{figure} 
+ 
+  
+ \item {\bf{Implementation in Flink }}
+ \end{itemize}
 \section{Performance Results}
 
 This section provides and compares the performance results of the different workloads.
