@@ -78,7 +78,7 @@ The data stream is portioned into four portions over two server, while the data 
      \caption{Data Stream Producer \& Kafka Cluster Setup.}
 \end{figure} 
 
-\subsection{Workloads Design}
+\subsection{Evaluation Workloads}
 In our experimental evaluation, we developed two streaming processing workloads that read the ADS-B messages stream from Kafka to perform basic trajectories analysis methods. In our design choice, we try to cover key main points related to the streaming processing, to evaluate how  does each framework perform. The following are general key aspects of  streaming data processing were covered by our workloads design: 
 
 \begin{itemize}
@@ -136,9 +136,12 @@ The statistics computation of trajectories stream is solved in Flink by performi
 
 //TODO: discuss differences between flink and spark.
 
-
 \end{itemize}
-\subsection{Workloads Implementation}
+
+\subsubsection{Sector of Trajectory Change Detection}
+
+The goal of sector change detection workload is to detect the  enter or leaving of aircraft from one air sector to other, by processing the trajectories stream. Given that the dataset of sectors (i.e., polygons) available as reference to  check against it, also it used to assign the corresponding sector for certain aircraft position. In this workload, providing the  global model of data (sectors dataset) in streaming processing workload is tested.Moreover, preserving the stream records order and parallel streams consuming are covered.
+ 
 \section{Performance Results}
 
 This section provides and compares the performance results of the different workloads.
