@@ -2,7 +2,7 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
 import java.util.List;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.TrajectoryStatisticsWrapper;
 
 /**
@@ -19,15 +19,15 @@ public class StatisticsUtils {
 	 * @param trajectories
 	 * @return
 	 */
-	public static List<Trajectory> computeStatistics(List<Trajectory> trajectories) {
+	public static List<PositionMessage> computeStatistics(List<PositionMessage> trajectories) {
 
 		double minLongtitude = Double.MAX_VALUE, minLatitude = Double.MAX_VALUE, minAltitude = Double.MAX_VALUE,
 				minSpeed = Double.MAX_VALUE, minAcceleration = Double.MAX_VALUE;
 		double maxLongtitude = Double.MIN_VALUE, maxLatitude = Double.MIN_VALUE, maxAltitude = Double.MIN_VALUE,
 				maxSpeed = Double.MIN_VALUE, maxAcceleration = Double.MIN_VALUE;
 
-		Trajectory prevTrajectory = null;
-		for (Trajectory trajectory : trajectories) {
+		PositionMessage prevTrajectory = null;
+		for (PositionMessage trajectory : trajectories) {
 
 			TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(prevTrajectory, trajectory);
 
@@ -65,7 +65,7 @@ public class StatisticsUtils {
 		statistics.setMaxSpeed(maxSpeed);
 		statistics.setMinSpeed(minSpeed);
 
-		for (Trajectory trajectory : trajectories) {
+		for (PositionMessage trajectory : trajectories) {
 
 			// just update new trajectories
 			if (trajectory.getStatistics() == null) {
@@ -84,7 +84,7 @@ public class StatisticsUtils {
 	 * @param oldTrajectory
 	 * @param newTrajectory
 	 */
-	public static void computeStatistics(Trajectory oldTrajectory, Trajectory newTrajectory) {
+	public static void computeStatistics(PositionMessage oldTrajectory, PositionMessage newTrajectory) {
 
 		if (oldTrajectory == null) {
 			intitStaticsForOldTrajectory(newTrajectory);
@@ -134,7 +134,7 @@ public class StatisticsUtils {
 	 * 
 	 * @param oldTrajectory
 	 */
-	private static void intitStaticsForOldTrajectory(Trajectory oldTrajectory) {
+	private static void intitStaticsForOldTrajectory(PositionMessage oldTrajectory) {
 		if (oldTrajectory.isNew() || oldTrajectory.getStatistics() == null) {
 
 			TrajectoryStatisticsWrapper statistics = new TrajectoryStatisticsWrapper();

@@ -8,7 +8,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.SectorUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 
 /**
  * Trajectory and Sector maper
@@ -18,7 +18,7 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
  *         Jan 5, 2017
  */
 final class TrajectorySectorMapper
-		implements MapFunction<Tuple2<String, List<Trajectory>>, Tuple2<String, List<Trajectory>>> {
+		implements MapFunction<Tuple2<String, List<PositionMessage>>, Tuple2<String, List<PositionMessage>>> {
 
 	private static final long serialVersionUID = -4643101889705396118L;
 	public static List<Sector> sectors = null;
@@ -38,12 +38,12 @@ final class TrajectorySectorMapper
 	 * 
 	 */
 	@Override
-	public Tuple2<String, List<Trajectory>> map(Tuple2<String, List<Trajectory>> tuple) throws Exception {
+	public Tuple2<String, List<PositionMessage>> map(Tuple2<String, List<PositionMessage>> tuple) throws Exception {
 
 		// sort trajectories
-		List<Trajectory> trajectories = TrajectoriesUtils.sortTrajectories(tuple.f1);
+		List<PositionMessage> trajectories = TrajectoriesUtils.sortTrajectories(tuple.f1);
 		// assign sector for all trajectories
-		for (Trajectory trajectory : trajectories) {
+		for (PositionMessage trajectory : trajectories) {
 
 			if (trajectory.getSector() == null) {
 				Sector sector = SectorUtils.getSectorForTrajectory(trajectory, sectors);
@@ -51,7 +51,7 @@ final class TrajectorySectorMapper
 			}
 
 		}
-		return new Tuple2<String, List<Trajectory>>(tuple.f0, trajectories);
+		return new Tuple2<String, List<PositionMessage>>(tuple.f0, trajectories);
 
 	}
 }

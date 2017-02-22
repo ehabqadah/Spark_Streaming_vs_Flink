@@ -3,7 +3,7 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils;
 import java.util.List;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 
 /**
  * 
@@ -20,7 +20,7 @@ public class SectorUtils {
 	 * @param sectors
 	 * @return
 	 */
-	public static Sector getSectorForTrajectory(Trajectory trajectory, List<Sector> sectors) {
+	public static Sector getSectorForTrajectory(PositionMessage trajectory, List<Sector> sectors) {
 
 		for (Sector sector : sectors) {
 

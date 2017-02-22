@@ -3,7 +3,17 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Trajectory implements Serializable {
+/**
+ * Position of Aircraft follows the Automatic Dependent Surveillance–Broadcast
+ * 
+ * (ADS-B) messages schema, with additional fields.
+ * 
+ * @author Ehab Qadah
+ * 
+ *         Feb 22, 2017
+ */
+
+public class PositionMessage implements Serializable {
 
 	private static final long serialVersionUID = 1013765199466780042L;
 	private String ID;
@@ -21,10 +31,10 @@ public class Trajectory implements Serializable {
 	private Double speed = null;
 	private Double acceleration;
 
-	public Trajectory() {
+	public PositionMessage() {
 	}
 
-	public Trajectory(String id, String type, double latitude, double longtitude, double altitude) {
+	public PositionMessage(String id, String type, double latitude, double longtitude, double altitude) {
 
 		this.ID = id;
 		this.setLatitude(latitude);

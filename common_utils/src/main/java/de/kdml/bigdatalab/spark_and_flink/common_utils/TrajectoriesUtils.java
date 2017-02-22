@@ -8,7 +8,7 @@ import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
 
 import com.google.common.collect.Lists;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 
 /***
  * 
@@ -27,11 +27,11 @@ public class TrajectoriesUtils {
 	 * @param line
 	 * @return
 	 */
-	public static Trajectory parseDataInput(String line) {
+	public static PositionMessage parseDataInput(String line) {
 
 		String[] attributes = line.split(",");
 
-		Trajectory trajectory = new Trajectory();
+		PositionMessage trajectory = new PositionMessage();
 		if (attributes.length > 5) {
 			trajectory.setType(attributes[0] + attributes[1]);
 			trajectory.setID(attributes[4]);
@@ -56,9 +56,9 @@ public class TrajectoriesUtils {
 	 * @param trajectories
 	 * @return
 	 */
-	public static List<Trajectory> sortTrajectories(List<Trajectory> trajectories) {
+	public static List<PositionMessage> sortTrajectories(List<PositionMessage> trajectories) {
 
-		Iterator<Trajectory> sortedTrajectories = trajectories.stream().sorted((trajectory1, trajector2) -> {
+		Iterator<PositionMessage> sortedTrajectories = trajectories.stream().sorted((trajectory1, trajector2) -> {
 
 			return -1 * trajectory1.getCreatedDateTime().compareTo(trajector2.getCreatedDateTime());
 		}).iterator();
@@ -73,7 +73,7 @@ public class TrajectoriesUtils {
 	 * @param prevTrajectory
 	 * @param trajectory
 	 */
-	public static void calculateDistanceAndSpeedOfTrajectory(Trajectory prevTrajectory, Trajectory trajectory) {
+	public static void calculateDistanceAndSpeedOfTrajectory(PositionMessage prevTrajectory, PositionMessage trajectory) {
 
 		if (trajectory.getSpeed() != null && trajectory.getDistance() != null) {
 			return;

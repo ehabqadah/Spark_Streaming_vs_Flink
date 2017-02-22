@@ -13,7 +13,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 
 /**
  * Initialize the trajectories stream
@@ -32,7 +32,7 @@ public class TrajectoriesStreamUtils {
 	 * @param env
 	 * @return
 	 */
-	public static KeyedStream<Tuple2<String, Trajectory>, Tuple> getTrajectoriesStream(StreamExecutionEnvironment env) {
+	public static KeyedStream<Tuple2<String, PositionMessage>, Tuple> getTrajectoriesStream(StreamExecutionEnvironment env) {
 
 		// configure Kafka consumer
 		Properties props = new Properties();
@@ -67,10 +67,10 @@ public class TrajectoriesStreamUtils {
 		 * 
 		 **/
 
-		KeyedStream<Tuple2<String, Trajectory>, Tuple> trajectoriesStream = dataLines.map(line -> {
+		KeyedStream<Tuple2<String, PositionMessage>, Tuple> trajectoriesStream = dataLines.map(line -> {
 
 			StreamRecord streamRecord = StreamRecord.parseData(line);
-			Trajectory trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
+			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
 			trajectory.setNew(true);
 			return new Tuple2<>(trajectory.getID(), trajectory);

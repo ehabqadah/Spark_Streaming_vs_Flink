@@ -14,7 +14,7 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 
 /**
@@ -40,10 +40,10 @@ public class TrajectoriesStatistics {
 
 		// Start the computation
 
-		JavaPairDStream<String, Iterable<Trajectory>> trajectories = TrajectoriesStreamUtils
+		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
 				.getTrajectoriesStream(jssc);
 		// update the stream state
-		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
+		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
 		printLatencies(runningTrajectories);
@@ -58,13 +58,13 @@ public class TrajectoriesStatistics {
 		}
 	}
 
-	private static void printLatencies(JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories) {
+	private static void printLatencies(JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
 		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
 
 			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
 
-			Iterable<Trajectory> trajectoriesList = trajectoryTuple._2;
-			for (Trajectory trajectory : trajectoriesList) {
+			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
+			for (PositionMessage trajectory : trajectoriesList) {
 				if (trajectory.isNew()) {
 					sumLatency += currentTime - trajectory.getStreamedTime();
 					count++;
@@ -85,26 +85,26 @@ public class TrajectoriesStatistics {
 	 * values for the key
 	 * 
 	 */
-	public static Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>> updateTrajectoriesAndComputeStatistics = new Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>>() {
+	public static Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>> updateTrajectoriesAndComputeStatistics = new Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>>() {
 
 		private static final long serialVersionUID = -76088662409004569L;
 
 		@Override
-		public Optional<Iterable<Trajectory>> call(List<Iterable<Trajectory>> values,
-				Optional<Iterable<Trajectory>> state) {
+		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> values,
+				Optional<Iterable<PositionMessage>> state) {
 
-			Trajectory lastOldTrajectory = null;
-			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
+			PositionMessage lastOldTrajectory = null;
+			List<PositionMessage> aggregatedTrajectories = new ArrayList<>();
 			// get last old trajectory to be used in statistics computation
-			Iterable<Trajectory> stateTrajectories = state.orElse(new ArrayList<>());
-			for (Trajectory trajectory : stateTrajectories) {
+			Iterable<PositionMessage> stateTrajectories = state.orElse(new ArrayList<>());
+			for (PositionMessage trajectory : stateTrajectories) {
 				lastOldTrajectory = trajectory;
 				lastOldTrajectory.setNew(false);
 			}
 			
 			// aggregate new values
-			for (Iterable<Trajectory> val : values) {
-				for (Trajectory trajectory : val) {
+			for (Iterable<PositionMessage> val : values) {
+				for (PositionMessage trajectory : val) {
 					aggregatedTrajectories.add(trajectory);
 				}
 
@@ -116,7 +116,7 @@ public class TrajectoriesStatistics {
 			
 			aggregatedTrajectories = TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
 
-			for (Trajectory trajectory : aggregatedTrajectories) {
+			for (PositionMessage trajectory : aggregatedTrajectories) {
 				// compute statistics for each trajectory
 				StatisticsUtils.computeStatistics(lastOldTrajectory, trajectory);
 				lastOldTrajectory = trajectory;

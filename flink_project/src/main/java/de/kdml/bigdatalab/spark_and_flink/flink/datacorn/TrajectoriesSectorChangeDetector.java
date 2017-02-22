@@ -10,7 +10,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 
 /**
@@ -26,7 +26,7 @@ public class TrajectoriesSectorChangeDetector {
 	public static void main(String[] args) throws Exception {
 
 		StreamExecutionEnvironment env = FlinkUtils.getInitializedEnv();
-		KeyedStream<Tuple2<String, Trajectory>, Tuple> trajectoriesStream = TrajectoriesStreamUtils
+		KeyedStream<Tuple2<String, PositionMessage>, Tuple> trajectoriesStream = TrajectoriesStreamUtils
 				.getTrajectoriesStream(env);
 
 		DataSet<Sector> sectorsDataSet = getSectorDataSet();
@@ -35,7 +35,7 @@ public class TrajectoriesSectorChangeDetector {
 		// the sector between two consecutive trajectories
 		DataStream<String> trajectoriesStreamWithSectors = trajectoriesStream
 				.reduce(new TrajectoriesSectorsReducer(sectorsDataSet.collect())).filter(tuple -> {
-					Trajectory trajectory = tuple.f1;
+					PositionMessage trajectory = tuple.f1;
 					if (trajectory.getPrevSector() != null
 							&& !trajectory.getSector().equals(trajectory.getPrevSector())) {
 						return true;
@@ -44,7 +44,7 @@ public class TrajectoriesSectorChangeDetector {
 				}).map(tuple -> {
 
 					// print the sector transition
-					Trajectory trajectory = tuple.f1;
+					PositionMessage trajectory = tuple.f1;
 					return tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
 							+ trajectory.getSector().getNameAndAirBlock();
 

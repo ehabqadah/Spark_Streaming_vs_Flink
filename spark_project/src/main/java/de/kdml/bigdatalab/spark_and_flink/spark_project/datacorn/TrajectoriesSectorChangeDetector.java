@@ -16,7 +16,7 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.SectorUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 
 /**
@@ -44,10 +44,10 @@ public class TrajectoriesSectorChangeDetector {
 		sectors = sc.broadcast(getSectorsDataSet(sc));
 		// Start the computation
 
-		JavaPairDStream<String, Iterable<Trajectory>> trajectories = TrajectoriesStreamUtils
+		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
 				.getTrajectoriesStream(jssc);
 		// update the stream state
-		JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories = trajectories
+		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndAssignSectors);
 
 		// find trajectories with change in sector
@@ -55,10 +55,10 @@ public class TrajectoriesSectorChangeDetector {
 
 			// filter the trajectories that contain change in sector between two
 			// consecutive trajectories
-			Iterable<Trajectory> trajectoriesList = trajectoryTuple._2;
+			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
 
-			Trajectory prevTrajectory = null;
-			for (Trajectory trajectory : trajectoriesList) {
+			PositionMessage prevTrajectory = null;
+			for (PositionMessage trajectory : trajectoriesList) {
 				if (prevTrajectory != null) {
 					if ((prevTrajectory.isNew() || trajectory.isNew())
 							&& (!trajectory.getSector().equals(prevTrajectory.getSector()))) {
@@ -74,10 +74,10 @@ public class TrajectoriesSectorChangeDetector {
 			// print the sector change transitions
 			StringBuilder output = new StringBuilder(trajectoryTuple._1);
 			output.append(": ");
-			Iterable<Trajectory> trajectoriesList = trajectoryTuple._2;
+			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
 
-			Trajectory prevTrajectory = null;
-			for (Trajectory trajectory : trajectoriesList) {
+			PositionMessage prevTrajectory = null;
+			for (PositionMessage trajectory : trajectoriesList) {
 
 				if (prevTrajectory != null) {
 
@@ -136,26 +136,26 @@ public class TrajectoriesSectorChangeDetector {
 	 * values for the key
 	 * 
 	 */
-	public static Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>> updateTrajectoriesAndAssignSectors = new Function2<List<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>, Optional<Iterable<Trajectory>>>() {
+	public static Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>> updateTrajectoriesAndAssignSectors = new Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>>() {
 
 		private static final long serialVersionUID = -76088662409004569L;
 
 		@Override
-		public Optional<Iterable<Trajectory>> call(List<Iterable<Trajectory>> values,
-				Optional<Iterable<Trajectory>> state) {
+		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> values,
+				Optional<Iterable<PositionMessage>> state) {
 
-			Trajectory lastOldTrajectory = null;
+			PositionMessage lastOldTrajectory = null;
 
 			// get last old trajectory to be used in statistics computation
-			Iterable<Trajectory> stateTrajectories = state.orElse(new ArrayList<>());
-			for (Trajectory trajectory : stateTrajectories) {
+			Iterable<PositionMessage> stateTrajectories = state.orElse(new ArrayList<>());
+			for (PositionMessage trajectory : stateTrajectories) {
 				lastOldTrajectory = trajectory;
 				lastOldTrajectory.setNew(false);
 			}
-			List<Trajectory> newTrajectories = new ArrayList<>();
+			List<PositionMessage> newTrajectories = new ArrayList<>();
 			// aggregate new values
-			for (Iterable<Trajectory> val : values) {
-				for (Trajectory trajectory : val) {
+			for (Iterable<PositionMessage> val : values) {
+				for (PositionMessage trajectory : val) {
 					newTrajectories.add(trajectory);
 				}
 
@@ -166,13 +166,13 @@ public class TrajectoriesSectorChangeDetector {
 				return Optional.of(stateTrajectories);
 			}
 
-			List<Trajectory> aggregatedTrajectories = new ArrayList<>();
+			List<PositionMessage> aggregatedTrajectories = new ArrayList<>();
 			// append only the last old trajectory
 			if (lastOldTrajectory != null) {
 				appendTrajectoryAndAssignSector(aggregatedTrajectories, lastOldTrajectory);
 			}
 
-			for (Trajectory trajectory : newTrajectories) {
+			for (PositionMessage trajectory : newTrajectories) {
 				trajectory.setNew(true);
 				appendTrajectoryAndAssignSector(aggregatedTrajectories, trajectory);
 
@@ -187,7 +187,7 @@ public class TrajectoriesSectorChangeDetector {
 		 * @param aggregatedTrajectories
 		 * @param trajectory
 		 */
-		private void appendTrajectoryAndAssignSector(List<Trajectory> aggregatedTrajectories, Trajectory trajectory) {
+		private void appendTrajectoryAndAssignSector(List<PositionMessage> aggregatedTrajectories, PositionMessage trajectory) {
 
 			// assign sector for trajectory
 			if (trajectory.getSector() == null) {

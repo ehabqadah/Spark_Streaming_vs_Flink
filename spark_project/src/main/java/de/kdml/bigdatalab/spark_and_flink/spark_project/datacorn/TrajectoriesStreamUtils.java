@@ -20,7 +20,7 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Trajectory;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import scala.Tuple2;
 
 /**
@@ -34,7 +34,7 @@ public class TrajectoriesStreamUtils {
 
 	private static Configs configs = Configs.getInstance();
 
-	public static JavaPairDStream<String, Iterable<Trajectory>> getTrajectoriesStream(JavaStreamingContext jssc) {
+	public static JavaPairDStream<String, Iterable<PositionMessage>> getTrajectoriesStream(JavaStreamingContext jssc) {
 
 		Set<String> topicsSet = new HashSet<String>();
 		topicsSet.add(configs.getStringProp("topicId"));
@@ -81,10 +81,10 @@ public class TrajectoriesStreamUtils {
 		 * RDDs of the new DStream. org.apache.spark.Partitioner is used to
 		 * control the partitioning of each RDD)
 		 */
-		JavaPairDStream<String, Iterable<Trajectory>> trajectories = dataStream.mapToPair(record -> {
+		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = dataStream.mapToPair(record -> {
 
 			StreamRecord streamRecord = StreamRecord.parseData(record.value());
-			Trajectory trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
+			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
 			trajectory.setNew(true);
 			
