@@ -19,7 +19,7 @@ import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 
 /**
  * 
- * Compute statistics per trajectory
+ * Compute statistics per trajectory in Spark Streaming
  * 
  * @author Ehab Qadah
  * 
@@ -38,11 +38,14 @@ public class TrajectoriesStatistics {
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
-		// Start the computation
-
+		// create the trajectories stream
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
 				.getTrajectoriesStream(jssc);
-		// update the stream state
+		/**
+		 * Manage the state of the trajectories stream by calculating the
+		 * statistics in every batch from aggregated old statistics, for more
+		 * details check {updateTrajectoriesAndComputeStatistics}
+		 */
 		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
@@ -58,6 +61,11 @@ public class TrajectoriesStatistics {
 		}
 	}
 
+	/**
+	 * Print latencies measurements
+	 * 
+	 * @param runningTrajectories
+	 */
 	private static void printLatencies(JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
 		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
 
@@ -80,9 +88,10 @@ public class TrajectoriesStatistics {
 	}
 
 	/**
-	 * Return a new "state" DStream where the state for each key is updated by
-	 * applying the given function on the previous state of the key and the new
-	 * values for the key
+	 * Return a new "state" trajectories DStream where the state for each
+	 * trajectory key is updated by applying statistics calculation and
+	 * aggregation on the previous state of the key and the new values for the
+	 * key
 	 * 
 	 */
 	public static Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>> updateTrajectoriesAndComputeStatistics = new Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>>() {
@@ -90,83 +99,61 @@ public class TrajectoriesStatistics {
 		private static final long serialVersionUID = -76088662409004569L;
 
 		@Override
-		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> values,
-				Optional<Iterable<PositionMessage>> state) {
+		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> newPostitions,
+				Optional<Iterable<PositionMessage>> statePositions) {
 
-			PositionMessage lastOldTrajectory = null;
-			List<PositionMessage> aggregatedTrajectories = new ArrayList<>();
-			// get last old trajectory to be used in statistics computation
-			Iterable<PositionMessage> stateTrajectories = state.orElse(new ArrayList<>());
-			for (PositionMessage trajectory : stateTrajectories) {
-				lastOldTrajectory = trajectory;
-				lastOldTrajectory.setNew(false);
-			}
-			
+			// Get last old trajectory to be used in statistics computation for
+			// new batch positions
+
+			Iterable<PositionMessage> prevBatchPositions = statePositions.orElse(new ArrayList<>());
+
+			// Get last position in previous batch
+			PositionMessage lastOldPosition = getLastPosition(prevBatchPositions);
+
+			// Combine all new batch positions
+			List<PositionMessage> aggregatedPositions = new ArrayList<>();
 			// aggregate new values
-			for (Iterable<PositionMessage> val : values) {
-				for (PositionMessage trajectory : val) {
-					aggregatedTrajectories.add(trajectory);
+			for (Iterable<PositionMessage> val : newPostitions) {
+				for (PositionMessage position : val) {
+					aggregatedPositions.add(position);
 				}
 
 			}
-			if(aggregatedTrajectories.size()==0)
-			{
-				return Optional.of(stateTrajectories);
-			}
-			
-			aggregatedTrajectories = TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
 
-			for (PositionMessage trajectory : aggregatedTrajectories) {
-				// compute statistics for each trajectory
-				StatisticsUtils.computeStatistics(lastOldTrajectory, trajectory);
-				lastOldTrajectory = trajectory;
+			// In case there is no new positions keep the current state for the
+			// given trajectory
+			if (aggregatedPositions.size() == 0) {
+				return Optional.of(prevBatchPositions);
+			}
+
+			// First, use the last old position as the first record for
+			// calculating the statistics quantities, and the sort is needed
+			// since we need to preserve the right order of the position
+			// messages based on the streamed time
+			aggregatedPositions = TrajectoriesUtils.sortTrajectories(aggregatedPositions);
+
+			for (PositionMessage trajectory : aggregatedPositions) {
+				// Compute statistics for each position message based on
+				// the aggregated values of previous position statistics
+				StatisticsUtils.computeStatistics(lastOldPosition, trajectory);
+				lastOldPosition = trajectory;
 
 			}
-			// update state
-			return Optional.of(aggregatedTrajectories);
+			// Aggregate state
+			return Optional.of(aggregatedPositions);
+		}
+
+		/**
+		 * Get last position message in previous batch's positions
+		 */
+		private PositionMessage getLastPosition(Iterable<PositionMessage> prevBatchPositions) {
+			PositionMessage lastOldPosition = null;
+			for (PositionMessage trajectory : prevBatchPositions) {
+				lastOldPosition = trajectory;
+				lastOldPosition.setNew(false);
+			}
+			return lastOldPosition;
 		}
 	};
 
-	/**
-	 * NOTE: mapWithState is still in the experimental phase
-	 * JavaPairDStream<String, Iterable<Trajectory>> runningTrajectories =
-	 * trajectories
-	 * .mapWithState(StateSpec.function(updateTrajectoriesStreamFunction2)).stateSnapshots();
-	 * 
-	 * * Return a new "state" DStream where the state for each key is updated by
-	 * applying the given function on the previous state of the key and the new
-	 * values for the key
-	 * 
-	 * To be used with mapWithState
-	 * 
-	 * public static Function3<String, Optional<Iterable<Trajectory>>,
-	 * State<Iterable<Trajectory>>, Tuple2<String, Iterable<Trajectory>>>
-	 * updateTrajectoriesStreamFunction2 = new Function3<String,
-	 * Optional<Iterable<Trajectory>>, State<Iterable<Trajectory>>,
-	 * Tuple2<String, Iterable<Trajectory>>>() {
-	 * 
-	 * private static final long serialVersionUID = -1393453967261881632L;
-	 * 
-	 * @Override public Tuple2<String, Iterable<Trajectory>> call(String id,
-	 *           Optional<Iterable<Trajectory>> values,
-	 *           State<Iterable<Trajectory>> state) throws Exception {
-	 *           List<Trajectory> aggregatedTrajectories = new ArrayList<>(); //
-	 *           add old state for (Trajectory trajectory : (state.exists() ?
-	 *           state.get() : new ArrayList<Trajectory>())) {
-	 *           aggregatedTrajectories.add(trajectory); }
-	 * 
-	 *           // aggergate new values
-	 * 
-	 *           for (Trajectory val : values.orElse(new
-	 *           ArrayList<Trajectory>())) {
-	 * 
-	 *           aggregatedTrajectories.add(val);
-	 * 
-	 *           }
-	 * 
-	 *           aggregatedTrajectories =
-	 *           TrajectoriesUtils.sortTrajectories(aggregatedTrajectories);
-	 *           state.update(aggregatedTrajectories); return new Tuple2<>(id,
-	 *           aggregatedTrajectories); } };
-	 */
 }

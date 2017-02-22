@@ -3,7 +3,8 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 import java.io.Serializable;
 
 /***
- * Stream record of value and streamed time
+ * Stream record of value (i.e., ADB-S message) {@link PositionMessage} and
+ * streamed time
  * 
  * @author Ehab Qadah
  * 
@@ -53,10 +54,7 @@ public class StreamRecord implements Serializable {
 	}
 
 	/**
-	 * Parse a stream record
-	 * 
-	 * @param line
-	 * @return
+	 * Parse a stream record from string line 
 	 */
 	public static StreamRecord parseData(String line) {
 

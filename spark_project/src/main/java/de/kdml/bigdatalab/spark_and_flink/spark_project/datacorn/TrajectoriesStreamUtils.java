@@ -36,25 +36,26 @@ public class TrajectoriesStreamUtils {
 
 	public static JavaPairDStream<String, Iterable<PositionMessage>> getTrajectoriesStream(JavaStreamingContext jssc) {
 
+		//setup Kafka parameters 
 		Set<String> topicsSet = new HashSet<String>();
 		topicsSet.add(configs.getStringProp("topicId"));
-
 		Map<String, Object> kafkaParams = new HashMap<>();
 		kafkaParams.put("bootstrap.servers", configs.getStringProp("bootstrap.servers"));
 		kafkaParams.put("key.deserializer", StringDeserializer.class);
 		kafkaParams.put("value.deserializer", StringDeserializer.class);
 		kafkaParams.put("group.id", configs.getStringProp("kafkaGroupId"));
 		kafkaParams.put("auto.offset.reset", "latest");
-		//kafkaParams.put("enable.auto.commit", false);
+		kafkaParams.put("enable.auto.commit", false);
 
 		List<JavaDStream<ConsumerRecord<String, String>>> kafkaStreams = new ArrayList<>();
 
-		// to create parallel receivers for the same topic with same group to
-		// scale with kafka partitions
+		/**
+		 * create parallel receivers for the same topic within same group, in order to
+		 * scale with Kafka partitions
+		 **/
 		int numParallelKafkaStream = configs.getIntProp("numberOfKafkParallelStreams");
 		for (int i = 0; i < numParallelKafkaStream; i++) {
 			// Create direct kafka stream
-			// Create multiple stream and union them
 			JavaDStream<ConsumerRecord<String, String>> dataStreami = KafkaUtils.createDirectStream(jssc,
 					LocationStrategies.PreferConsistent(),
 					ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
@@ -62,19 +63,15 @@ public class TrajectoriesStreamUtils {
 			kafkaStreams.add(dataStreami);
 		}
 
-		// union all kafka streams
+		// union all parallel Kafka streams
 		JavaDStream<ConsumerRecord<String, String>> dataStream = numParallelKafkaStream == 1 ? kafkaStreams.get(0)
 				: jssc.union(kafkaStreams.get(0), kafkaStreams.subList(1, kafkaStreams.size()));
 
 		// Start the computation
-
 		/**
-		 * 1- parse data lines to create tuple<id,trajectory>
-		 * 
-		 * 2-filter messages
-		 * 
-		 * 3- group all trajectories with same id
-		 * 
+		 * 1- parse the stream record to create tuple<trajectory_id,position_message>
+		 * 2-filter irrelevant tuples based on position message type
+		 * 3- group all tuples that share the same trajectory_id by using groupBy operation
 		 * ( groubByKey -> Return a new DStream by applying `groupByKey` on each
 		 * RDD of `this` DStream. Therefore, the values for each key in `this`
 		 * DStream's RDDs are grouped into a single sequence to generate the
@@ -87,7 +84,7 @@ public class TrajectoriesStreamUtils {
 			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
 			trajectory.setNew(true);
-			
+
 			return new Tuple2<>(trajectory.getID(), trajectory);
 		}).filter(tuple -> {
 			// get only msg2 & msg3 types
