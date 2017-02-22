@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
@@ -19,8 +18,8 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
 import scala.Tuple2;
 
 /**
@@ -36,7 +35,7 @@ public class TrajectoriesStreamUtils {
 
 	public static JavaPairDStream<String, Iterable<PositionMessage>> getTrajectoriesStream(JavaStreamingContext jssc) {
 
-		//setup Kafka parameters 
+		// setup Kafka parameters
 		Set<String> topicsSet = new HashSet<String>();
 		topicsSet.add(configs.getStringProp("topicId"));
 		Map<String, Object> kafkaParams = new HashMap<>();
@@ -50,8 +49,8 @@ public class TrajectoriesStreamUtils {
 		List<JavaDStream<ConsumerRecord<String, String>>> kafkaStreams = new ArrayList<>();
 
 		/**
-		 * create parallel receivers for the same topic within same group, in order to
-		 * scale with Kafka partitions
+		 * create parallel receivers for the same topic within same group, in
+		 * order to scale with Kafka partitions
 		 **/
 		int numParallelKafkaStream = configs.getIntProp("numberOfKafkParallelStreams");
 		for (int i = 0; i < numParallelKafkaStream; i++) {
@@ -69,14 +68,15 @@ public class TrajectoriesStreamUtils {
 
 		// Start the computation
 		/**
-		 * 1- parse the stream record to create tuple<trajectory_id,position_message>
-		 * 2-filter irrelevant tuples based on position message type
-		 * 3- group all tuples that share the same trajectory_id by using groupBy operation
-		 * ( groubByKey -> Return a new DStream by applying `groupByKey` on each
-		 * RDD of `this` DStream. Therefore, the values for each key in `this`
-		 * DStream's RDDs are grouped into a single sequence to generate the
-		 * RDDs of the new DStream. org.apache.spark.Partitioner is used to
-		 * control the partitioning of each RDD)
+		 * 1- parse the stream record to create
+		 * tuple<trajectory_id,position_message> 2-filter irrelevant tuples
+		 * based on position message type 3- group all tuples that share the
+		 * same trajectory_id by using groupBy operation ( groubByKey -> Return
+		 * a new DStream by applying `groupByKey` on each RDD of `this` DStream.
+		 * Therefore, the values for each key in `this` DStream's RDDs are
+		 * grouped into a single sequence to generate the RDDs of the new
+		 * DStream. org.apache.spark.Partitioner is used to control the
+		 * partitioning of each RDD)
 		 */
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = dataStream.mapToPair(record -> {
 

@@ -89,31 +89,15 @@ In our experimental evaluation, we developed two real-time stream processing wor
 \item How to provide and update global data model in stream processing task.
 \item Evaluate the performance by measuring  the latency and throughput.
 \end{itemize}
-We present the relation of workloads and these aspects, and th implementation details of Spark and Flink solutions in Section 3.2.1 \& 3.2.1. Afterward, In Section 4 we discuss the performance evaluation and analysis of workloads.
+We present the description of workloads and the relation with these aspects, and th implementation details of Spark and Flink solutions in Section 3.2.1 \& 3.2.1. Afterward, In Section 4 we discuss the performance evaluation and analysis of workloads.
 
 \subsubsection{Statistics Computation per Trajectory}
-In first stream processing workload, we perform statistics calculation for each trajectory (i.e.,  messages of the same ID) in ADS-B messages stream. As example of computed statistics indexes speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we try to cover 
-the parallel receiving of input data stream, state-full stream aggregation, and preserve the order of stream records.
+In first stream processing workload, we construct stream of trajectories by considering  the aircraft's positions (i.e., ADS-B messages) that belong to the same aircraft as trajectory. Moreover, we continuously compute and aggregate statistics for each arriving position in a  trajectory . As example of computed statistics indexes speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we  cover the parallel receiving of input data stream, state-full aggregation on input data stream, and preserving the right order of the stream's records.
 The implementation details of this workload in Spark and Flink are presented in the following: 
 \begin{itemize}
 \item {\bf{Implementation in Spark }}
 
-The statistics calculation workload is implemented in Spark by performing the following steps: \begin{enumerate*}[label={\alph*)}]
-\item read parallel Kafka input streams 
-\item parse the multiple streams records   
-\item filter only the relevant  messages 
-\item combine the all messages related to the same trajectory
-\item manage the aggregate state and compute the statistics for each trajectory.
-\end{enumerate*}
-
-\par The used Spark Streaming API operations to execute those steps are shown in Figure 2. First, in Spark to consume parallel Kafka stream, multiple Kafka stream receivers must be created then combine them using the stream \texttt{union} API. Second, we parse each stream record (i.e., ADS-B message) then map it to tuple of aircraft ID and a position of aircraft object through \texttt{mapToPair} transformation API. Third, the irrelevant messages are filtered by the \texttt{filter}. Fourth, the tuples with same ID are grouped together using the \texttt{groupByKey} Spark API function, after applying this transformation the input stream records are shuffled which means to preserve the order of records a sort operation is needed. Finally, due to the mini-batch nature of Spark streaming, the input stream is processed batch by batch, we use the  \texttt{updateStateByKey} to compute statistics per trajectory after sorting the list of positions, then update the aggregated state of the trajectories stream.
-
-\begin{figure}[h]
- 
-  \centering
-  
-     \caption{Spark streaming implementation of statistics computation workload.}
-\end{figure} 
+\par The Spark Streaming implementation of trajectory statistics computation read the Kafka stream using \texttt{KafkaUtils.createDirectStream} that creates \texttt{DStream} instance, in order to scale up and have parallel Kafka stream receivers, a multiple instances of \texttt{DStream} are created and combined together using \texttt{union} operation. The output stream of the \texttt{union} is processed using \texttt{mapToPair}, to map each position message to tuple of aircraft ID and position message. Then, the irrelevant tuples are filtered based on the position message type using  a \texttt{filter} transformation. Afterward, the tuple with same aircraft ID are groped together to construct trajectories (tuples of Id and list of positions), by applying the \texttt{groupByKey} operation. Since streaming model of Spark is micro-batch based and stateless, \texttt{updateStateByKey} operation is must be used to manage the state between the batches. In context of this workload, the statistics computation is preformed within the custom \texttt{updateStateByKey} function, which uses the last position of trajectory from previous batch to aggregate and compute statistics values to each trajectory's position in the new arriving batch.  The list of new positions must be sorted to preserve the correct order, since the tuples after \texttt{groupByKey} operation are shuffled across the cluster's  nodes.
 
 \item {\bf{Implementation in Flink }}
 
