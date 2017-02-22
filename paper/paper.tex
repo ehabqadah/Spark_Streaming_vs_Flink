@@ -80,16 +80,16 @@ The data stream is portioned into four portions over two server, while the data 
 \end{figure} 
 
 \subsection{Evaluation Streaming Workloads}
-In our experimental evaluation, we developed two streaming processing workloads that read the ADS-B messages stream from Kafka to perform basic trajectories analysis methods. In our design choice, we try to cover key main points related to the streaming processing, to evaluate how  does each framework perform. The following are general key aspects of  streaming data processing were covered by our workloads design: 
+In our experimental evaluation, we developed two real-time stream processing workloads that read the ADS-B messages stream from Kafka in order to perform basic trajectories analysis methods. In our design choice, we try to cover some key points that related to the streaming processing tasks, and evaluate the corresponding solutions in Spark and Flink. The following are general key aspects of  streaming data processing were covered by our workloads's design: 
 
 \begin{itemize}
-\item Handling parallel input streams.
-\item How to aggregate the state of input stream records.
-\item Mange the order of stream records.
+\item Handling parallel input streams (e.g., Kafka Stream).
+\item How to aggregate the state of input stream.
+\item Manage the order of stream records.
 \item How to provide and update global data model in stream processing task.
 \item Evaluate the performance by measuring  the latency and throughput.
 \end{itemize}
-We present how Spark and Flink are handling these key aspects and related issues in each workload, then we discuss the performance evaluation in Section 4.
+We present the relation of workloads and these aspects, and th implementation details of Spark and Flink solutions in Section 3.2.1 \& 3.2.1. Afterward, In Section 4 we discuss the performance evaluation and analysis of workloads.
 
 \subsubsection{Statistics Computation per Trajectory}
 In first stream processing workload, we perform statistics calculation for each trajectory (i.e.,  messages of the same ID) in ADS-B messages stream. As example of computed statistics indexes speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we try to cover 
