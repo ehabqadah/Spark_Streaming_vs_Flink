@@ -11,6 +11,8 @@
 
 \begin{flushleft}
 \centering\LARGE {\bf Comparative Evaluation of Spark and Flink Stream Processing}
+
+Supervisor: PD Dr. Michael Mock
 \thispagestyle{empty}
 \end{flushleft}
 \newpage
@@ -35,8 +37,9 @@ In this paper, we provide a performance comparison of streaming data processing 
 \par TODO: add paragraph about Yahoo benchmark and why do we still need evaluation 1- continuous dev of frameworks 2- explore more complex operation like groupby that shuffle the data.
 \par The purpose of this paper is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads we try to cover the main programming API differences between the both frameworks. Informally,  this work aims to help developer to determine which platform to choose in production. 
 
-\par The rest of this paper is organized as follows: Section 2
-presents the main characteristics, APIs, and main data abstraction of Spark and Flink. Section 3  describes the experiment workloads and their implementation in each framework. Section 4
+
+\par The remainder of this paper is organized as follows.
+In Section 2, we present the main characteristics, APIs, and main data abstraction of Spark and Flink. Section 3  describes the experiment workloads and their implementation in each framework. Section 4
 provides and compares the performance results of the different workloads. Finally, Section 5 gives the overall conclusion.
 
 \section{Technical Background}
@@ -80,7 +83,7 @@ The data stream is portioned into four portions over two server, while the data 
 \end{figure} 
 
 \subsection{Evaluation Streaming Workloads}
-In our experimental evaluation, we developed two real-time stream processing workloads that read the ADS-B messages stream from Kafka in order to perform basic trajectories analysis methods. In our design choice, we try to cover some key points that related to the streaming processing tasks, and evaluate the corresponding solutions in Spark and Flink. The following are general key aspects of  streaming data processing were covered by our workloads's design: 
+In our experimental evaluation, we developed two real-time stream processing workloads that read the ADS-B messages stream from Kafka in order to perform basic trajectories analysis methods. The workloads are designed in such way that cover general key aspects of real-time streaming processing tasks, and evaluate the corresponding solutions in Spark and Flink. The following are the aspects of streaming data processing were covered by our workloads's design: 
 
 \begin{itemize}
 \item Handling parallel input streams (e.g., Kafka Stream).
@@ -101,6 +104,11 @@ The implementation details of this workload in Spark and Flink are presented in 
 
 \item {\bf{Implementation in Flink }}
 
+
+The detail of Flink's implementation of statistics computation workload as follows. First, \texttt{map}
+
+
+
 The statistics computation of trajectories stream is solved in Flink by performing the following steps: \begin{enumerate*}[label={\alph*)}]
 \item read Kafka input stream
 \item parse the input stream records   
@@ -111,12 +119,7 @@ The statistics computation of trajectories stream is solved in Flink by performi
 
 \par The utilized Flink APIs to perform those steps are shown in Figure 3. First, create Kafka stream consumers that run in multiple parallel instances based on the configured \texttt{parallelism} factor. Second,  stream elements (i.e., ADS-B message) are mapped  to tuples of aircraft ID and  position object through \texttt{map} transformation API. Third, the irrelevant messages are filtered by the \texttt{filter}. Fourth, tuples with same ID are combined together using the \texttt{keyBy} API function. Finally, the \texttt{reduce} API function is used to calculate the statistics and aggregate it.
 
-\begin{figure}[h]
- 
-  \centering
-  
-     \caption{Flink implementation of statistics computation workload.}
-\end{figure}
+
 
 
 //TODO: discuss differences between Flink and Spark.
