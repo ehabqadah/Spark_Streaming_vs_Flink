@@ -105,21 +105,8 @@ The implementation details of this workload in Spark and Flink are presented in 
 \item {\bf{Implementation in Flink }}
 
 
-The detail of Flink's implementation of statistics computation workload as follows. First, \texttt{map}
-
-
-
-The statistics computation of trajectories stream is solved in Flink by performing the following steps: \begin{enumerate*}[label={\alph*)}]
-\item read Kafka input stream
-\item parse the input stream records   
-\item filter only the relevant  messages 
-\item combine the all messages related to the same trajectory
-\item compute the statistics for each trajectory.
-\end{enumerate*}
-
-\par The utilized Flink APIs to perform those steps are shown in Figure 3. First, create Kafka stream consumers that run in multiple parallel instances based on the configured \texttt{parallelism} factor. Second,  stream elements (i.e., ADS-B message) are mapped  to tuples of aircraft ID and  position object through \texttt{map} transformation API. Third, the irrelevant messages are filtered by the \texttt{filter}. Fourth, tuples with same ID are combined together using the \texttt{keyBy} API function. Finally, the \texttt{reduce} API function is used to calculate the statistics and aggregate it.
-
-
+The detail of Flink's implementation of statistics computation workload as follows. First, a \texttt{FlinkKafkaConsumer} is used to read the Kafka stream that constructs \texttt{DataStream} instance, moreover, it implicitly runs multiple parallel Kafka stream consumers, which makes the Kafka partitions balanced between the instances. Second, the stream records (i.e., ADS-B messages) are parsed and transformed to tuples of ID and position message using a configured \texttt{map} transformation. Third, a \texttt{filter} function is used to filter irrelevant tuples based on the message type. Fourth, the result tuples after the filtration steps are grouped with similar ID using \texttt{keyBy} operator, to constructs the stream of trajectories. Finally, 
+a \texttt{reduce} transformation on the trajectories tuples is used to calculate the statistics for new received trajectory's position, utilizing the aggregated statistics of previous position, while old position is discarded and the new record is used to aggregate the statistics.
 
 
 //TODO: discuss differences between Flink and Spark.
