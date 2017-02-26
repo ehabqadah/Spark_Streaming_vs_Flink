@@ -15,8 +15,8 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.SectorUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 
 /**
@@ -54,7 +54,7 @@ public class TrajectoriesSectorChangeDetector {
 		JavaDStream<String> changedTrajectories = runningTrajectories.filter(trajectoryTuple -> {
 
 			// filter the trajectories that contain change in sector between two
-			// consecutive trajectories
+			// consecutive positions
 			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
 
 			PositionMessage prevTrajectory = null;
@@ -187,7 +187,8 @@ public class TrajectoriesSectorChangeDetector {
 		 * @param aggregatedTrajectories
 		 * @param trajectory
 		 */
-		private void appendTrajectoryAndAssignSector(List<PositionMessage> aggregatedTrajectories, PositionMessage trajectory) {
+		private void appendTrajectoryAndAssignSector(List<PositionMessage> aggregatedTrajectories,
+				PositionMessage trajectory) {
 
 			// assign sector for trajectory
 			if (trajectory.getSector() == null) {
