@@ -25,10 +25,10 @@ public class TrajectoriesStatistics {
 		 * Reduce the trajectories by aggregate the statics from the previous
 		 * trajectory record and keep the new record, the further aggregation
 		 * and discard old record.
-		 * 
 		 **/
 
-		DataStream<Tuple2<String, PositionMessage>> trajectoriesStream = TrajectoriesStreamUtils.getTrajectoriesStream(env)
+		DataStream<Tuple2<String, PositionMessage>> trajectoriesStream = TrajectoriesStreamUtils
+				.getTrajectoriesStream(env)
 				.reduce((Tuple2<String, PositionMessage> tuple1, Tuple2<String, PositionMessage> tuple2) -> {
 					// compute & aggregate statistics for the new trajectory
 					// based on the statistics of old trajectory
