@@ -77,9 +77,16 @@ It offers programming API in Java and Scala. Its software stack includes the cor
 \end{figure} 
 \subsection{Apache Kafka}
 \par Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
-It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. It has been widely  adopted, for example, 
+It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers of the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. The consumers are grouped into groups based on the group name that allows Kafka to distribute and balance the stream partitions among the  members of a certain group for the sake of scalability. Figure 3 shows how 4 partitions of stream is distributed differentially between two groups of consumers based on the number of members. 
+Apache Kafka has been widely  adopted, for example, 
 Spark and Flink can receive data stream from Kafka. 
 
+\begin{figure}[h]
+ 
+  \centering
+    \includegraphics[width=\textwidth, height=.3\textheight]{kafka_groups.png}
+     \caption{ Distribution of stream partitions for consumer groups in Kafka \cite{kafka}.}
+\end{figure} 
 
 \section{Experiment Setup and Implementation}
 This section describes the data stream setup, design of evaluation streaming workloads, and implementation details in Spark and Flink.
@@ -179,7 +186,7 @@ Apache flink: Stream and batch processing in a single engine.
 Bulletin of the IEEE Computer Society Technical Committee on Data Engineering, 36(4).
 
 \bibitem[8]{kafka} 
-Apache Kafka. Available: https://kafka.apache.org/ [Accessed February 2017].
+Apache Kafka. Available: https://kafka.apache.org/intro.html [Accessed February 2017].
 
 
 %
