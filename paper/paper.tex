@@ -61,14 +61,22 @@ provides and compares the performance results of the different workloads. Finall
 
 \subsection{Apache Flink}
 
-Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming applications \cite{flink}.
-It offers programming API in Java, Scala. Its stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
+\par Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming applications (i.e., finite stream)  \cite{flink}.
+It offers programming API in Java and Scala. Its software stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
 
-The main data abstraction of Flink are DataStream and DataSet that represents read-only collection of elements of the same type. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
+\par The main data abstraction of Flink are DataStream and DataSet that represent read-only collection of data elements. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
+
+\par The Flink's core is a distributed streaming dataflow engine,  each Flink program is represented by a data flow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure 2 shows a data flow graph of Flink program.
 
 
+\begin{figure}[h]
+ 
+  \centering
+    \includegraphics[width=\textwidth, height=.4\textheight]{flink_engine.png}
+     \caption{ An example of data flow graph \cite{flink}.}
+\end{figure} 
 \subsection{Apache Kafka}
-Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
+\par Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
 It manges the stream records in different categorizes (i.e., topics) that portioned and distributed over the servers in the Kafka cluster. It allows the data producers to publish stream of records to certain Kafka topic. While the consumer applications can subscribe to one or more topic to read the data stream. It has been widely  adopted, for example, 
 Spark and Flink can receive data stream from Kafka. 
 
@@ -165,7 +173,12 @@ Spark Streaming. Available: http://spark.apache.org/docs/latest/streaming-progra
 \bibitem[6]{flink} 
 Apache Flink. Available: https://flink.apache.org/ [Accessed February 2017].
 
-\bibitem[7]{kafka} 
+\bibitem[7]{flink_paper} 
+Carbone, P., Katsifodimos, A., Ewen, S., Markl, V., Haridi, S. et al. (2015)
+Apache flink: Stream and batch processing in a single engine.
+Bulletin of the IEEE Computer Society Technical Committee on Data Engineering, 36(4).
+
+\bibitem[8]{kafka} 
 Apache Kafka. Available: https://kafka.apache.org/ [Accessed February 2017].
 
 
