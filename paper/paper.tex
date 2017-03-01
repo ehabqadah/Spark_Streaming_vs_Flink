@@ -43,15 +43,21 @@ In Section 2, we present the main characteristics, APIs, and main data abstracti
 provides and compares the performance results of the different workloads. Finally, Section 5 gives the overall conclusion.
 
 \section{Technical Background}
- In this section, we present the architecture, key characteristics, programming APIs  of Apache Spark, Apache Flink. The Apache Kafka platform is also discussed briefly.
+ In this section, we present the architecture, key characteristics, programming APIs  of Apache Spark and Apache Flink. Moreover, a brief overview of the Apache Kafka platform is  provided.
 
 \subsection{Apache Spark}
 
 \par Apache Spark is an open source project that provide general framework for large-scale data processing \cite{spark}. It offers programming API in Java, Scala, Python and R. Its stack includes set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
 
-\par The main data abstraction in Spark is the Resilient Distributed Datasets (RDDs), which is a in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs supports two categories of operations: transformations that drive new RDDs from the operated ones (e.g., map).  And actions which return a value (e.g., count).
+\par The main data abstraction in Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs supports two categories of operations: transformations that drive new RDDs from the operated ones (e.g., map), and actions which return a certain value (e.g., count). On the other hand, the Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is batch-based processing model, which process the continuous stream of data by divided into micro-batches to be processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
 
-//TODO: DStreams, streaming model
+
+\begin{figure}[h]
+ 
+  \centering
+    \includegraphics[width=.9\textwidth, height=.2\textheight]{streaming-flow.png}
+     \caption{ Process flow of Spark Streaming \cite{spark_streaming}.}
+\end{figure} 
 
 \subsection{Apache Flink}
 
@@ -153,10 +159,13 @@ Apache Spark. Available: https://spark.apache.org/ [Accessed February 2017].
 \bibitem[4]{rdd}
 Zaharia, Matei, et al. "Resilient distributed datasets: A fault-tolerant abstraction for in-memory cluster computing." Proceedings of the 9th USENIX conference on Networked Systems Design and Implementation. USENIX Association, 2012.
 
-\bibitem[5]{flink} 
+\bibitem[5]{spark_streaming}
+Spark Streaming. Available: http://spark.apache.org/docs/latest/streaming-programming-guide.html [Accessed March 2017].
+
+\bibitem[6]{flink} 
 Apache Flink. Available: https://flink.apache.org/ [Accessed February 2017].
 
-\bibitem[6]{kafka} 
+\bibitem[7]{kafka} 
 Apache Kafka. Available: https://kafka.apache.org/ [Accessed February 2017].
 
 
