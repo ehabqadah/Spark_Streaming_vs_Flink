@@ -81,24 +81,26 @@ public class StatisticsUtils {
 	/**
 	 * Compute statistics by aggregating from old trajectory
 	 * 
-	 * @param oldTrajectory
-	 * @param newTrajectory
+	 * @param oldPosition
+	 * @param newPosition
 	 */
-	public static void computeStatistics(PositionMessage oldTrajectory, PositionMessage newTrajectory) {
+	public static void computeStatistics(PositionMessage oldPosition, PositionMessage newPosition) {
 
-		if (oldTrajectory == null) {
-			intitStaticsForOldTrajectory(newTrajectory);
+		if (oldPosition == null) {
+			intitStaticsForIntitialPositionOfTrajectory(newPosition);
 			return;
 		}
-		intitStaticsForOldTrajectory(oldTrajectory);// initialize statics for
-													// the first trajectory only
+		intitStaticsForIntitialPositionOfTrajectory(oldPosition);// initialize
+																	// statics
+																	// for
+		// the first trajectory only
 		double minLongtitude, minLatitude, minAltitude, minSpeed, minAcceleration;
 		double maxLongtitude, maxLatitude, maxAltitude, maxSpeed, maxAcceleration;
-		TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(oldTrajectory, newTrajectory);
-		double longtitude = newTrajectory.getLongitude(), lat = newTrajectory.getLatitude(),
-				altit = newTrajectory.getAltitude(), speed = newTrajectory.getSpeed(),
-				acceleration = newTrajectory.getAcceleration();
-		TrajectoryStatisticsWrapper oldStatistics = oldTrajectory.getStatistics();
+		TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(oldPosition, newPosition);
+		double longtitude = newPosition.getLongitude(), lat = newPosition.getLatitude(),
+				altit = newPosition.getAltitude(), speed = newPosition.getSpeed(),
+				acceleration = newPosition.getAcceleration(), newSpeed = newPosition.getSpeed();
+		TrajectoryStatisticsWrapper oldStatistics = oldPosition.getStatistics();
 		// update min longitude
 		minLongtitude = Math.min(oldStatistics.getMinLong(), longtitude);
 		// update min latitude
@@ -114,6 +116,10 @@ public class StatisticsUtils {
 		maxSpeed = Math.max(oldStatistics.getMaxSpeed(), speed);
 		maxAcceleration = Math.max(oldStatistics.getMaxAcceleration(), acceleration);
 
+		// compute aggergate speed sum & number of points to find avg speed
+		double speedSum = newSpeed + oldStatistics.getAggergatedSpeedSum();
+		long numberOfpoints = oldStatistics.getNumPoints() + 1;
+		double avgSpeed = speedSum / (double) numberOfpoints;
 		TrajectoryStatisticsWrapper statistics = new TrajectoryStatisticsWrapper();
 		statistics.setMinLong(minLongtitude);
 		statistics.setMinLat(minLatitude);
@@ -125,34 +131,37 @@ public class StatisticsUtils {
 		statistics.setMinAcceleration(minAcceleration);
 		statistics.setMaxSpeed(maxSpeed);
 		statistics.setMinSpeed(minSpeed);
-
-		newTrajectory.setStatistics(statistics);
+		statistics.setNumPoints(numberOfpoints);
+		statistics.setAggergatedSpeedSum(speedSum);
+		statistics.setAvgSpeed(avgSpeed);
+		newPosition.setStatistics(statistics);
 	}
 
 	/**
-	 * Initialize the statistics of the first trajectory
+	 * Initialize the statistics of the first postition in the trajectory
 	 * 
-	 * @param oldTrajectory
+	 * @param oldPosition
 	 */
-	private static void intitStaticsForOldTrajectory(PositionMessage oldTrajectory) {
-		if (oldTrajectory.isNew() || oldTrajectory.getStatistics() == null) {
+	private static void intitStaticsForIntitialPositionOfTrajectory(PositionMessage oldPosition) {
+		if (oldPosition.isNew() || oldPosition.getStatistics() == null) {
 
 			TrajectoryStatisticsWrapper statistics = new TrajectoryStatisticsWrapper();
-			statistics.setMinLong(oldTrajectory.getLongitude());
-			statistics.setMinLat(oldTrajectory.getLatitude());
-			statistics.setMinAltitude(oldTrajectory.getAltitude());
-			statistics.setMaxLong(oldTrajectory.getLongitude());
-			statistics.setMaxLat(oldTrajectory.getLatitude());
-			statistics.setMaxAltitude(oldTrajectory.getAltitude());
+			statistics.setMinLong(oldPosition.getLongitude());
+			statistics.setMinLat(oldPosition.getLatitude());
+			statistics.setMinAltitude(oldPosition.getAltitude());
+			statistics.setMaxLong(oldPosition.getLongitude());
+			statistics.setMaxLat(oldPosition.getLatitude());
+			statistics.setMaxAltitude(oldPosition.getAltitude());
 			statistics.setMaxAcceleration(0);
 			statistics.setMinAcceleration(0);
 			statistics.setMaxSpeed(0);
 			statistics.setMinSpeed(0);
-
-			oldTrajectory.setStatistics(statistics);
-			oldTrajectory.setSpeed(0.0);
-			oldTrajectory.setAcceleration(0.0);
-			oldTrajectory.setDistance(0.0);
+			statistics.setAvgSpeed(0);
+			statistics.setNumPoints(1);
+			oldPosition.setStatistics(statistics);
+			oldPosition.setSpeed(0.0);
+			oldPosition.setAcceleration(0.0);
+			oldPosition.setDistance(0.0);
 		}
 
 	}
