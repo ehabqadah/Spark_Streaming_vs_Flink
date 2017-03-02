@@ -178,7 +178,7 @@ public class TrajectoriesSectorChangeDetector {
 
 			}
 			// update state
-			return Optional.of(TrajectoriesUtils.sortTrajectories(aggregatedTrajectories));
+			return Optional.of(TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedTrajectories));
 		}
 
 		/**

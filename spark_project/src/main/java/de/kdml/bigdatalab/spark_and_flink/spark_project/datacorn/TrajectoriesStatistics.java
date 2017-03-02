@@ -130,7 +130,7 @@ public class TrajectoriesStatistics {
 			// calculating the statistics quantities, and the sort is needed
 			// since we need to preserve the right order of the position
 			// messages based on the streamed time
-			aggregatedPositions = TrajectoriesUtils.sortTrajectories(aggregatedPositions);
+			aggregatedPositions = TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedPositions);
 
 			for (PositionMessage trajectory : aggregatedPositions) {
 				// Compute statistics for each position message based on

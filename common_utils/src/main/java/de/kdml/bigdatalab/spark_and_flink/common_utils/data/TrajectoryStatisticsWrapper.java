@@ -14,72 +14,36 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 	public static final long serialVersionUID = 686131645808716203L;
 
 	private long numPoints;
-
 	private double minSpeed;
-
 	private double maxSpeed;
-
 	private double avgSpeed;
-
 	private double medianSpeed;
-
 	private double minAcceleration;
-
 	private double maxAcceleration;
-
 	private double avgAcceleration;
-
 	private double medianAcceleration;
-
 	private double minDifftime;
-
 	private double maxDifftime;
-
 	private double avgDifftime;
-
 	private double median_difftime;
-
 	private double minDate;
-
 	private double maxDate;
-
 	private double minLong;
-
 	private double maxLong;
-
 	private double maxAltitude;
-
 	private double minAltitude;
-
 	private double minLat;
-
 	private double maxLat;
+	private double aggergatedSpeedSum;
 
 	public TrajectoryStatisticsWrapper() {
 	}
 
-	public TrajectoryStatisticsWrapper(//
-			String id, //
-			int id_c, //
-			long nr_points, //
-			double min_speed, //
-			double max_speed, //
-			double avg_speed, //
-			double median_speed, //
-			double min_acceleration, //
-			double max_acceleration, //
-			double avg_acceleration, //
-			double median_acceleration, //
-			double min_difftime, //
-			double max_difftime, //
-			double avg_difftime, //
-			double median_difftime, //
-			double min_date, //
-			double max_date, //
-			double min_X, //
-			double max_X, //
-			double min_Y, //
-			double max_Y) {
+	public TrajectoryStatisticsWrapper(String id, int id_c, long nr_points, double min_speed, double max_speed,
+			double avg_speed, double median_speed, double min_acceleration, double max_acceleration,
+			double avg_acceleration, double median_acceleration, double min_difftime, double max_difftime,
+			double avg_difftime, double median_difftime, double min_date, double max_date, double min_X, double max_X,
+			double min_Y, double max_Y) {
 
 		super();
 
@@ -108,37 +72,8 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Statistics ");
-
 		builder.append("[ nr_points=");
 		builder.append(getNumPoints());
-		builder.append(", min_speed=");
-		builder.append(getMinSpeed());
-		builder.append(", max_speed=");
-		builder.append(getMaxSpeed());
-		builder.append(", avg_speed=");
-		builder.append(getAvgSpeed());
-		builder.append(", median_speed=");
-		builder.append(getMedianSpeed());
-		builder.append(", min_acceleration=");
-		builder.append(getMinAcceleration());
-		builder.append(", max_acceleration=");
-		builder.append(getMaxAcceleration());
-		builder.append(", avg_acceleration=");
-		builder.append(getAvgAcceleration());
-		builder.append(", median_acceleration=");
-		builder.append(getMedianAcceleration());
-		builder.append(", min_difftime=");
-		builder.append(getMinDifftime());
-		builder.append(", max_difftime=");
-		builder.append(getMaxDifftime());
-		builder.append(", avg_difftime=");
-		builder.append(getAvgDifftime());
-		builder.append(", median_difftime=");
-		builder.append(getMedian_difftime());
-		builder.append(", min_date=");
-		builder.append(getMinDate());
-		builder.append(", max_date=");
-		builder.append(getMaxDate());
 		builder.append(", min_X=");
 		builder.append(getMinLong());
 		builder.append(", max_X=");
@@ -147,6 +82,13 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 		builder.append(getMinLat());
 		builder.append(", max_Y=");
 		builder.append(getMaxLat());
+		builder.append(", min_speed=");
+		builder.append(getMinSpeed());
+		builder.append(", max_speed=");
+		builder.append(getMaxSpeed());
+		builder.append(", avg_speed=");
+		builder.append(getAvgSpeed());
+
 		builder.append("]");
 		return builder.toString();
 	}
@@ -317,6 +259,14 @@ public class TrajectoryStatisticsWrapper implements Serializable {
 
 	public void setMinAltitude(double minAltitude) {
 		this.minAltitude = minAltitude;
+	}
+
+	public double getAggergatedSpeedSum() {
+		return aggergatedSpeedSum;
+	}
+
+	public void setAggergatedSpeedSum(double aggergatedSpeedSum) {
+		this.aggergatedSpeedSum = aggergatedSpeedSum;
 	}
 
 }

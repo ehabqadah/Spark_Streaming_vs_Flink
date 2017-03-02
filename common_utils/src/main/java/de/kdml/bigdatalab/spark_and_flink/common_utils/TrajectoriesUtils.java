@@ -4,8 +4,6 @@ import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
-
 import com.google.common.collect.Lists;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
@@ -51,14 +49,14 @@ public class TrajectoriesUtils {
 	}
 
 	/**
-	 * Sort the trajectories based on created time
+	 * Sort the positions based on created time
 	 * 
-	 * @param trajectories
+	 * @param positions
 	 * @return
 	 */
-	public static List<PositionMessage> sortTrajectories(List<PositionMessage> trajectories) {
+	public static List<PositionMessage> sortPositionsOfTrajectory(List<PositionMessage> positions) {
 
-		Iterator<PositionMessage> sortedTrajectories = trajectories.stream().sorted((trajectory1, trajector2) -> {
+		Iterator<PositionMessage> sortedTrajectories = positions.stream().sorted((trajectory1, trajector2) -> {
 
 			return -1 * trajectory1.getCreatedDateTime().compareTo(trajector2.getCreatedDateTime());
 		}).iterator();
@@ -70,35 +68,36 @@ public class TrajectoriesUtils {
 	/**
 	 * Calculate Speed and distance of trajectory
 	 * 
-	 * @param prevTrajectory
-	 * @param trajectory
+	 * @param prevPosition
+	 * @param currentPosition
 	 */
-	public static void calculateDistanceAndSpeedOfTrajectory(PositionMessage prevTrajectory, PositionMessage trajectory) {
+	public static void calculateDistanceAndSpeedOfTrajectory(PositionMessage prevPosition,
+			PositionMessage currentPosition) {
 
-		if (trajectory.getSpeed() != null && trajectory.getDistance() != null) {
+		if (currentPosition.getSpeed() != null && currentPosition.getDistance() != null) {
 			return;
 		}
-		double distance = prevTrajectory == null ? 0
-				: GeoUtils.greatCircleDistance(prevTrajectory.getLatitude(), prevTrajectory.getLongitude(),
-						trajectory.getLatitude(), trajectory.getLongitude()),
+		double distance = prevPosition == null ? 0
+				: GeoUtils.greatCircleDistance(prevPosition.getLatitude(), prevPosition.getLongitude(),
+						currentPosition.getLatitude(), currentPosition.getLongitude()),
 				speed = 0.0, diffTime, acceleration = 0.0;
 
-		if (prevTrajectory != null) {
+		if (prevPosition != null) {
 
-			long diff = Duration.between(prevTrajectory.getCreatedDateTime(), trajectory.getCreatedDateTime())
+			long diff = Duration.between(prevPosition.getCreatedDateTime(), currentPosition.getCreatedDateTime())
 					.toMillis();
-			diffTime = ((double) (diff)) / (1000 * 60 * 60);
+			diffTime = ((double) (diff)) / (1000.0 * 60.0 * 60.0);
 
 			if (diffTime != 0.0) {
 				speed = distance / diffTime;
-				acceleration = (speed - prevTrajectory.getSpeed()) / diffTime;
+				acceleration = (speed - prevPosition.getSpeed()) / diffTime;
 			}
 
 		}
 
-		trajectory.setSpeed(speed);
-		trajectory.setDistance(distance);
-		trajectory.setAcceleration(acceleration);
+		currentPosition.setSpeed(speed);
+		currentPosition.setDistance(distance);
+		currentPosition.setAcceleration(acceleration);
 
 	}
 }

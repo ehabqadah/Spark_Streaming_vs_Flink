@@ -41,7 +41,7 @@ final class TrajectorySectorMapper
 	public Tuple2<String, List<PositionMessage>> map(Tuple2<String, List<PositionMessage>> tuple) throws Exception {
 
 		// sort trajectories
-		List<PositionMessage> trajectories = TrajectoriesUtils.sortTrajectories(tuple.f1);
+		List<PositionMessage> trajectories = TrajectoriesUtils.sortPositionsOfTrajectory(tuple.f1);
 		// assign sector for all trajectories
 		for (PositionMessage trajectory : trajectories) {
 
