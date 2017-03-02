@@ -26,20 +26,26 @@ Supervisor: PD Dr. Michael Mock
 \end{abstract}
 Recent years have witnessed a big development improvements of Big Data frameworks such as Apache Spark and Apache Flink. For example, both frameworks support real-time
 streaming processing. While which platform is the best still an open question. 
-In this paper, we provide a performance comparison of streaming data processing in Spark and Flink, by measuring different performance metrics, namely latency and throughput. The experiment is done using multiple streaming workloads over real-world datasets.
+In this paper, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink, by measuring different performance metrics, namely latency and throughput. In addition, we cover some key aspects of streaming data applications and how they are handled in both frameworks. The experiment is done using multiple streaming workloads over real-world datasets.
 \section{Introduction}
 
-\par Big Data is now one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academics, since the amount of data we generate is increasing exponentially \cite{idc} that generated from social media platforms, mobile phones, IoT and finical transactions, etc. Moreover, recent years showed a rapid development of Big Data frameworks such as Spark and Flink that provide more and efficient data processing capabilities.
- \par The Big Data is a method to process not just only just large datasets (volume), but also that arrives in high rate (velocity), and it comes in all kinds of data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety))\cite{svs}.
+\par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academics, as a result of the fact that the amount of data we generate is increasing exponentially \cite{idc} that generated from social media platforms, mobile phones, IoT and finical transactions, etc. Moreover, recent years showed a rapid development of Big Data frameworks such as Apache Spark and Apache Flink that provide more and efficient data processing capabilities.
+ \par The Big Data is a method to process not just only large datasets (volume), but also the data that arrives in high rate (velocity), and it comes in all kinds of data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety)) \cite{svs}.
 
-\par The processing models of Big Data are Batch and Stream processing, Batch processing is a way to handle large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
+\par The processing models of Big Data are Batch processing and Stream processing, Batch processing is a way to handle large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
 
-\par TODO: add paragraph about Yahoo benchmark and why do we still need evaluation 1- continuous dev of frameworks 2- explore more complex operation like groupby that shuffle the data.
-\par The purpose of this paper is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads we try to cover the main programming API differences between the both frameworks. Informally,  this work aims to help developer to determine which platform to choose in production. 
+\par The are some performance evaluation of Apache Spark and Apache Flink and other framework such as Yahoo Streaming Benchmark \cite{yahoo}. We believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
+\item both frameworks are continuously improving in short time 
+\item we aim to study the performance of some complex operations such as \texttt{groupByKey} \& \texttt{keyBy} in Apache Spark and Apache Flink, respectively.
+\end{enumerate*}
+
+ 
+
+\par The purpose of this paper is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads. Also we try to cover general aspects of streaming processing tasks (later details in Section 3) and how they can be solved in each platform. Informally,  this work aims to help the developers to determine which platform to choose in production for different use cases. 
 
 
 \par The remainder of this paper is organized as follows.
-In Section 2, we present the main characteristics, APIs, and main data abstraction of Spark and Flink. Section 3  describes the experiment workloads and their implementation in each framework. Section 4
+In Section 2, we present the main characteristics, APIs, and main data abstraction of Apache Spark and Flink. Section 3  presents the general aspects of streaming processing, the design and implementation of experimental workloads. Section 4
 provides and compares the performance results of the different workloads. Finally, Section 5 gives the overall conclusion.
 
 \section{Technical Background}
@@ -168,24 +174,27 @@ Gantz, John, and David Reinsel. "The digital universe in 2020: Big data, bigger 
 \bibitem[2]{svs} 
 Laney, D 2001 3D Data Management: Controlling Data Volume, Velocity, and Variety. META Group.
 
-\bibitem[3]{spark} 
+\bibitem[3]{yahoo} 
+Chintapalli, Sanket, et al. "Benchmarking streaming computation engines: Storm, Flink and Spark streaming." Parallel and Distributed Processing Symposium Workshops, 2016 IEEE International. IEEE, 2016.
+
+\bibitem[4]{spark} 
 Apache Spark. Available: https://spark.apache.org/ [Accessed February 2017].
 
-\bibitem[4]{rdd}
+\bibitem[5]{rdd}
 Zaharia, Matei, et al. "Resilient distributed datasets: A fault-tolerant abstraction for in-memory cluster computing." Proceedings of the 9th USENIX conference on Networked Systems Design and Implementation. USENIX Association, 2012.
 
-\bibitem[5]{spark_streaming}
+\bibitem[6]{spark_streaming}
 Spark Streaming. Available: http://spark.apache.org/docs/latest/streaming-programming-guide.html [Accessed March 2017].
 
-\bibitem[6]{flink} 
+\bibitem[7]{flink} 
 Apache Flink. Available: https://flink.apache.org/ [Accessed February 2017].
 
-\bibitem[7]{flink_paper} 
+\bibitem[8]{flink_paper} 
 Carbone, P., Katsifodimos, A., Ewen, S., Markl, V., Haridi, S. et al. (2015)
 Apache flink: Stream and batch processing in a single engine.
 Bulletin of the IEEE Computer Society Technical Committee on Data Engineering, 36(4).
 
-\bibitem[8]{kafka} 
+\bibitem[9]{kafka} 
 Apache Kafka. Available: https://kafka.apache.org/intro.html [Accessed February 2017].
 
 

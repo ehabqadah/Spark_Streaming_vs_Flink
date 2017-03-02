@@ -2,11 +2,11 @@
 \contentsline {section}{\numberline {2}Technical Background}{4}{section.2}
 \contentsline {subsection}{\numberline {2.1}Apache Spark}{4}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Apache Flink}{4}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Apache Kafka}{5}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.3}Apache Kafka}{6}{subsection.2.3}
 \contentsline {section}{\numberline {3}Experiment Setup and Implementation}{6}{section.3}
 \contentsline {subsection}{\numberline {3.1}Data Stream Setup}{6}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Evaluation Streaming Workloads}{6}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.2}Evaluation Streaming Workloads}{7}{subsection.3.2}
 \contentsline {subsubsection}{\numberline {3.2.1}Statistics Computation per Trajectory}{7}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}Air Sector Change Detection}{8}{subsubsection.3.2.2}
-\contentsline {section}{\numberline {4}Performance Results}{9}{section.4}
-\contentsline {section}{\numberline {5}Conclusion}{9}{section.5}
+\contentsline {subsubsection}{\numberline {3.2.2}Air Sector Change Detection}{9}{subsubsection.3.2.2}
+\contentsline {section}{\numberline {4}Performance Results}{10}{section.4}
+\contentsline {section}{\numberline {5}Conclusion}{10}{section.5}

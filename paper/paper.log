@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  1 MAR 2017 23:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  2 MAR 2017 16:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -275,83 +275,81 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
  [2]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 38.
+(Font)              <8> on input line 44.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 38.
+(Font)              <6> on input line 44.
 
-[3] <streaming-flow.png, id=96, 516.0078pt x 115.1502pt>
+[3] <streaming-flow.png, id=101, 516.0078pt x 115.1502pt>
 File: streaming-flow.png Graphic file (type png)
 
 <use streaming-flow.png>
-Package pdftex.def Info: streaming-flow.png used on input line 58.
+Package pdftex.def Info: streaming-flow.png used on input line 64.
 (pdftex.def)             Requested size: 310.49678pt x 109.99825pt.
- [4 <./streaming-flow.png>]
-<flink_engine.png, id=111, 1109.14375pt x 551.05875pt>
-File: flink_engine.png Graphic file (type png)
- <use flink_engine.png>
-Package pdftex.def Info: flink_engine.png used on input line 75.
-(pdftex.def)             Requested size: 344.99878pt x 219.99916pt.
-
-<kafka_groups.png, id=114, 475.7775pt x 252.945pt>
-File: kafka_groups.png Graphic file (type png)
- <use kafka_groups.png>
-Package pdftex.def Info: kafka_groups.png used on input line 87.
-(pdftex.def)             Requested size: 345.01332pt x 165.00282pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[5 <./flink_engine.png>]
+[4] <flink_engine.png, id=114, 1109.14375pt x 551.05875pt>
+File: flink_engine.png Graphic file (type png)
+
+<use flink_engine.png>
+Package pdftex.def Info: flink_engine.png used on input line 81.
+(pdftex.def)             Requested size: 344.99878pt x 219.99916pt.
+ [5 <./streaming-flow.png> <./flink_engine.png>]
+<kafka_groups.png, id=125, 475.7775pt x 252.945pt>
+File: kafka_groups.png Graphic file (type png)
+ <use kafka_groups.png>
+Package pdftex.def Info: kafka_groups.png used on input line 93.
+(pdftex.def)             Requested size: 345.01332pt x 165.00282pt.
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
- <kafka.png, id=123, 738.76pt x 304.13625pt>
+
+[6 <./kafka_groups.png>] <kafka.png, id=134, 738.76pt x 304.13625pt>
 File: kafka.png Graphic file (type png)
 
 <use kafka.png>
-Package pdftex.def Info: kafka.png used on input line 102.
+Package pdftex.def Info: kafka.png used on input line 108.
 (pdftex.def)             Requested size: 310.49126pt x 109.9948pt.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 116.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 110.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 110.
- [6 <./kafka_groups.png>] [7 <./kafka.png>] [8]
-Overfull \hbox (2.2484pt too wide) in paragraph at lines 153--154
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 116.
+
+[7 <./kafka.png>] [8]
+Overfull \hbox (2.2484pt too wide) in paragraph at lines 159--160
 \OT1/cmtt/m/n/10 FlinkKafkaConsumer09 \OT1/cmr/m/n/10 that read the ADS-B mes-s
 ages stream from Kafka,
  []
 
 [9]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 178--179
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 187--188
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 194.
 [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 194.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 203.
+ [11]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 203.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 194.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 194.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 203.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 203.
 Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: 1C5FEA9175AF30BDCDCCC1CBC23243B5;784.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 194.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 203.
  ) 
 Here is how much of TeX's memory you used:
- 6611 strings out of 494953
- 98354 string characters out of 6180978
- 181580 words of memory out of 5000000
- 9821 multiletter control sequences out of 15000+600000
+ 6622 strings out of 494953
+ 98515 string characters out of 6180978
+ 180607 words of memory out of 5000000
+ 9828 multiletter control sequences out of 15000+600000
  8530 words of font info for 31 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 29i,8n,32p,1440b,432s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,8n,32p,1440b,426s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
@@ -362,10 +360,10 @@ pe1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmtt8.pfb>
-Output written on paper.pdf (10 pages, 249861 bytes).
+Output written on paper.pdf (11 pages, 250722 bytes).
 PDF statistics:
- 198 PDF objects out of 1000 (max. 8388607)
- 167 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
+ 206 PDF objects out of 1000 (max. 8388607)
+ 174 compressed objects within 2 object streams
+ 42 named destinations out of 1000 (max. 500000)
  117 words of extra memory for PDF output out of 10000 (max. 10000000)
 
