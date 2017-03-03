@@ -89,7 +89,7 @@ public class PositionMessage implements Serializable {
 
 		// TODO: use string builder
 		return "|" + isNew() + getCreatedDateTime() + ":(" + getLatitude() + "," + getLongitude() + "," + getAltitude()
-				+ ") |" + " speed=" + getSpeed() + " Distance" + getDistance() + "|"
+				+ ") |" + " speed=" + getSpeed() + " Distance=" + getDistance() + "|"
 				+ (getStatistics() != null ? getStatistics() : "  ") + (getSector() != null ? getSector() : " ") + "\n";
 	}
 

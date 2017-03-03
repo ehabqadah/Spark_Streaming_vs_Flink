@@ -80,13 +80,13 @@ public class TrajectoriesUtils {
 		double distance = prevPosition == null ? 0
 				: GeoUtils.greatCircleDistance(prevPosition.getLatitude(), prevPosition.getLongitude(),
 						currentPosition.getLatitude(), currentPosition.getLongitude()),
-				speed = 0.0, diffTime, acceleration = 0.0;
+				speed = 0.0, diffTime = 0.0, acceleration = 0.0;
 
 		if (prevPosition != null) {
 
 			long diff = Duration.between(prevPosition.getCreatedDateTime(), currentPosition.getCreatedDateTime())
 					.toMillis();
-			diffTime = ((double) (diff)) / (1000.0 * 60.0 * 60.0);
+			diffTime = ((double) (diff)) / (1000.0 * 60.0 * 60.0); // to hours
 
 			if (diffTime != 0.0) {
 				speed = distance / diffTime;
@@ -95,7 +95,7 @@ public class TrajectoriesUtils {
 
 		}
 
-		currentPosition.setSpeed(speed);
+		currentPosition.setSpeed(Math.abs(speed));
 		currentPosition.setDistance(distance);
 		currentPosition.setAcceleration(acceleration);
 

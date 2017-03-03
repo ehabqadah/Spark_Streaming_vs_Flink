@@ -86,14 +86,12 @@ public class StatisticsUtils {
 	 */
 	public static void computeStatistics(PositionMessage oldPosition, PositionMessage newPosition) {
 
+		// for the first received position
 		if (oldPosition == null) {
 			intitStaticsForIntitialPositionOfTrajectory(newPosition);
 			return;
 		}
-		intitStaticsForIntitialPositionOfTrajectory(oldPosition);// initialize
-																	// statics
-																	// for
-		// the first trajectory only
+		intitStaticsForIntitialPositionOfTrajectory(oldPosition);
 		double minLongtitude, minLatitude, minAltitude, minSpeed, minAcceleration;
 		double maxLongtitude, maxLatitude, maxAltitude, maxSpeed, maxAcceleration;
 		TrajectoriesUtils.calculateDistanceAndSpeedOfTrajectory(oldPosition, newPosition);
