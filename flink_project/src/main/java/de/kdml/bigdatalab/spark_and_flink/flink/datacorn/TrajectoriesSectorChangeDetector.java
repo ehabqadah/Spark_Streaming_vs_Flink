@@ -9,8 +9,8 @@ import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
 
 /**
@@ -35,9 +35,9 @@ public class TrajectoriesSectorChangeDetector {
 		// the sector between two consecutive trajectories
 		DataStream<String> trajectoriesStreamWithSectors = trajectoriesStream
 				.reduce(new TrajectoriesSectorsReducer(sectorsDataSet.collect())).filter(tuple -> {
-					PositionMessage trajectory = tuple.f1;
-					if (trajectory.getPrevSector() != null
-							&& !trajectory.getSector().equals(trajectory.getPrevSector())) {
+					PositionMessage position = tuple.f1;
+					// check for change in previous and current sector
+					if (position.getPrevSector() != null && !position.getSector().equals(position.getPrevSector())) {
 						return true;
 					}
 					return false;
