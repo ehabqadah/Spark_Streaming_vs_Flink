@@ -55,17 +55,19 @@ public class TrajectoriesSectorChangeDetector {
 
 			// filter the trajectories that contain change in sector between two
 			// consecutive positions
-			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
+			Iterable<PositionMessage> positionsOfTrajectory = trajectoryTuple._2;
 
-			PositionMessage prevTrajectory = null;
-			for (PositionMessage trajectory : trajectoriesList) {
-				if (prevTrajectory != null) {
-					if ((prevTrajectory.isNew() || trajectory.isNew())
-							&& (!trajectory.getSector().equals(prevTrajectory.getSector()))) {
+			PositionMessage prevPosition = null;
+			for (PositionMessage currentPosition : positionsOfTrajectory) {
+				if (prevPosition != null) {
+					if ((prevPosition.isNew() || currentPosition.isNew())
+							&& (!currentPosition.getSector().equals(prevPosition.getSector()))) {
+						// filter a trajectory that contains change in sector
+						// between two consecutive positions
 						return true;
 					}
 				}
-				prevTrajectory = trajectory;
+				prevPosition = currentPosition;
 			}
 
 			return false;
@@ -74,23 +76,23 @@ public class TrajectoriesSectorChangeDetector {
 			// print the sector change transitions
 			StringBuilder output = new StringBuilder(trajectoryTuple._1);
 			output.append(": ");
-			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
+			Iterable<PositionMessage> positionsOfTrajetory = trajectoryTuple._2;
 
-			PositionMessage prevTrajectory = null;
-			for (PositionMessage trajectory : trajectoriesList) {
+			PositionMessage prevPosition = null;
+			for (PositionMessage currentPosition : positionsOfTrajetory) {
 
-				if (prevTrajectory != null) {
+				if (prevPosition != null) {
 
-					if ((prevTrajectory.isNew() || trajectory.isNew())
-							&& (!trajectory.getSector().equals(prevTrajectory.getSector()))) {
+					if ((prevPosition.isNew() || currentPosition.isNew())
+							&& (!currentPosition.getSector().equals(prevPosition.getSector()))) {
 
 						output.append("\n");
-						output.append(prevTrajectory.getSector().getNameAndAirBlock());
+						output.append(prevPosition.getSector().getNameAndAirBlock());
 						output.append("--->");
-						output.append(trajectory.getSector().getNameAndAirBlock());
+						output.append(currentPosition.getSector().getNameAndAirBlock());
 					}
 				}
-				prevTrajectory = trajectory;
+				prevPosition = currentPosition;
 			}
 			return output.toString();
 		});
