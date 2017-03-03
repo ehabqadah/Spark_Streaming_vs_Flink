@@ -1,6 +1,7 @@
 package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaSparkContext;
@@ -13,7 +14,6 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
-import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
 
@@ -35,6 +35,7 @@ public class TrajectoriesStatistics {
 		// configure spark streaming context
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Trajectories Statistics Computation ");
 
+		// configure the stream batch interval
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
 				Durations.seconds(configs.getIntProp("batchDuration")));
 
@@ -102,35 +103,27 @@ public class TrajectoriesStatistics {
 		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> newPostitions,
 				Optional<Iterable<PositionMessage>> statePositions) {
 
-			// Get last old trajectory to be used in statistics computation for
-			// new batch positions
+			// Get the last old trajectory from the previous batch to be used in
+			// statistics computation for the new batch positions
 
 			Iterable<PositionMessage> prevBatchPositions = statePositions.orElse(new ArrayList<>());
 
 			// Get last position in previous batch
-			PositionMessage lastOldPosition = getLastPosition(prevBatchPositions);
+			PositionMessage lastOldPosition = TrajectoriesStreamUtils.getLastPositionInBatch(prevBatchPositions);
 
-			// Combine all new batch positions
-			List<PositionMessage> aggregatedPositions = new ArrayList<>();
-			// aggregate new values
-			for (Iterable<PositionMessage> val : newPostitions) {
-				for (PositionMessage position : val) {
-					aggregatedPositions.add(position);
-				}
-
-			}
+			List<PositionMessage> aggregatedPositions = TrajectoriesStreamUtils
+					.getNewAggregatedPositions(newPostitions);
 
 			// In case there is no new positions keep the current state for the
 			// given trajectory
 			if (aggregatedPositions.size() == 0) {
-				return Optional.of(prevBatchPositions);
+				return Optional.of(Arrays.asList(lastOldPosition));
 			}
 
 			// First, use the last old position as the first record for
 			// calculating the statistics quantities, and the sort is needed
 			// since we need to preserve the right order of the position
-			// messages based on the streamed time
-			aggregatedPositions = TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedPositions);
+			// messages based on the created time
 
 			for (PositionMessage trajectory : aggregatedPositions) {
 				// Compute statistics for each position message based on
@@ -138,22 +131,15 @@ public class TrajectoriesStatistics {
 				StatisticsUtils.computeStatistics(lastOldPosition, trajectory);
 				lastOldPosition = trajectory;
 
+				/**
+				 * Alternative solution: print or save the positions here and
+				 * save the last position in the trajectory state
+				 */
 			}
-			// Aggregate state
+			// save the state
 			return Optional.of(aggregatedPositions);
 		}
 
-		/**
-		 * Get last position message in previous batch's positions
-		 */
-		private PositionMessage getLastPosition(Iterable<PositionMessage> prevBatchPositions) {
-			PositionMessage lastOldPosition = null;
-			for (PositionMessage trajectory : prevBatchPositions) {
-				lastOldPosition = trajectory;
-				lastOldPosition.setNew(false);
-			}
-			return lastOldPosition;
-		}
 	};
 
 }

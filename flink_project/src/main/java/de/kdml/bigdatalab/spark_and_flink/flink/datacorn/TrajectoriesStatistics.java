@@ -15,6 +15,7 @@ import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
  * 
  *         Jan 2, 2017
  */
+
 public class TrajectoriesStatistics {
 
 	public static void main(String[] args) throws Exception {
@@ -52,6 +53,7 @@ public class TrajectoriesStatistics {
 	 * 
 	 * @param trajectoriesStream
 	 */
+
 	private static void showLatecies(DataStream<Tuple2<String, PositionMessage>> trajectoriesStream) {
 		DataStream<Long> latencies = trajectoriesStream.map(tuple -> {
 

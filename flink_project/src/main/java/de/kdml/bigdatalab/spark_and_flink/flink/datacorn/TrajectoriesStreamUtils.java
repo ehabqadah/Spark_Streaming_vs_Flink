@@ -22,16 +22,15 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
  * 
  *         Jan 5, 2017
  */
+
 public class TrajectoriesStreamUtils {
 
 	private static Configs configs = Configs.getInstance();
 
 	/**
-	 * Get trajectories stream
-	 * 
-	 * @param env
-	 * @return
+	 * Get the trajectories stream
 	 */
+
 	public static KeyedStream<Tuple2<String, PositionMessage>, Tuple> getTrajectoriesStream(
 			StreamExecutionEnvironment env) {
 
@@ -47,7 +46,7 @@ public class TrajectoriesStreamUtils {
 		FlinkKafkaConsumer09<String> kafkaConsumer = new FlinkKafkaConsumer09<>(configs.getStringProp("topicId"),
 				new SimpleStringSchema(), props);
 		// constructs the data stream
-		DataStream<String> dataLines = env.addSource(kafkaConsumer);
+		DataStream<String> postitionMessagesStream = env.addSource(kafkaConsumer);
 
 		/**
 		 * 1- Map each data line to Tuple2<id,list of Trajectories>
@@ -61,8 +60,9 @@ public class TrajectoriesStreamUtils {
 		 * of a key)
 		 **/
 
-		KeyedStream<Tuple2<String, PositionMessage>, Tuple> trajectoriesStream = dataLines.map(line -> {
-			// parse ADS-B messages and construct tuple for each message
+		KeyedStream<Tuple2<String, PositionMessage>, Tuple> trajectoriesStream = postitionMessagesStream.map(line -> {
+			// parse ADS-B messages and construct tuple of ID & position
+			// message for each message
 			StreamRecord streamRecord = StreamRecord.parseData(line);
 			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());

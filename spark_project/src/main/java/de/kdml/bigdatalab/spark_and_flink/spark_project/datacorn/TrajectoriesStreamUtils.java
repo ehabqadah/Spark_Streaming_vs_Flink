@@ -49,12 +49,12 @@ public class TrajectoriesStreamUtils {
 		List<JavaDStream<ConsumerRecord<String, String>>> kafkaStreams = new ArrayList<>();
 
 		/**
-		 * create parallel receivers for the same topic within same group, in
-		 * order to scale with Kafka partitions
+		 * Create parallel receivers for the same topic within the same group,
+		 * in order to scale with Kafka partitions
 		 **/
 		int numParallelKafkaStream = configs.getIntProp("numberOfKafkParallelStreams");
 		for (int i = 0; i < numParallelKafkaStream; i++) {
-			// Create direct kafka stream
+			// Create direct Kafka stream
 			JavaDStream<ConsumerRecord<String, String>> dataStreami = KafkaUtils.createDirectStream(jssc,
 					LocationStrategies.PreferConsistent(),
 					ConsumerStrategies.<String, String>Subscribe(topicsSet, kafkaParams));
@@ -62,7 +62,8 @@ public class TrajectoriesStreamUtils {
 			kafkaStreams.add(dataStreami);
 		}
 
-		// union all parallel Kafka streams
+		// union all parallel Kafka streams, and use the reslut stream as the
+		// main stream
 		JavaDStream<ConsumerRecord<String, String>> dataStream = numParallelKafkaStream == 1 ? kafkaStreams.get(0)
 				: jssc.union(kafkaStreams.get(0), kafkaStreams.subList(1, kafkaStreams.size()));
 
@@ -80,18 +81,51 @@ public class TrajectoriesStreamUtils {
 		 */
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = dataStream.mapToPair(record -> {
 
+			// parse the ADBS-B messages from the Kafka stream
 			StreamRecord streamRecord = StreamRecord.parseData(record.value());
 			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
 			trajectory.setNew(true);
 
+			// create a tuple of Id & position message for each stream line
 			return new Tuple2<>(trajectory.getID(), trajectory);
 		}).filter(tuple -> {
-			// get only msg2 & msg3 types
+			// filter only msg2 & msg3 types
 			return ("MSG2".equals(tuple._2.getType()) || "MSG3".equals(tuple._2.getType()));
 		}).groupByKey();
-
+		// Group all message belong to same aircraft as trajectory
 		return trajectories;
 	}
 
+	/**
+	 * Get last position message in the previous batch's positions
+	 */
+	public static PositionMessage getLastPositionInBatch(Iterable<PositionMessage> prevBatchPositions) {
+		PositionMessage lastOldPosition = null;
+		for (PositionMessage trajectory : prevBatchPositions) {
+			lastOldPosition = trajectory;
+			lastOldPosition.setNew(false);
+		}
+		return lastOldPosition;
+	}
+
+	/**
+	 * Aggregate positions of a trajectory and sort them
+	 * 
+	 * @param newPostitions
+	 * @return
+	 */
+	public static List<PositionMessage> getNewAggregatedPositions(List<Iterable<PositionMessage>> newPostitions) {
+		// Combine all new batch positions
+		List<PositionMessage> aggregatedPositions = new ArrayList<>();
+		// aggregate new values
+		for (Iterable<PositionMessage> val : newPostitions) {
+			for (PositionMessage position : val) {
+				aggregatedPositions.add(position);
+			}
+		}
+		// Sort the new positions based on create time to preserve the
+		// correct order of message order
+		return TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedPositions);
+	}
 }
