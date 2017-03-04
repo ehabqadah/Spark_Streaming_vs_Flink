@@ -12,11 +12,14 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
+import com.google.common.collect.Iterators;
+
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
+import scala.Tuple2;
 
 /**
  * 
@@ -36,9 +39,9 @@ public class TrajectoriesStatistics {
 		// configure spark streaming context
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Trajectories Statistics Computation ");
 
+		long batchTime = configs.getIntProp("batchDuration");
 		// configure the stream batch interval
-		JavaStreamingContext jssc = new JavaStreamingContext(sc,
-				Durations.milliseconds(configs.getIntProp("batchDuration")));
+		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.milliseconds(batchTime));
 
 		// create the trajectories stream
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
@@ -51,16 +54,37 @@ public class TrajectoriesStatistics {
 		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
-		printLatencies(runningTrajectories);
+		// printLatencies(runningTrajectories);
 
 		runningTrajectories.print(1000);
 
+		showThroughput(batchTime, runningTrajectories);
 		jssc.start();
 		try {
 			jssc.awaitTermination();
 		} catch (InterruptedException e) {
 			System.out.println("Error:" + e.getMessage());
 		}
+	}
+
+	private static void showThroughput(long batchTime,
+			JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
+		runningTrajectories.foreachRDD((rdd, time) -> {
+
+			double batchTimeInSeconds = configs.getDoubleProp("batchDuration") / 1000.0;
+			if (rdd.isEmpty()) {
+				return;
+			}
+			List<Tuple2<String, Iterable<PositionMessage>>> tuples = rdd.collect();
+
+			double count = 0;
+			for (Tuple2<String, Iterable<PositionMessage>> tuple : tuples) {
+				count += Iterators.size(tuple._2().iterator());
+			}
+
+			LoggerUtils.logMessage(time + " count=" + count + "Current throughput = " + (count / batchTimeInSeconds)
+					+ " records / second");
+		});
 	}
 
 	/**

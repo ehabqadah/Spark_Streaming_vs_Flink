@@ -59,4 +59,9 @@ public class Configs {
 		return Integer.parseInt(this.props.getProperty(propName));
 	}
 
+	public double getDoubleProp(String propName) {
+
+		return Double.parseDouble(this.props.getProperty(propName));
+	}
+
 }

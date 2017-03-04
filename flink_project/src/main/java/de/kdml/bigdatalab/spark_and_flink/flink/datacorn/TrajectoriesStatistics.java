@@ -1,8 +1,13 @@
 package de.kdml.bigdatalab.spark_and_flink.flink.datacorn;
 
+import org.apache.flink.api.common.functions.FoldFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
+import org.apache.flink.streaming.api.functions.sink.SinkFunction;
+import org.apache.flink.streaming.api.watermark.Watermark;
+import org.apache.flink.streaming.api.windowing.time.Time;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
@@ -42,10 +47,64 @@ public class TrajectoriesStatistics {
 					return newTuple;
 				});
 
-		showLatecies(trajectoriesStream);
+		// showLatecies(trajectoriesStream);
 		trajectoriesStream.print().setParallelism(1);
 
+		showThroughput(trajectoriesStream);
 		env.execute(" Flink Trajectories Statistics Computation");
+	}
+
+	private static void showThroughput(DataStream<Tuple2<String, PositionMessage>> trajectoriesStream) {
+		DataStream<Tuple2<String, PositionMessage>> trajectoriesStreamWithTime = trajectoriesStream
+
+				.assignTimestampsAndWatermarks(new AssignerWithPeriodicWatermarks<Tuple2<String, PositionMessage>>() {
+
+					/**
+					 *
+					 * @link{https://ci.apache.org/projects/flink/flink-docs-release-1.2/dev/event_timestamps_watermarks.html}
+					 */
+					private static final long serialVersionUID = 1L;
+					private final long maxTimeLag = 1000; // 5 seconds
+
+					@Override
+					public long extractTimestamp(Tuple2<String, PositionMessage> element,
+							long previousElementTimestamp) {
+						return element.f1.getStreamedTime();
+					}
+
+					@Override
+					public Watermark getCurrentWatermark() {
+						// return the watermark as current time minus the
+						// maximum time lag
+						return new Watermark(System.currentTimeMillis() - maxTimeLag);
+					}
+				});
+
+		DataStream<Tuple2<String, Integer>> throughput = trajectoriesStreamWithTime.timeWindowAll(Time.seconds(60))
+
+				.fold(Tuple2.of("number_of_elements_per_window", 0),
+						new FoldFunction<Tuple2<String, PositionMessage>, Tuple2<String, Integer>>() {
+
+							private static final long serialVersionUID = 3540889174899846578L;
+
+							@Override
+							public Tuple2<String, Integer> fold(Tuple2<String, Integer> accumulator,
+									Tuple2<String, PositionMessage> value) throws Exception {
+								return Tuple2.of(accumulator.f0, accumulator.f1 + 1);
+							}
+						});
+		throughput.addSink(new SinkFunction<Tuple2<String, Integer>>() {
+
+			private static final long serialVersionUID = 6840724449853693597L;
+
+			@Override
+			public void invoke(Tuple2<String, Integer> value) throws Exception {
+				// log the throughput
+				LoggerUtils.logMessage(value.f1.toString());
+
+			}
+		});
+		throughput.print();
 	}
 
 	/**
