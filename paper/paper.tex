@@ -24,7 +24,7 @@ Supervisor: PD Dr. Michael Mock
 \begin{abstract}
 
 \end{abstract}
-Recent years have witnessed a big development improvements of Big Data frameworks such as Apache Spark and Apache Flink. For example, both frameworks support real-time
+Recent years have witnessed a advances in the  development of Big Data frameworks like Apache Spark and Apache Flink. For example, both frameworks support real-time
 streaming processing. While which platform is the best still an open question. 
 In this paper, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink, by measuring different performance metrics, namely latency and throughput. In addition, we cover some key aspects of streaming data applications and how they are handled in both frameworks. The experiment is done using multiple streaming workloads over real-world datasets.
 \section{Introduction}
@@ -46,14 +46,14 @@ In this paper, we provide a performance comparison of streaming data processing 
 
 \par The remainder of this paper is organized as follows.
 In Section 2, we present the main characteristics, APIs, and main data abstraction of Apache Spark and Flink. Section 3  presents the general aspects of streaming processing, the design and implementation of experimental workloads. Section 4
-provides and compares the performance results of the different workloads. Finally, Section 5 gives the overall conclusion.
+provides and compares the performance results of the different workloads. Last, Section 5 gives the overall conclusion.
 
 \section{Technical Background}
  In this section, we present the architecture, key characteristics, programming APIs  of Apache Spark and Apache Flink. Moreover, a brief overview of the Apache Kafka platform is  provided.
 
 \subsection{Apache Spark}
 
-\par Apache Spark is an open source project that provide general framework for large-scale data processing \cite{spark}. It offers programming API in Java, Scala, Python and R. Its stack includes set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
+\par Apache Spark is an open source project that provide general framework for large-scale data processing \cite{spark}. It offers programming APIs in Java, Scala, Python and R. Its stack includes set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
 
 \par The main data abstraction in Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs supports two categories of operations: transformations that drive new RDDs from the operated ones (e.g., map), and actions which return a certain value (e.g., count). On the other hand, the Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is batch-based processing model, which process the continuous stream of data by divided into micro-batches to be processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
 
@@ -68,7 +68,7 @@ provides and compares the performance results of the different workloads. Finall
 \subsection{Apache Flink}
 
 \par Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming applications (i.e., finite stream)  \cite{flink}.
-It offers programming API in Java and Scala. Its software stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
+It offers programming APIs in Java and Scala. Its software stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
 
 \par The main data abstraction of Flink are DataStream and DataSet that represent read-only collection of data elements. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
 
@@ -163,7 +163,15 @@ The goal of sector change detection workload is to detect the  enter or leaving 
  \end{itemize}
 \section{Performance Results}
 
-This section provides and compares the performance results of the different workloads.
+\par This section presents the results of performance evaluation in Spark (2.0.2) and Flink (1.1.3) for the streaming workloads were described in Section 3.2. Specifically, we provide  the measurements of latency and throughput of the benchmarking workloads execution in Spark and Flink. We carried the experiment by setup the Kafka stream as described in Section 3.1 on local machine\footnote{ The experiments have been carried  on single machine with Ubuntu 16.04 LTS os, Intel® Core™ i5-6200U CPU @ 2.30GHz × 4  processor, and 16 GB of memory.  }, and run the different workloads on the same machine (i.e., local mode) to obtain the performance results.  
+
+\par We consider the time delay between the streaming time of record in Kafka and the 
+finish processing time in a workload as the platform's processing latency (measured in milliseconds). On the other hand, the number of processed stream's records (aircrafts position messages) per second within each streaming workload is the throughput measure. Since the Spark Streaming is micro-batch based,  We examine the effect of different batch intervals
+of the Spark Streaming on the performance measurements.
+\subsection{Latency Measurements}
+\subsection{Throughput Measurements}
+
+
 
 \section{Conclusion}
 This section gives the overall conclusion.

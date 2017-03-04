@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  3 MAR 2017 21:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  4 MAR 2017 13:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -279,7 +279,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 44.
 
-[3] <streaming-flow.png, id=101, 516.0078pt x 115.1502pt>
+[3] <streaming-flow.png, id=111, 516.0078pt x 115.1502pt>
 File: streaming-flow.png Graphic file (type png)
 
 <use streaming-flow.png>
@@ -289,14 +289,14 @@ Package pdftex.def Info: streaming-flow.png used on input line 64.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[4] <flink_engine.png, id=114, 1109.14375pt x 551.05875pt>
+[4] <flink_engine.png, id=124, 1109.14375pt x 551.05875pt>
 File: flink_engine.png Graphic file (type png)
 
 <use flink_engine.png>
 Package pdftex.def Info: flink_engine.png used on input line 81.
 (pdftex.def)             Requested size: 344.99878pt x 219.99916pt.
  [5 <./streaming-flow.png> <./flink_engine.png>]
-<kafka_groups.png, id=125, 475.7775pt x 252.945pt>
+<kafka_groups.png, id=135, 475.7775pt x 252.945pt>
 File: kafka_groups.png Graphic file (type png)
  <use kafka_groups.png>
 Package pdftex.def Info: kafka_groups.png used on input line 93.
@@ -305,7 +305,7 @@ Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
 
-[6 <./kafka_groups.png>] <kafka.png, id=134, 738.76pt x 304.13625pt>
+[6 <./kafka_groups.png>] <kafka.png, id=144, 738.76pt x 304.13625pt>
 File: kafka.png Graphic file (type png)
 
 <use kafka.png>
@@ -326,27 +326,34 @@ afkaUtils.createDirectStream
  []
 
 [8] [9]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 190--191
+Missing character: There is no Â in font cmr8!
+Missing character: There is no ® in font cmr8!
+Missing character: There is no â in font cmr8!
+Missing character: There is no „ in font cmr8!
+Missing character: There is no ¢ in font cmr8!
+Missing character: There is no Ã in font cmr8!
+Missing character: There is no — in font cmr8!
+ [10]
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 198--199
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-[10]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 206.
- [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 206.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 214.
+[11]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 214.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 206.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 206.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 214.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 214.
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: 1C5FEA9175AF30BDCDCCC1CBC23243B5;784.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 206.
+(rerunfilecheck)             Checksum: B4E6EE70F0320D69E22B999C49B7ACD2;927.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 214.
  ) 
 Here is how much of TeX's memory you used:
- 6622 strings out of 494953
- 98515 string characters out of 6180978
- 181607 words of memory out of 5000000
- 9828 multiletter control sequences out of 15000+600000
+ 6627 strings out of 494953
+ 98586 string characters out of 6180978
+ 180610 words of memory out of 5000000
+ 9830 multiletter control sequences out of 15000+600000
  8530 words of font info for 31 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  29i,8n,32p,1451b,428s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -357,13 +364,14 @@ ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/
 fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmtt8.pfb>
-Output written on paper.pdf (11 pages, 251461 bytes).
+ic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8
+.pfb>
+Output written on paper.pdf (11 pages, 269252 bytes).
 PDF statistics:
- 206 PDF objects out of 1000 (max. 8388607)
- 174 compressed objects within 2 object streams
- 42 named destinations out of 1000 (max. 500000)
- 117 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 223 PDF objects out of 1000 (max. 8388607)
+ 190 compressed objects within 2 object streams
+ 45 named destinations out of 1000 (max. 500000)
+ 133 words of extra memory for PDF output out of 10000 (max. 10000000)
 
