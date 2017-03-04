@@ -1,1 +1,3 @@
 /app-log.log
+/flink-app-log.log
+/spark-app-log.log

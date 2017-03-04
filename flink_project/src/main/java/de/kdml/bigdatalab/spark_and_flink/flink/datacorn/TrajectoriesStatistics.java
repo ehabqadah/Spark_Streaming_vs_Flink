@@ -4,6 +4,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
@@ -41,15 +42,15 @@ public class TrajectoriesStatistics {
 					return newTuple;
 				});
 
-		// showLatecies(trajectoriesStream);
+		showLatecies(trajectoriesStream);
 		trajectoriesStream.print().setParallelism(1);
 
 		env.execute(" Flink Trajectories Statistics Computation");
 	}
 
 	/**
-	 * Show latencies of processed trajectories based on the time deference
-	 * between streamed time and finished time
+	 * Show latencies of processed trajectories based on the time delay between
+	 * streamed time and finished time
 	 * 
 	 * @param trajectoriesStream
 	 */
@@ -58,11 +59,12 @@ public class TrajectoriesStatistics {
 		DataStream<Long> latencies = trajectoriesStream.map(tuple -> {
 
 			long currentTime = System.currentTimeMillis();
-			// get last entered item
-			PositionMessage trajectory = tuple.f1;
-
-			return new Long(currentTime - trajectory.getStreamedTime());
-
+			// Calculate latency
+			PositionMessage position = tuple.f1;
+			Long latency = new Long(currentTime - position.getStreamedTime());
+			// log the latency
+			LoggerUtils.logMessage(latency.toString());
+			return latency;
 		});
 
 		latencies.print().setParallelism(1);

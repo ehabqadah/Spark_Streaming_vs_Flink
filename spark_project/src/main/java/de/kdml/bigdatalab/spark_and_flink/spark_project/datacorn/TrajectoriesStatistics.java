@@ -13,6 +13,7 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.StatisticsUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.spark_project.SparkConfigsUtils;
@@ -37,7 +38,7 @@ public class TrajectoriesStatistics {
 
 		// configure the stream batch interval
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
-				Durations.seconds(configs.getIntProp("batchDuration")));
+				Durations.milliseconds(configs.getIntProp("batchDuration")));
 
 		// create the trajectories stream
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
@@ -70,12 +71,16 @@ public class TrajectoriesStatistics {
 	private static void printLatencies(JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
 		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
 
+			// find the average latency for all positions in a trajectory
 			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
 
-			Iterable<PositionMessage> trajectoriesList = trajectoryTuple._2;
-			for (PositionMessage trajectory : trajectoriesList) {
-				if (trajectory.isNew()) {
-					sumLatency += currentTime - trajectory.getStreamedTime();
+			Iterable<PositionMessage> positionsInTrajectory = trajectoryTuple._2;
+			for (PositionMessage position : positionsInTrajectory) {
+				if (position.isNew()) {
+
+					long latency = currentTime - position.getStreamedTime();
+					LoggerUtils.logMessage(String.valueOf(latency));
+					sumLatency += latency;
 					count++;
 				}
 			}
@@ -85,7 +90,8 @@ public class TrajectoriesStatistics {
 			return latency > 0;
 		});
 
-		// latencies.print();
+		// show latencies
+		latencies.print();
 	}
 
 	/**
