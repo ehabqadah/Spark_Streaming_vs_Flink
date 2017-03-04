@@ -13,7 +13,6 @@ import java.util.Properties;
 
 public class Configs {
 
-	
 	private Configs(Properties props) {
 		this.props = props;
 	}

@@ -9,7 +9,7 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 public class App {
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
-
+		Configs.getInstance();
 		DateTimeUtils.parseDateTime("2015/08/13 15:41:37.181", "yyyy/MM/dd HH:mm:ss.SSS");
 
 		Sector sector = Sector.parseSectorData(
@@ -18,5 +18,6 @@ public class App {
 
 		System.out.println(GeoUtils.isPointInPolygon(sector.getPolygon(), -2.8564453125, 54.97761367069628));// true
 		System.out.println(GeoUtils.isPointInPolygon(sector.getPolygon(), 15.3369140625, 62.79493487887006));// false
+		LoggerUtils.logMessage("ehab");
 	}
 }
