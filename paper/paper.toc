@@ -6,9 +6,9 @@
 \contentsline {section}{\numberline {3}Experiment Setup and Implementation}{6}{section.3}
 \contentsline {subsection}{\numberline {3.1}Data Stream Setup}{6}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Evaluation Streaming Workloads}{7}{subsection.3.2}
-\contentsline {subsubsection}{\numberline {3.2.1}Statistics Computation per Trajectory}{7}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.1}Statistics Computation per Trajectory}{8}{subsubsection.3.2.1}
 \contentsline {subsubsection}{\numberline {3.2.2}Air Sector Change Detection}{9}{subsubsection.3.2.2}
 \contentsline {section}{\numberline {4}Performance Results}{10}{section.4}
-\contentsline {subsection}{\numberline {4.1}Latency Measurements}{10}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Throughput Measurements}{10}{subsection.4.2}
-\contentsline {section}{\numberline {5}Conclusion}{10}{section.5}
+\contentsline {subsection}{\numberline {4.1}Latency Measurements}{11}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Throughput Measurements}{11}{subsection.4.2}
+\contentsline {section}{\numberline {5}Conclusion}{11}{section.5}
