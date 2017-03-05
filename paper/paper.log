@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  5 MAR 2017 20:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  5 MAR 2017 23:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -195,25 +195,49 @@ File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
 File: listings.cfg 2015/06/04 1.6 listings configuration
 ))
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
- (./paper.aux)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2016/02/20 v1.1-142 Sub-captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen114
+\captionmargin@=\dimen115
+\captionwidth=\dimen116
+\caption@tempdima=\dimen117
+\caption@indent=\dimen118
+\caption@parindent=\dimen119
+\caption@hangindent=\dimen120
+)
+\c@ContinuedFloat=\count107
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+)
+\c@subfigure=\count108
+\c@subtable=\count109
+) (./paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
 \AtBeginShipoutBox=\box29
-Package hyperref Info: Link coloring OFF on input line 10.
+Package hyperref Info: Link coloring OFF on input line 11.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -221,11 +245,11 @@ Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count107
+\c@section@level=\count110
 )
-LaTeX Info: Redefining \ref on input line 10.
-LaTeX Info: Redefining \pageref on input line 10.
-LaTeX Info: Redefining \nameref on input line 10.
+LaTeX Info: Redefining \ref on input line 11.
+LaTeX Info: Redefining \pageref on input line 11.
+LaTeX Info: Redefining \nameref on input line 11.
 
 (./paper.out) (./paper.out)
 \@outlinefile=\write3
@@ -234,16 +258,16 @@ LaTeX Info: Redefining \nameref on input line 10.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count108
-\scratchdimen=\dimen114
+\scratchcounter=\count111
+\scratchdimen=\dimen121
 \scratchbox=\box30
-\nofMPsegments=\count109
-\nofMParguments=\count110
+\nofMPsegments=\count112
+\nofMParguments=\count113
 \everyMPshowfont=\toks17
-\MPscratchCnt=\count111
-\MPscratchDim=\dimen115
-\MPnumerator=\count112
-\makeMPintoPDFobject=\count113
+\MPscratchCnt=\count114
+\MPscratchDim=\dimen122
+\MPnumerator=\count115
+\makeMPintoPDFobject=\count116
 \everyMPtoPDFconversion=\toks18
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
@@ -260,61 +284,63 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\c@lstlisting=\count114
+\c@lstlisting=\count117
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 51.
+(Font)              <7> on input line 52.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 51.
+(Font)              <5> on input line 52.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 51.
+(Font)              <8> on input line 52.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 51.
+(Font)              <6> on input line 52.
 
 <streaming-flow.png, id=81, 516.0078pt x 115.1502pt>
 File: streaming-flow.png Graphic file (type png)
  <use streaming-flow.png>
-Package pdftex.def Info: streaming-flow.png used on input line 71.
+Package pdftex.def Info: streaming-flow.png used on input line 72.
 (pdftex.def)             Requested size: 310.49678pt x 109.99825pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[2] <flink_engine.png, id=98, 1109.14375pt x 551.05875pt>
+[2] <flink_engine.png, id=99, 1109.14375pt x 551.05875pt>
 File: flink_engine.png Graphic file (type png)
 
 <use flink_engine.png>
-Package pdftex.def Info: flink_engine.png used on input line 88.
+Package pdftex.def Info: flink_engine.png used on input line 89.
 (pdftex.def)             Requested size: 344.99878pt x 164.99937pt.
  [3 <./streaming-flow.png> <./flink_engine.png>]
-<kafka_groups.png, id=110, 475.7775pt x 252.945pt>
+<kafka_groups.png, id=112, 475.7775pt x 252.945pt>
 File: kafka_groups.png Graphic file (type png)
  <use kafka_groups.png>
-Package pdftex.def Info: kafka_groups.png used on input line 100.
+Package pdftex.def Info: kafka_groups.png used on input line 101.
 (pdftex.def)             Requested size: 345.01332pt x 165.00282pt.
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no “ in font cmr10!
 
-[4 <./kafka_groups.png>] <kafka.png, id=119, 738.76pt x 304.13625pt>
+[4 <./kafka_groups.png>] <kafka.png, id=122, 738.76pt x 304.13625pt>
 File: kafka.png Graphic file (type png)
 
 <use kafka.png>
-Package pdftex.def Info: kafka.png used on input line 115.
+Package pdftex.def Info: kafka.png used on input line 116.
 (pdftex.def)             Requested size: 310.49126pt x 109.9948pt.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 123.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 124.
 
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 123.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 124.
 
 [5 <./kafka.png>]
-Overfull \hbox (8.1379pt too wide) in paragraph at lines 137--139
+Overfull \hbox (8.1379pt too wide) in paragraph at lines 138--140
 \OT1/cmr/m/n/10 ing, first, it reads the Kafka stream us-ing \OT1/cmtt/m/n/10 K
 afkaUtils.createDirectStream
  []
@@ -327,31 +353,40 @@ Missing character: There is no „ in font cmr8!
 Missing character: There is no ¢ in font cmr8!
 Missing character: There is no Ã in font cmr8!
 Missing character: There is no — in font cmr8!
- [8]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 206--207
+ [8] <latency1.png, id=147, 455.45157pt x 255.95625pt>
+File: latency1.png Graphic file (type png)
+
+<use latency1.png>
+Package pdftex.def Info: latency1.png used on input line 185.
+(pdftex.def)             Requested size: 172.5pt x 96.94412pt.
+File: latency1.png Graphic file (type png)
+ <use latency1.png>
+Package pdftex.def Info: latency1.png used on input line 191.
+(pdftex.def)             Requested size: 172.5pt x 96.94412pt.
+ [9 <./latency1.png (PNG copy)>]
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 224--225
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-[9]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 222.
- [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 222.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 240.
+[10]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 240.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 222.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 222.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 240.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 240.
 Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: B4E6EE70F0320D69E22B999C49B7ACD2;927.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 222.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 240.
  ) 
 Here is how much of TeX's memory you used:
- 6619 strings out of 494953
- 98505 string characters out of 6180978
- 181610 words of memory out of 5000000
- 9828 multiletter control sequences out of 15000+600000
+ 7706 strings out of 494953
+ 118260 string characters out of 6180978
+ 203101 words of memory out of 5000000
+ 10904 multiletter control sequences out of 15000+600000
  7924 words of font info for 29 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 29i,8n,32p,1451b,428s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,8n,43p,1451b,450s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
@@ -359,13 +394,14 @@ ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/typ
 e1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmtt8.pfb>
-Output written on paper.pdf (10 pages, 256567 bytes).
+c/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.
+pfb>
+Output written on paper.pdf (10 pages, 289691 bytes).
 PDF statistics:
- 200 PDF objects out of 1000 (max. 8388607)
- 169 compressed objects within 2 object streams
- 43 named destinations out of 1000 (max. 500000)
- 133 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 209 PDF objects out of 1000 (max. 8388607)
+ 173 compressed objects within 2 object streams
+ 44 named destinations out of 1000 (max. 500000)
+ 138 words of extra memory for PDF output out of 10000 (max. 10000000)
 

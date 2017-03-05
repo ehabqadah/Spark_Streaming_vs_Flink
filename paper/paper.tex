@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage[inline]{enumitem}
 \usepackage{listings}
+\usepackage{subcaption}
 %opening
 
 
@@ -177,6 +178,23 @@ The goal of sector change detection workload is to detect the  enter or leaving 
 finish processing time in a workload as the platform's processing latency (measured in milliseconds). On the other hand, the number of processed stream's records (aircrafts position messages) per second within each streaming workload is the throughput measure. Since the Spark Streaming is micro-batch based,  We examine the effect of different batch intervals
 of the Spark Streaming on the performance measurements.
 \subsection{Latency Measurements}
+
+\begin{figure}[h]
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{latency1.png}
+  \caption{Latency of Statistics Computation}
+
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{latency1.png}
+\caption{Latency of Sector Change Detection }
+
+\end{subfigure}
+\caption{Latency Results}
+\label{fig:fig}
+\end{figure}
 \subsection{Throughput Measurements}
 
 
