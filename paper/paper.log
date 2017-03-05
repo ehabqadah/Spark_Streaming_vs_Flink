@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  5 MAR 2017 16:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  5 MAR 2017 18:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -334,24 +334,25 @@ Missing character: There is no ¢ in font cmr8!
 Missing character: There is no Ã in font cmr8!
 Missing character: There is no — in font cmr8!
  [10]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 214--215
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 215--216
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 230.
 [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 230.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 231.
+ [12]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 231.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 230.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 230.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 231.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 231.
 Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: B4E6EE70F0320D69E22B999C49B7ACD2;927.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 230.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 231.
  ) 
 Here is how much of TeX's memory you used:
- 6627 strings out of 494953
- 98586 string characters out of 6180978
+ 6628 strings out of 494953
+ 98593 string characters out of 6180978
  181610 words of memory out of 5000000
  9830 multiletter control sequences out of 15000+600000
  8530 words of font info for 31 fonts, out of 8000000 for 9000
@@ -368,10 +369,10 @@ ic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
 nts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8
 .pfb>
-Output written on paper.pdf (11 pages, 274881 bytes).
+Output written on paper.pdf (12 pages, 275832 bytes).
 PDF statistics:
- 223 PDF objects out of 1000 (max. 8388607)
- 190 compressed objects within 2 object streams
- 45 named destinations out of 1000 (max. 500000)
+ 227 PDF objects out of 1000 (max. 8388607)
+ 193 compressed objects within 2 object streams
+ 46 named destinations out of 1000 (max. 500000)
  133 words of extra memory for PDF output out of 10000 (max. 10000000)
 
