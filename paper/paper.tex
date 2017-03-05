@@ -11,30 +11,21 @@
 
 \begin{flushleft}
 
- \thispagestyle{empty}
-\centering\LARGE {\bf Comparative Evaluation of Spark and Flink Stream Processing}
-
-
-
-
-\vspace{14pt}
-
+\centering { \large \bf Comparative Evaluation of Spark and Flink Stream Processing}
+\vspace{4pt}
 
 \centering
- Lab: Data Science and Big Data MA-INF 4306,
+ Lab Report: Data Science and Big Data MA-INF 4306,
  Winter Term 2016/2017, University of Bonn
 
-
-\vspace{14pt}
+\vspace{4pt}
 \centering
  Ehab Qadah\\
- Supervisor: PD Dr. Michael Mock
-\rule{\textwidth}{1pt}
+ Supervisor: PD Dr. Michael Mock.
+ \vspace{4pt}
+ 
+ \today
 \end{flushleft}
-\newpage
-\tableofcontents
-
-\newpage
 
 
 \begin{abstract}
@@ -42,7 +33,7 @@
 \end{abstract}
 Recent years have witnessed a advances in the  development of Big Data frameworks like Apache Spark and Apache Flink. For example, both frameworks support real-time
 streaming processing. While which platform is the best still an open question. 
-In this paper, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink, by measuring different performance metrics, namely latency and throughput. In addition, we cover some key aspects of streaming data applications and how they are handled in both frameworks. The experiment is done using multiple streaming workloads over real-world datasets.
+In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink, by measuring different performance metrics, namely latency and throughput. In addition, we cover some key aspects of streaming data applications and how they are handled in both frameworks. The experiment is done using multiple streaming workloads over real-world datasets.
 \section{Introduction}
 
 \par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia, as a result of the fact that the amount of data we generate is increasing exponentially \cite{idc} that generated from social media platforms, mobile phones, IoT and finical transactions, etc. Moreover, recent years showed a rapid development of Big Data frameworks such as Apache Spark and Apache Flink that provide more and efficient data processing capabilities.
@@ -57,10 +48,10 @@ In this paper, we provide a performance comparison of streaming data processing 
 
  
 
-\par The purpose of this paper is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads. Also we try to cover general aspects of streaming processing tasks (later details in Section 3) and how they can be solved in each platform. Informally,  this work aims to help the developers to determine which platform to choose in production for different use cases. 
+\par The purpose of this report is to provide a comparative experimental evaluation of throughput, latency (i.e., performance) of stream processing in Apache Spark and Apache Flink. We use a datasets of airplanes trajectories provided in the context of Datacron project\footnote{\url{http://www.datacron-project.eu/}}, in order to simulate real-world use cases. Using multiple streaming data workloads. Also we try to cover general aspects of streaming processing tasks (later details in Section 3) and how they can be solved in each platform. Informally,  this work aims to help the developers to determine which platform to choose in production for different use cases. 
 
 
-\par The remainder of this paper is organized as follows.
+\par The remainder of this report is organized as follows.
 In Section 2, we present the main characteristics, APIs, and main data abstraction of Apache Spark and Flink. Section 3  presents the general aspects of streaming processing, the design and implementation of experimental workloads. Section 4
 provides and compares the performance results of the different workloads. Last, Section 5 gives the overall conclusion.
 
@@ -94,8 +85,8 @@ It offers programming APIs in Java and Scala. Its software stack includes the co
 \begin{figure}[h]
  
   \centering
-    \includegraphics[width=\textwidth, height=.4\textheight]{flink_engine.png}
-     \caption{ An example of data flow graph \cite{flink}.}
+    \includegraphics[width=\textwidth, height=.3\textheight]{flink_engine.png}
+     \caption{ An example of data flow graph in Flink \cite{flink}.}
 \end{figure} 
 \subsection{Apache Kafka}
 \par Apache Kafka is scalable, fault-tolerant distributed publish/subscribe streaming framework \cite{kafka}.
