@@ -40,17 +40,19 @@ public class TrajectoriesStatistics {
 					// compute & aggregate statistics for the new trajectory
 					// based on the statistics of old trajectory
 					// discard the old trajectory and just keep the new one
-					Tuple2<String, PositionMessage> oldTuple = tuple2.f1.isNew() ? tuple1 : tuple2;
-					Tuple2<String, PositionMessage> newTuple = tuple2.f1.isNew() ? tuple2 : tuple1;
+					Tuple2<String, PositionMessage> oldTuple = tuple2.f1.getStreamedTime() < tuple1.f1.getStreamedTime()
+							? tuple2 : tuple1;
+					Tuple2<String, PositionMessage> newTuple = tuple2.f1.getStreamedTime() < tuple1.f1.getStreamedTime()
+							? tuple1 : tuple2;
 					StatisticsUtils.computeStatistics(oldTuple.f1, newTuple.f1);
 					newTuple.f1.setNew(false);
 					return newTuple;
 				});
 
-		// showLatecies(trajectoriesStream);
+		showLatecies(trajectoriesStream);
 		trajectoriesStream.print().setParallelism(1);
 
-		showThroughput(trajectoriesStream);
+		// showThroughput(trajectoriesStream);
 		env.execute(" Flink Trajectories Statistics Computation");
 	}
 
@@ -117,10 +119,9 @@ public class TrajectoriesStatistics {
 	private static void showLatecies(DataStream<Tuple2<String, PositionMessage>> trajectoriesStream) {
 		DataStream<Long> latencies = trajectoriesStream.map(tuple -> {
 
-			long currentTime = System.currentTimeMillis();
 			// Calculate latency
 			PositionMessage position = tuple.f1;
-			Long latency = new Long(currentTime - position.getStreamedTime());
+			Long latency = new Long(System.currentTimeMillis() - position.getStreamedTime());
 			// log the latency
 			LoggerUtils.logMessage(latency.toString());
 			return latency;

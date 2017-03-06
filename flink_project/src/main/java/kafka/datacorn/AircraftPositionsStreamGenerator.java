@@ -17,7 +17,7 @@ import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
  */
 public class AircraftPositionsStreamGenerator implements SourceFunction<String> {
 
-	private static final int LINE_SLIDE_TIME_MS = 0;
+	private static final int LINE_SLIDE_TIME_MS = 10;
 
 	private static final long serialVersionUID = 2174904787118597072L;
 	private static Configs configs = Configs.getInstance();
@@ -41,7 +41,7 @@ public class AircraftPositionsStreamGenerator implements SourceFunction<String> 
 						// append streaming time
 						messageLine = new StreamRecord(messageLine).toString();
 						ctx.collect(messageLine);
-						// Thread.sleep(LINE_SLIDE_TIME_MS);
+						Thread.sleep(LINE_SLIDE_TIME_MS);
 					}
 				} catch (Exception e) {
 
