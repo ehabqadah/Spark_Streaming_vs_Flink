@@ -54,11 +54,11 @@ public class TrajectoriesStatistics {
 		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
-		// printLatencies(runningTrajectories);
+		printLatencies(runningTrajectories);
 
 		runningTrajectories.print(1000);
 
-		showThroughput(batchTime, runningTrajectories);
+		// showThroughput(batchTime, runningTrajectories);
 		jssc.start();
 		try {
 			jssc.awaitTermination();
@@ -102,7 +102,7 @@ public class TrajectoriesStatistics {
 			for (PositionMessage position : positionsInTrajectory) {
 				if (position.isNew()) {
 
-					long latency = currentTime - position.getStreamedTime();
+					long latency = position.getFinishProcessingTime() - position.getStreamedTime();
 					LoggerUtils.logMessage(String.valueOf(latency));
 					sumLatency += latency;
 					count++;
@@ -159,6 +159,7 @@ public class TrajectoriesStatistics {
 				// Compute statistics for each position message based on
 				// the aggregated values of previous position statistics
 				StatisticsUtils.computeStatistics(lastOldPosition, trajectory);
+				trajectory.setFinishProcessingTime(System.currentTimeMillis());
 				lastOldPosition = trajectory;
 
 				/**

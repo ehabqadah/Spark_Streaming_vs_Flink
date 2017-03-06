@@ -26,7 +26,7 @@ public class PositionMessage implements Serializable {
 	private Sector sector;
 	private Sector prevSector;
 	private Boolean isNew = null;
-	private long streamedTime;
+	private long streamedTime, finishProcessingTime;
 	private Double ditance = null;
 	private Double speed = null;
 	private Double acceleration;
@@ -163,6 +163,14 @@ public class PositionMessage implements Serializable {
 
 	public void setPrevSector(Sector prevSector) {
 		this.prevSector = prevSector;
+	}
+
+	public long getFinishProcessingTime() {
+		return finishProcessingTime;
+	}
+
+	public void setFinishProcessingTime(long finishProcessingTime) {
+		this.finishProcessingTime = finishProcessingTime;
 	}
 
 }
