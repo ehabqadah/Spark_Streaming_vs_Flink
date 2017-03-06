@@ -32,7 +32,7 @@
 \begin{abstract}
 
 \end{abstract}
-Recent years have witnessed a advances in the  development of Big Data frameworks like Apache Spark and Apache Flink. For example, both frameworks support real-time
+Recent years have witnessed a advances in the  development of Big Data frameworks like Apache Spark and Apache Flink. For instance, both frameworks support real-time
 streaming processing. While which platform is the best still an open question. 
 In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink, by measuring different performance metrics, namely latency and throughput. In addition, we cover some key aspects of streaming data applications and how they are handled in both frameworks. The experiment is done using multiple streaming workloads over real-world datasets.
 \section{Introduction}
@@ -40,7 +40,7 @@ In this report, we provide a performance comparison of streaming data processing
 \par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia, as a result of the fact that the amount of data we generate is increasing exponentially \cite{idc} that generated from social media platforms, mobile phones, IoT and finical transactions, etc. Moreover, recent years showed a rapid development of Big Data frameworks such as Apache Spark and Apache Flink that provide more and efficient data processing capabilities.
  \par The Big Data is a method to process not just only large datasets (volume), but also the data that arrives in high rate (velocity), and it comes in all kinds of data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety)) \cite{svs}.
 
-\par The processing models of Big Data are Batch processing and Stream processing, Batch processing is a way to handle large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
+\par The processing models of Big Data are Batch processing and Stream processing, Batch processing involves handling  large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives to the system (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
 
 \par The are some performance evaluation of Apache Spark and Apache Flink and other framework such as Yahoo Streaming Benchmark \cite{yahoo}. We believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
 \item both frameworks are continuously improving in short time 
@@ -200,7 +200,12 @@ of the Spark Streaming on the performance measurements.
 
 
 \section{Conclusion}
-This section gives the overall conclusion.
+
+In this report, we present an experimental evaluation of the streaming processing performance and capabilities of Apache Spark and Apache Flink. We carried our experiment over aircraft potions provided in the context of EU Datacorn  project, we developed two streaming workloads to cover general aspects of real-time stream processing tasks, and we measured the latency and throughput of those workloads within the solution of Spark and Flink. Results show that Flink outperforms Spark Streaming in term of processing latency. Furthermore, Flink's processing model is well-suited to  the stream processing tasks, there is no need to manage the Stream's state and batch interval as it is in Spark streaming. Additionally, Flink operates over the individual record of the data stream, not like Spark Streaming that processes the input data stream as micro-batches. In Summary, Flink is true stream processing framework.
+
+In future work, we plan to carry our experiments over cluster of computers not just only on single computer. In addition, we will cover more aspects of streaming processing and developing more evaluation workloads. 
+
+
 
 
 \begin{thebibliography}{[MT1]}
@@ -233,7 +238,6 @@ Bulletin of the IEEE Computer Society Technical Committee on Data Engineering, 3
 
 \bibitem[9]{kafka} 
 Apache Kafka. Available: https://kafka.apache.org/intro.html [Accessed February 2017].
-
 
 %
 \end{thebibliography}

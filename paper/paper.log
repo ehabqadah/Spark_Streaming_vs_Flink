@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  5 MAR 2017 23:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  6 MAR 2017 19:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -364,20 +364,20 @@ File: latency1.png Graphic file (type png)
 Package pdftex.def Info: latency1.png used on input line 191.
 (pdftex.def)             Requested size: 172.5pt x 96.94412pt.
  [9 <./latency1.png (PNG copy)>]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 224--225
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 229--230
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 240.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 244.
 [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 240.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 244.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 240.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 240.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 244.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 244.
 Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: B4E6EE70F0320D69E22B999C49B7ACD2;927.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 240.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 244.
  ) 
 Here is how much of TeX's memory you used:
  7706 strings out of 494953
@@ -398,7 +398,7 @@ c/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.
 pfb>
-Output written on paper.pdf (10 pages, 289691 bytes).
+Output written on paper.pdf (10 pages, 290436 bytes).
 PDF statistics:
  209 PDF objects out of 1000 (max. 8388607)
  173 compressed objects within 2 object streams
