@@ -42,7 +42,7 @@ In this report, we provide a performance comparison of streaming data processing
 
 \par The processing models of Big Data are Batch processing and Stream processing, Batch processing involves handling  large, finite volumes of data (e.g., processing of historical transaction records), is more concerned with throughput. While the Stream processing  is a method to manage fast and continuously incoming data (real-time), process it as it arrives to the system (e.g., credit card fraud detection and network monitoring applications), where the low latency is required. The variety of data (structured and semi-structured) is included in the two processing models.
 
-\par The are some performance evaluation of Apache Spark and Apache Flink and other framework such as Yahoo Streaming Benchmark \cite{yahoo}. We believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
+\par The are some performance evaluation of Apache Spark and Apache Flink  such as Yahoo Streaming Benchmark \cite{yahoo}. We believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
 \item both frameworks are continuously improving in short time 
 \item we aim to study the performance of some complex operations such as \texttt{groupByKey} \& \texttt{keyBy} in Apache Spark and Apache Flink, respectively.
 \end{enumerate*}
@@ -177,7 +177,9 @@ The goal of sector change detection workload is to detect the  enter or leaving 
 \par We consider the time delay between the streaming time of record in Kafka and the 
 finish processing time in a workload as the platform's processing latency (measured in milliseconds). On the other hand, the number of processed stream's records (aircrafts position messages) per second within each streaming workload is the throughput measure. Since the Spark Streaming is micro-batch based,  We examine the effect of different batch intervals
 of the Spark Streaming on the performance measurements.
-\subsection{Latency Measurements}
+\subsection{Latency Results}
+
+Figure 5 shows the results of latency measurements of the streaming workloads in Spark and Flink. The observed values present the mean value of multiple trails and measurements. Measurements for different batch intervals are given in Spark Streaming,  if we decrease  will not get better latency but it is even getting  worse. Results show that Flink outperform Spark streaming in term of processing latency in the both evaluation workloads.
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -192,10 +194,10 @@ of the Spark Streaming on the performance measurements.
 \caption{Latency of Sector Change Detection }
 
 \end{subfigure}
-\caption{Latency Results}
+\caption{Latency Measurements}
 \label{fig:fig}
 \end{figure}
-\subsection{Throughput Measurements}
+\subsection{Throughput Results}
 
 
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  6 MAR 2017 19:33
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.2.5)  6 MAR 2017 22:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -287,10 +287,6 @@ e
 \c@lstlisting=\count117
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-
-[1
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 52.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -300,7 +296,10 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 52.
 
-<streaming-flow.png, id=81, 516.0078pt x 115.1502pt>
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+<streaming-flow.png, id=80, 516.0078pt x 115.1502pt>
 File: streaming-flow.png Graphic file (type png)
  <use streaming-flow.png>
 Package pdftex.def Info: streaming-flow.png used on input line 72.
@@ -357,27 +356,27 @@ Missing character: There is no — in font cmr8!
 File: latency1.png Graphic file (type png)
 
 <use latency1.png>
-Package pdftex.def Info: latency1.png used on input line 185.
+Package pdftex.def Info: latency1.png used on input line 187.
 (pdftex.def)             Requested size: 172.5pt x 96.94412pt.
 File: latency1.png Graphic file (type png)
  <use latency1.png>
-Package pdftex.def Info: latency1.png used on input line 191.
+Package pdftex.def Info: latency1.png used on input line 193.
 (pdftex.def)             Requested size: 172.5pt x 96.94412pt.
  [9 <./latency1.png (PNG copy)>]
-Overfull \hbox (25.36195pt too wide) in paragraph at lines 229--230
+Overfull \hbox (25.36195pt too wide) in paragraph at lines 231--232
 []\OT1/cmr/m/n/10 Spark Stream-ing. Avail-able: http://spark.apache.org/docs/la
 test/streaming-
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 244.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 246.
 [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 244.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 246.
  (./paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 244.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 244.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 246.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 246.
 Package rerunfilecheck Info: File `paper.out' has not changed.
-(rerunfilecheck)             Checksum: B4E6EE70F0320D69E22B999C49B7ACD2;927.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 244.
+(rerunfilecheck)             Checksum: DBA7EA50419AE244D1130F12B2FA8654;917.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 246.
  ) 
 Here is how much of TeX's memory you used:
  7706 strings out of 494953
@@ -386,7 +385,7 @@ Here is how much of TeX's memory you used:
  10904 multiletter control sequences out of 15000+600000
  7924 words of font info for 29 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 42i,8n,43p,1451b,450s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,8n,43p,1451b,448s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
@@ -398,7 +397,7 @@ c/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.
 pfb>
-Output written on paper.pdf (10 pages, 290436 bytes).
+Output written on paper.pdf (10 pages, 291586 bytes).
 PDF statistics:
  209 PDF objects out of 1000 (max. 8388607)
  173 compressed objects within 2 object streams
