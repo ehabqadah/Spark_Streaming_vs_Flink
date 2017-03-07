@@ -61,9 +61,9 @@ compares the performance results of the different workloads. Section 5 gives the
 
 \subsection{Apache Spark}
 
-\par Apache Spark is an open source project that provide general framework for large-scale data processing \cite{spark}. It offers programming APIs in Java, Scala, Python and R. Its stack includes set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
+\par Apache Spark is an open source project that provides a general framework for large-scale data processing \cite{spark}. It offers programming APIs in Java, Scala, Python and R. Its stack includes a set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
 
-\par The main data abstraction in Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs supports two categories of operations: transformations that drive new RDDs from the operated ones (e.g., map), and actions which return a certain value (e.g., count). On the other hand, the Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is batch-based processing model, which process the continuous stream of data by divided into micro-batches to be processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
+\par The main data abstraction of Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs support two categories of operations: transformations that drive new RDDs from the operated ones (e.g., \texttt{map}, \texttt{filter} and \texttt{groupByKey}), and actions which return a certain value (e.g., \texttt{count} and \texttt{collect}). Additionally, Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is a series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is a batch-based processing model, which processes the continuous stream of data by divided it into micro-batches that are  processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
 
 
 \begin{figure}[h]
@@ -75,12 +75,12 @@ compares the performance results of the different workloads. Section 5 gives the
 
 \subsection{Apache Flink}
 
-\par Apache Flink is an open source project that provide large-scale, distributed stream processing platform, while the batch processing treated as special case of streaming applications (i.e., finite stream)  \cite{flink}.
-It offers programming APIs in Java and Scala. Its software stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML), and Flink Graph API (Gelly).
+\par Apache Flink is an open source project that provides a large-scale, distributed stream processing platform \cite{flink}. Flink treats the batch processing as special case of streaming applications (i.e., finite stream).
+It offers programming APIs in Java and Scala. Its software stack includes the core DataStream and DataSet APIs with additional libraries such as Complex event processing for Flink (FlinkCEP), Machine Learning for Flink (FlinkML)  and Flink Graph API (Gelly).
 
 \par The main data abstraction of Flink are DataStream and DataSet that represent read-only collection of data elements. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
 
-\par The Flink's core is a distributed streaming dataflow engine,  each Flink program is represented by a data flow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure 2 shows a data flow graph of Flink program.
+\par The Flink's core is a distributed streaming dataflow engine,  with each Flink program is represented by a data flow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure 2 shows a data flow graph of a Flink program.
 
 
 \begin{figure}[h]
