@@ -34,7 +34,7 @@
 \end{abstract}
 Recent years have witnessed advances in the  development of Big Data frameworks like Apache Spark and Apache Flink. For instance, both frameworks support real-time data 
 stream processing. The question of which platform is superior to the other still open. 
-In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink by measuring different performance metrics (latency and throughput). In addition, we cover some key aspects of streaming data applications and how they are handled in the two frameworks. The experiment is done using multiple streaming workloads over real-world datasets. Results show that Flink outperform Spark streaming in term of latency.  
+In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink by measuring different performance metrics (latency and throughput). In addition, we cover some key aspects of streaming data applications and how they are handled in the two frameworks. The experiment is done using multiple streaming workloads over real-world datasets. Results show that Flink outperform Spark streaming in term of latency. While Spark Streaming gives higher throughput rates than Flink. 
 \section{Introduction}
 
 \par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia. As result of the fact that the amount of data we generate is increasing exponentially \cite{idc}.  Different sources such as  social media platforms, mobile phones, IoT and finical transactions, etc.  create large volumes of data.  Moreover, recent years have shown a rapid development of Big Data frameworks such as Apache Spark and Apache Flink that provide efficient data processing functionalities.
@@ -106,7 +106,7 @@ Apache Spark and Apache Flink can ingest Kafka streams.
 This section describes the data stream setup, the design of evaluation streaming workloads and the solution's implementation details of  Apache Spark and Apache Flink.
 
 \subsection{Data Stream Setup}
-The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.
+The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.  And  these datasets contain around \texttt{26 millions} messages.  
 \par In our experiment a data stream producer component reads the ADS-B message datasets, then publishes them to the Kafka cluster to be consumed by the workloads in Apache Spark and Apache Flink. Figure 4 illustrates the data producer and the Kafka cluster setup in all experiments.
 The data stream is divided into four portions over two server. The data producer publishes the stream records randomly to a Kafka partition and all ADS-B messages are published to the same topic (\texttt{datacorn}). Moreover, the data producer attaches the time of publishing to the ADS-B message line before publishing it to the Kafka topic.
 
@@ -127,7 +127,8 @@ In our experimental evaluation, we developed two real-time stream processing wor
 \item How to provide and update global data model in a stream processing task.
 \item Evaluate the performance by measuring the latency and throughput.
 \end{itemize}
-We give the description of workloads, the relation with these aspects and  the implementation details of Spark's and Flink's solutions in Section 3.2.1 \& 3.2.1. Afterward, In Section 4 we discuss the performance evaluation and analysis of stream processing workloads in the two frameworks.
+We give the description of workloads, the relation with these aspects and  the implementation details of Spark's and Flink's solutions in Section 3.2.1 \& 3.2.1. Afterward, In Section 4 we discuss the performance evaluation and analysis of stream processing workloads in the two frameworks. 
+The source code of the two streaming workloads and the data stream producers is available in a repository on Github\footnote{\url{https://github.com/ehabqadah/Spark_vs_Flink}}. 
 
 \subsubsection{Statistics Computation per Trajectory}
 In the first stream processing workload, we construct a stream of trajectories by considering  the position messages (i.e., ADS-B messages) that belong to the same aircraft as trajectory. Moreover, we continuously compute and aggregate statistics for each new position in a trajectory . As example of computed statistics quantities speed mean, mean of location coordinates, min and max altitude, etc. In this workload, we cover the parallel receiving of input data stream, statefull aggregation over the input data stream, and preserving the correct order of the stream's records.
@@ -172,14 +173,14 @@ The goal of sector change detection workload is to detect the  enter or leaving 
  \par To sum up, the same differences between Flink and Spark Streaming regarding the state management and parallel  consumers of Kafka stream as was discussed in Section 3.2.1. Another key difference between them, is how  to provide the global data model (e.g., sectors) in a streaming workload. Spark Streaming offers the \texttt{Broadcast} feature to handle this issue in efficient way, while the global data model is manually provided  to the stream operations in Flink.
 \section{Performance Results}
 
-\par This section presents the results of performance evaluation in Spark (2.0.2) and Flink (1.1.3) for the streaming workloads were described in Section 3.2. Specifically, we provide  the measurements of latency and throughput of the benchmarking workloads execution in Spark and Flink. We carried the experiment by setup the Kafka stream as described in Section 3.1 on local machine\footnote{ The experiments have been carried  on single machine with Ubuntu 16.04 LTS os, Intel® Core™ i5-6200U CPU @ 2.30GHz × 4  processor, and 16 GB of memory.  }, and run the different workloads on the same machine (i.e., local mode) to obtain the performance results.  
+\par This section presents the results of performance evaluation in Spark (2.0.2) and Flink (1.1.3) for the streaming workloads were described in Section 3.2. Specifically, we provide  the measurements of latency and throughput of the benchmarking workloads execution in Spark Streaming and Flink. We carried the experiment by setup the Kafka stream as described in Section 3.1 on local machine\footnote{ The experiments have been carried  on single machine with Ubuntu 16.04 LTS os, Intel® Core™ i5-6200U CPU @ 2.30GHz × 4  processor, and 16 GB of memory.  }, and execute the different workloads on the same machine (i.e., local mode) to obtain the performance results.  
 
 \par We consider the time delay between the streaming time of record in Kafka and the 
 finish processing time in a workload as the platform's processing latency (measured in milliseconds). On the other hand, the number of processed stream's records (aircrafts position messages) per second within each streaming workload is the throughput measure. Since the Spark Streaming is micro-batch based,  We examine the effect of different batch intervals
 of the Spark Streaming on the performance measurements.
 \subsection{Latency Results}
 
-Figure 5 shows the results of the latency measurements of the streaming workloads in Spark and Flink. The observed values present the mean value of multiple trails and measurements. Measurements for different batch intervals are given in Spark Streaming, we noticed that making the batch time too small does not give best latency results. Results show that Flink outperform Spark streaming in term of processing latency in the two evaluation workloads.
+Figure 5 shows the results of the latency measurements of the streaming workloads in Spark and Flink. The observed values present the mean value of multiple trails and measurements. Measurements for different batch durations are given in Spark Streaming, we noticed that making the batch time too small does not give best latency results. Results show that Flink outperform Spark streaming in term of processing latency in the two evaluation workloads.
 
 \begin{figure}[h]
 \begin{subfigure}{.5\textwidth}
@@ -201,36 +202,38 @@ Figure 5 shows the results of the latency measurements of the streaming workload
 
 The  measurements of throughput for the two streaming workloads are give in Figure 6. The observed values reflect the mean of throughput (message/minute) 
  in Spark streaming and Flink for multiple executions. Also for Spark streaming we tested different 
- batch times. Results show that 
+ batch times. Results show that Spark Streaming has higher throughput than Flink, with increasing the batch duration.
 
 \begin{figure}[h]
+\centering
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{latency1.png}
-  \caption{Throughput of Statistics Computation}
+  \includegraphics[width=\linewidth]{throughput1.png}
+  \caption{Statistics Computation}
 
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{latency1.png}
-\caption{Throughput of Sector Change Detection }
+  \includegraphics[width=\linewidth]{throughput1.png}
+\caption{Sector Change Detection }
 
 \end{subfigure}
 \caption{Throughput Measurements}
 \label{fig:fig}
 \end{figure}
 
-\newpage
+
 
 \section{Conclusion}
 
-In this report, we present an experimental evaluation of the stream processing performance and capabilities of Apache Spark and Apache Flink. We carried our experiment over aircraft positions datasets provided by the Datacorn project, we developed two streaming workloads to cover general aspects of real-time stream processing tasks. Additionally, and we measured the latency and throughput of those workloads solution of Spark and Flink. Results show that Flink outperforms Spark Streaming in term of processing latency. Furthermore, Flink's processing model is well-suited to the stream processing tasks, there is no need to manage the Stream's state and batch interval as it is in Spark streaming. Moreover, Flink operates over the individual record of the data stream, while Spark Streaming  processes the input data stream as micro-batches. In Summary, Flink is true stream processing framework. On the other hand, we noticed that finding online resources related to Spark is easier than to Flink.
+In this report, we present an experimental evaluation of the stream processing performance and capabilities of Apache Spark and Apache Flink. We carried our experiment over aircraft positions datasets provided by the Datacorn project, we developed two streaming workloads to cover general aspects of real-time stream processing tasks. Additionally, and we measured the latency and throughput of those workloads solution of Spark and Flink. Results show that Flink outperforms Spark Streaming in term of processing latency. In contrast, Spark Streaming has showed better throughput rates than Flink. 
+\par To sum up, Flink's processing model is well-suited to the stream processing tasks that require low latency, also there is no need to manage the Stream's state and batch interval as it is in Spark streaming. Moreover, Flink operates over the individual record of the data stream, while Spark Streaming  processes the input data stream as micro-batches. Thus we can state that  Flink is a true stream processing framework. A side remark, we have  noticed that finding online resources related to Spark is easier than to Flink.
 
 In future work, we plan to carry our experiments over cluster of computers not just only on single computer. In addition, we will cover more aspects of real-time data stream processing and developing more evaluation workloads. 
 
 
 
-
+\newpage
 \begin{thebibliography}{[MT1]}
 %
 \bibitem[1]{idc} 
