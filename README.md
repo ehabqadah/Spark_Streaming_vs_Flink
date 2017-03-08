@@ -23,4 +23,9 @@
 
 1. Change to the project directory
 2. run:  `mvn clean package`
-3. use eclipes to run code.
+3. use Eclipse to run code.
+
+
+## ADS-B messages Kafak Stream 
+1. 'adsbFiles' config hollds the pathes of datasets to be streamed
+2. run -> 'kafka.datacorn.DatacornKafkaStreamProducer'
