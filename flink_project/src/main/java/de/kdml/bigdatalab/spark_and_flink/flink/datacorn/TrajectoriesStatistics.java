@@ -49,7 +49,7 @@ public class TrajectoriesStatistics {
 					StatisticsUtils.computeStatistics(oldTuple.f1, newTuple.f1);
 					newTuple.f1.setNew(false);
 
-					// LoggerUtils.logMessage("-" + System.currentTimeMillis());
+					LoggerUtils.logMessage("-" + System.currentTimeMillis());
 					return newTuple;
 				});
 

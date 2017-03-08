@@ -129,7 +129,7 @@ public class TrajectoriesStatistics {
 				StatisticsUtils.computeStatistics(lastOldPosition, position);
 				long currentTime = System.currentTimeMillis();
 				position.setFinishProcessingTime(currentTime);
-				LoggerUtils.logMessage("_" + currentTime);
+				LoggerUtils.logMessage(currentTime + "-");
 				lastOldPosition = position;
 
 				/**
