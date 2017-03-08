@@ -8,7 +8,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
@@ -42,7 +41,7 @@ public class TrajectoriesStatistics {
 		long batchTime = configs.getIntProp("batchDuration");
 		// configure the stream batch interval
 		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.milliseconds(batchTime));
-
+		LoggerUtils.logMessage("Start Time:" + System.currentTimeMillis());
 		// create the trajectories stream
 		JavaPairDStream<String, Iterable<PositionMessage>> trajectories = TrajectoriesStreamUtils
 				.getTrajectoriesStream(jssc);
@@ -54,7 +53,7 @@ public class TrajectoriesStatistics {
 		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndComputeStatistics);
 
-		printLatencies(runningTrajectories);
+		// printLatencies(runningTrajectories);
 
 		runningTrajectories.print(1000);
 
@@ -85,37 +84,6 @@ public class TrajectoriesStatistics {
 			LoggerUtils.logMessage(time + " count=" + count + "Current throughput = " + (count / batchTimeInSeconds)
 					+ " records / second");
 		});
-	}
-
-	/**
-	 * Print latencies measurements
-	 * 
-	 * @param runningTrajectories
-	 */
-	private static void printLatencies(JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
-		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
-
-			// find the average latency for all positions in a trajectory
-			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
-
-			Iterable<PositionMessage> positionsInTrajectory = trajectoryTuple._2;
-			for (PositionMessage position : positionsInTrajectory) {
-				if (position.isNew()) {
-
-					long latency = position.getFinishProcessingTime() - position.getStreamedTime();
-					LoggerUtils.logMessage(String.valueOf(latency));
-					sumLatency += latency;
-					count++;
-				}
-			}
-			return count == 0 ? 0 : new Long(sumLatency / count);
-
-		}).filter(latency -> {
-			return latency > 0;
-		});
-
-		// show latencies
-		latencies.print();
 	}
 
 	/**
@@ -155,12 +123,14 @@ public class TrajectoriesStatistics {
 			// since we need to preserve the right order of the position
 			// messages based on the created time
 
-			for (PositionMessage trajectory : aggregatedPositions) {
+			for (PositionMessage position : aggregatedPositions) {
 				// Compute statistics for each position message based on
 				// the aggregated values of previous position statistics
-				StatisticsUtils.computeStatistics(lastOldPosition, trajectory);
-				trajectory.setFinishProcessingTime(System.currentTimeMillis());
-				lastOldPosition = trajectory;
+				StatisticsUtils.computeStatistics(lastOldPosition, position);
+				long currentTime = System.currentTimeMillis();
+				position.setFinishProcessingTime(currentTime);
+				LoggerUtils.logMessage("_" + currentTime);
+				lastOldPosition = position;
 
 				/**
 				 * Alternative solution: print or save the positions here and

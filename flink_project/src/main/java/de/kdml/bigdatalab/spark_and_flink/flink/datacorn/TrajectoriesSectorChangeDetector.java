@@ -9,6 +9,7 @@ import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.flink.utils.FlinkUtils;
@@ -33,24 +34,31 @@ public class TrajectoriesSectorChangeDetector {
 
 		// assign sector for each trajectory, then check if there is change in
 		// the sector between two consecutive trajectories
-		DataStream<String> trajectoriesStreamWithSectors = trajectoriesStream
-				.reduce(new TrajectoriesSectorsReducer(sectorsDataSet.collect())).filter(tuple -> {
-					PositionMessage position = tuple.f1;
-					// check for change in previous and current sector
-					if (position.getPrevSector() != null && !position.getSector().equals(position.getPrevSector())) {
-						return true;
-					}
-					return false;
-				}).map(tuple -> {
 
-					// print the sector transition
-					PositionMessage trajectory = tuple.f1;
-					return tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
-							+ trajectory.getSector().getNameAndAirBlock();
+		DataStream<Tuple2<String, PositionMessage>> runningTrajectories = trajectoriesStream
+				.reduce(new TrajectoriesSectorsReducer(sectorsDataSet.collect()));
 
-				});
+		DataStream<String> trajectoriesStreamWithSectors = runningTrajectories.filter(tuple -> {
+			PositionMessage position = tuple.f1;
+			// check for change in previous and current sector
+			if (position.getPrevSector() != null && !position.getSector().equals(position.getPrevSector())) {
+				return true;
+			}
+			return false;
+		}).map(tuple -> {
+
+			// print the sector transition
+			PositionMessage trajectory = tuple.f1;
+			String outputLine = tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
+					+ trajectory.getSector().getNameAndAirBlock();
+
+			LoggerUtils.logMessage(outputLine);
+			return outputLine;
+
+		});
 
 		trajectoriesStreamWithSectors.print().setParallelism(1);
+		// TrajectoriesStreamUtils.showLatecies(runningTrajectories);
 		env.execute("Trajectories Sector change detector");
 	}
 

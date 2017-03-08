@@ -1,6 +1,7 @@
 package de.kdml.bigdatalab.spark_and_flink.spark_project.datacorn;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaSparkContext;
@@ -38,7 +39,7 @@ public class TrajectoriesSectorChangeDetector {
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Trajectories sector change  deetctor ");
 
 		JavaStreamingContext jssc = new JavaStreamingContext(sc,
-				Durations.seconds(configs.getIntProp("batchDuration")));
+				Durations.milliseconds(configs.getIntProp("batchDuration")));
 
 		// broadcast the sector list
 		sectors = sc.broadcast(getSectorsDataSet(sc));
@@ -50,6 +51,7 @@ public class TrajectoriesSectorChangeDetector {
 		JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories = trajectories
 				.updateStateByKey(updateTrajectoriesAndAssignSectors);
 
+		TrajectoriesStreamUtils.printLatencies(runningTrajectories);
 		// find trajectories with change in sector
 		JavaDStream<String> changedTrajectories = runningTrajectories.filter(trajectoryTuple -> {
 
@@ -94,6 +96,8 @@ public class TrajectoriesSectorChangeDetector {
 				}
 				prevPosition = currentPosition;
 			}
+
+			// LoggerUtils.logMessage(output.toString());
 			return output.toString();
 		});
 
@@ -133,9 +137,8 @@ public class TrajectoriesSectorChangeDetector {
 	}
 
 	/**
-	 * Return a new "state" DStream where the state for each key is updated by
-	 * applying the given function on the previous state of the key and the new
-	 * values for the key
+	 * Update the positions of trajectory every new batch, by assigning the
+	 * sectors for the received positions
 	 * 
 	 */
 	public static Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>> updateTrajectoriesAndAssignSectors = new Function2<List<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>, Optional<Iterable<PositionMessage>>>() {
@@ -143,61 +146,62 @@ public class TrajectoriesSectorChangeDetector {
 		private static final long serialVersionUID = -76088662409004569L;
 
 		@Override
-		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> values,
-				Optional<Iterable<PositionMessage>> state) {
+		public Optional<Iterable<PositionMessage>> call(List<Iterable<PositionMessage>> newPostitions,
+				Optional<Iterable<PositionMessage>> statePositions) {
 
-			PositionMessage lastOldTrajectory = null;
+			// Get the last old trajectory from the previous batch to be used in
+			// statistics computation for the new batch positions
 
-			// get last old trajectory to be used in statistics computation
-			Iterable<PositionMessage> stateTrajectories = state.orElse(new ArrayList<>());
-			for (PositionMessage trajectory : stateTrajectories) {
-				lastOldTrajectory = trajectory;
-				lastOldTrajectory.setNew(false);
-			}
-			List<PositionMessage> newTrajectories = new ArrayList<>();
-			// aggregate new values
-			for (Iterable<PositionMessage> val : values) {
-				for (PositionMessage trajectory : val) {
-					newTrajectories.add(trajectory);
-				}
+			Iterable<PositionMessage> prevBatchPositions = statePositions.orElse(new ArrayList<>());
 
-			}
+			// Get last position in previous batch
+			PositionMessage lastOldPosition = TrajectoriesStreamUtils.getLastPositionInBatch(prevBatchPositions);
 
-			// no new trajectories were received
-			if (newTrajectories.size() == 0) {
-				return Optional.of(stateTrajectories);
+			List<PositionMessage> newAggregatedPositions = TrajectoriesStreamUtils
+					.getNewAggregatedPositions(newPostitions);
+
+			// In case there is no new positions keep the current state for the
+			// given trajectory
+			if (newAggregatedPositions.size() == 0) {
+				return Optional.of(Arrays.asList(lastOldPosition));
 			}
 
-			List<PositionMessage> aggregatedTrajectories = new ArrayList<>();
-			// append only the last old trajectory
-			if (lastOldTrajectory != null) {
-				appendTrajectoryAndAssignSector(aggregatedTrajectories, lastOldTrajectory);
+			List<PositionMessage> aggregatedPositionsOfTrajectory = new ArrayList<>();
+
+			// append only the last old position from previous batch
+			if (lastOldPosition != null) {
+				appendTrajectoryAndAssignSector(aggregatedPositionsOfTrajectory, lastOldPosition);
 			}
 
-			for (PositionMessage trajectory : newTrajectories) {
-				trajectory.setNew(true);
-				appendTrajectoryAndAssignSector(aggregatedTrajectories, trajectory);
+			for (PositionMessage position : newAggregatedPositions) {
+				position.setNew(true);
+				/**
+				 * We can print the change the change here and just keep the
+				 * last position
+				 */
+				appendTrajectoryAndAssignSector(aggregatedPositionsOfTrajectory, position);
+				position.setFinishProcessingTime(System.currentTimeMillis());
 
 			}
 			// update state
-			return Optional.of(TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedTrajectories));
+			return Optional.of(TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedPositionsOfTrajectory));
 		}
 
 		/**
 		 * Append the trajectory after assigning the sector
 		 * 
-		 * @param aggregatedTrajectories
-		 * @param trajectory
+		 * @param aggregatedPositionsOfTtrajectory
+		 * @param position
 		 */
-		private void appendTrajectoryAndAssignSector(List<PositionMessage> aggregatedTrajectories,
-				PositionMessage trajectory) {
+		private void appendTrajectoryAndAssignSector(List<PositionMessage> aggregatedPositionsOfTtrajectory,
+				PositionMessage position) {
 
 			// assign sector for trajectory
-			if (trajectory.getSector() == null) {
-				Sector sector = SectorUtils.getSectorForTrajectory(trajectory, sectors.getValue());
-				trajectory.setSector(sector);
+			if (position.getSector() == null) {
+				Sector sector = SectorUtils.getSectorForTrajectory(position, sectors.getValue());
+				position.setSector(sector);
 			}
-			aggregatedTrajectories.add(trajectory);
+			aggregatedPositionsOfTtrajectory.add(position);
 		}
 	};
 

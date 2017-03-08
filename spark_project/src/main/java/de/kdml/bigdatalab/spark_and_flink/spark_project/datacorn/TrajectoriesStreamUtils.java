@@ -17,6 +17,7 @@ import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.StreamRecord;
@@ -127,5 +128,36 @@ public class TrajectoriesStreamUtils {
 		// Sort the new positions based on create time to preserve the
 		// correct order of message order
 		return TrajectoriesUtils.sortPositionsOfTrajectory(aggregatedPositions);
+	}
+
+	/**
+	 * Print latencies measurements
+	 * 
+	 * @param runningTrajectories
+	 */
+	public static void printLatencies(JavaPairDStream<String, Iterable<PositionMessage>> runningTrajectories) {
+		JavaDStream<Long> latencies = runningTrajectories.map(trajectoryTuple -> {
+
+			// find the average latency for all positions in a trajectory
+			long currentTime = System.currentTimeMillis(), sumLatency = 0, count = 0;
+
+			Iterable<PositionMessage> positionsInTrajectory = trajectoryTuple._2;
+			for (PositionMessage position : positionsInTrajectory) {
+				if (position.isNew()) {
+
+					long latency = position.getFinishProcessingTime() - position.getStreamedTime();
+					LoggerUtils.logMessage(String.valueOf(latency));
+					sumLatency += latency;
+					count++;
+				}
+			}
+			return count == 0 ? 0 : new Long(sumLatency / count);
+
+		}).filter(latency -> {
+			return latency > 0;
+		});
+
+		// show latencies
+		latencies.print();
 	}
 }
