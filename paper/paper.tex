@@ -16,8 +16,13 @@
 \vspace{4pt}
 
 \centering
- Lab Report: Data Science and Big Data MA-INF 4306,
- Winter Term 2016/2017, University of Bonn
+ MA-INF 4306 - Data Science and Big Data \\
+ Lab Report\\
+ 
+   Winter Semester 2016.17\\
+
+		 University of Bonn\\
+
 
 \vspace{4pt}
 \centering
@@ -37,24 +42,25 @@ stream processing. The question of which platform is superior to the other still
 In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink by measuring different performance metrics (latency and throughput). In addition, we cover some key aspects of streaming data applications and how they are handled in the two frameworks. The experiment is done using multiple streaming workloads over real-world datasets. Results show that Flink outperform Spark streaming in term of latency. While Spark Streaming gives higher throughput rates than Flink. 
 \section{Introduction}
 
-\par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia. As result of the fact that the amount of data we generate is increasing exponentially \cite{idc}.  Different sources such as  social media platforms, mobile phones, IoT and finical transactions, etc.  create large volumes of data.  Moreover, recent years have shown a rapid development of Big Data frameworks such as Apache Spark and Apache Flink that provide efficient data processing functionalities.
- \par Big Data is a term that does not only describe large datasets (volume), but also the data that arrives in high rate (velocity), which comes in all kinds of data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety)) \cite{svs}.
+\par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia. This attention is a result of the fact that the amount of data we generate is increasing exponentially \cite{idc}.  Different sources such as  social media platforms, mobile phones, Internet of things (IoT), financial transactions, etc.  create large volumes of data.  Moreover, many Big Data frameworks have been recently developed such as Apache Spark and Apache Flink that provide efficient data processing functionalities.
+ \par Big Data is a term that does not only describe large datasets (volume), but also the data that arrives in high rate (velocity), and it comes in a mix of different data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety)) \cite{svs}.
 
-\par The processing models of Big Data are Batch processing and Stream processing. Batch processing involves handling  large, finite volumes of data (e.g., processing of historical transaction records), and is more concerned with throughput. While Stream processing  is a method to manage fast and continuously incoming data (real-time), as it arrives to the system (e.g., credit card fraud detection and network monitoring applications). Where low latency is crucial for stream processing systems. Both processing models are capable of operating with structured or semi-structured data (i.e., variety).
+\par The processing models of Big Data are Batch processing and Stream processing. Batch processing involves handling  large, finite volumes of data (e.g., processing of historical transaction records), and is more concerned with throughput. While Stream processing  is a method to manage fast and continuously incoming data (real-time), as it arrives to the system (e.g., credit card fraud detection and network monitoring applications). Stream processing systems usually  provide low latency processing. Both processing models are capable of operating with structured or semi-structured data (i.e., variety).
 
-\par There exist some performance evaluations of Apache Spark and Apache Flink  such as Yahoo Streaming Benchmark \cite{yahoo}. We believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
+\par There exist some publications that compare Apache Spark and Apache Flink
+ such as the Yahoo Streaming Benchmark \cite{yahoo}. But we believe that we still need to carry our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
 \item both frameworks are continuously improving in short time 
 \item we aim to study the performance of some complex operations such as \texttt{groupByKey} \& \texttt{keyBy} in Apache Spark and Apache Flink, respectively.
 \end{enumerate*}
 
  
 
-\par The purpose of this report is to provide a comparative experimental evaluation of throughput and latency of stream processing in Apache Spark and Apache Flink. In order to simulate real-world use cases, we use datasets of airplane trajectories provided by the  Datacron project\footnote{\url{http://www.datacron-project.eu/}} to develop multiple streaming data processing workloads. Beside the performance comparison of stream processing of the two frameworks, we try to cover general aspects of stream processing tasks (see Section 3) and how they can be solved in each platform. Informally,  this work aims to help the developers to determine which platform to use for different use cases. 
+\par The purpose of this report is to provide a comparative experimental evaluation of throughput and latency of stream processing in Apache Spark and Apache Flink. In order to simulate real-world use cases, we use datasets of airplane trajectories provided by the  Datacron project\footnote{\url{http://www.datacron-project.eu/}} to develop multiple streaming data processing workloads. Beside the performance comparison of the stream processing of the two frameworks, we try to cover general aspects of stream processing tasks (see Section 3) and how they can be solved in each platform. Informally,  this work aims to help the developers to determine which platform to use for different use cases. 
 
 
 \par The remainder of this report is organized as follows.
-In Section 2, we present the main characteristics, programming APIs, and main data abstraction of Apache Spark and Apache Flink. Section 3  presents the general aspects of streaming processing and the implementation of experimental workloads. Section 4
-compares the performance results of the different workloads. Section 5 gives the overall conclusion.
+In Section 2, we present the main characteristics, programming APIs, and main data abstraction of Apache Spark and Apache Flink. Section 3  presents the general aspects of stream processing tasks and the implementation of experimental workloads. Section 4
+compares the performance results of the different workloads. And finally, Section 5 gives the overall conclusion.
 
 \section{Technical Background}
  In this section, we present the architecture, key characteristics, programming APIs  of Apache Spark and Apache Flink. Moreover, a brief overview of the Apache Kafka platform is  provided.
@@ -63,7 +69,7 @@ compares the performance results of the different workloads. Section 5 gives the
 
 \par Apache Spark is an open source project that provides a general framework for large-scale data processing \cite{spark}. It offers programming APIs in Java, Scala, Python and R. Its stack includes a set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
 
-\par The main data abstraction of Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs support two categories of operations: transformations that drive new RDDs from the operated ones (e.g., \texttt{map}, \texttt{filter} and \texttt{groupByKey}), and actions which return a certain value (e.g., \texttt{count} and \texttt{collect}). Additionally, Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is a series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is a batch-based processing model, which processes the continuous stream of data by divided it into micro-batches that are  processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
+\par The main data abstraction of Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs support two categories of operations: transformations that drive new RDDs from the operated ones (e.g., \texttt{map}, \texttt{filter} and \texttt{groupByKey}), and actions which return a certain value (e.g., \texttt{count} and \texttt{collect}). Additionally, Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is a series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is a batch-based processing model, which processes the continuous stream of data by dividing it into micro-batches that are  processed by the Spark engine. Figure 1 illustrates the general process flow of Spark Streaming. 
 
 
 \begin{figure}[h]
@@ -80,7 +86,7 @@ It offers programming APIs in Java and Scala. Its software stack includes the co
 
 \par The main data abstraction of Flink are DataStream and DataSet that represent read-only collection of data elements. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in case of DataStream.
 
-\par The Flink's core is a distributed streaming dataflow engine,  with each Flink program is represented by a data flow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure 2 shows a data flow graph of a Flink program.
+\par The Flink's core is a distributed streaming dataflow engine,  with each Flink program is represented by a dataflow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure 2 shows a data flow graph of a Flink program.
 
 
 \begin{figure}[h]
@@ -91,7 +97,7 @@ It offers programming APIs in Java and Scala. Its software stack includes the co
 \end{figure} 
 \subsection{Apache Kafka}
 \par Apache Kafka is scalable, fault-tolerant and distributed streaming framework \cite{kafka}. It allows to publish and subscribe to data streams.
-Kafka manages the stream records in different categories (i.e., topics) that partitioned and distributed over the servers of the Kafka cluster. It allows the data producers to publish a stream of records to one or more  Kafka topic. Additionally, consumer applications can subscribe to one or more topic to read data streams. The consumers are grouped into groups based on the group name that allows Kafka to distribute and balance the stream partitions among the  members of a certain group for the sake of scalability. Figure 3 shows how 4 partitions of a stream are distributed between two groups of consumers based on the number of members. 
+Kafka manages the stream records in different categories (i.e., topics) that are partitioned and distributed over the servers of the Kafka cluster. It allows the data producers to publish a stream of records to one or more  Kafka topic. Additionally, consumer applications can subscribe to one or more topic to read data streams. The consumers within a group use the  same group name, which allows Kafka to distribute and balance the stream partitions among the  members of a certain group for the sake of scalability. Figure 3 shows how 4 partitions of a stream are distributed between two groups of consumers based on the number of members. 
 Apache Kafka has been widely  adopted, for example, 
 Apache Spark and Apache Flink can ingest Kafka streams. 
 
@@ -103,10 +109,10 @@ Apache Spark and Apache Flink can ingest Kafka streams.
 \end{figure} 
 
 \section{Experiment Setup and Implementation}
-This section describes the data stream setup, the design of evaluation streaming workloads and the solution's implementation details of  Apache Spark and Apache Flink.
+This section describes the data stream setup, the design of evaluation streaming workloads and the  implementation details of the proposed solution of Apache Spark and Apache Flink.
 
 \subsection{Data Stream Setup}
-The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that present the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.  And  these datasets contain around \texttt{26 millions} messages.  
+The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance – Broadcast (ADS-B) messages that represent the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.  And  these datasets contain around \texttt{26 millions} messages.  
 \par In our experiment a data stream producer component reads the ADS-B message datasets, then publishes them to the Kafka cluster to be consumed by the workloads in Apache Spark and Apache Flink. Figure 4 illustrates the data producer and the Kafka cluster setup in all experiments.
 The data stream is divided into four portions over two server. The data producer publishes the stream records randomly to a Kafka partition and all ADS-B messages are published to the same topic (\texttt{datacorn}). Moreover, the data producer attaches the time of publishing to the ADS-B message line before publishing it to the Kafka topic.
 
