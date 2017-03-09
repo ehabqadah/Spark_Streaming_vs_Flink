@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.SectorUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
@@ -42,6 +43,8 @@ public class TrajectoriesSectorsReducer implements ReduceFunction<Tuple2<String,
 
 		newTuple.f1.setNew(false);
 
+		LoggerUtils.logMessage("-" + System.currentTimeMillis());
+		LoggerUtils.logMessage("-" + System.currentTimeMillis());
 		return newTuple;
 	}
 

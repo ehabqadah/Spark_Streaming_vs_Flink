@@ -33,15 +33,18 @@ public class AircraftPositionsStreamGenerator implements SourceFunction<String> 
 			for (String file : adsbFiles) {
 
 				System.out.println("streaming of " + file);
-				i++;
+
 				try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 					String messageLine;
 					while ((messageLine = br.readLine()) != null) {
+						i++;
 
 						// append streaming time
 						messageLine = new StreamRecord(messageLine).toString();
+
 						ctx.collect(messageLine);
-						Thread.sleep(LINE_SLIDE_TIME_MS);
+
+						// Thread.sleep(LINE_SLIDE_TIME_MS);
 					}
 				} catch (Exception e) {
 

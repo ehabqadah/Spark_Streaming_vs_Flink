@@ -29,7 +29,7 @@ public class TrajectoriesSectorChangeDetector {
 		StreamExecutionEnvironment env = FlinkUtils.getInitializedEnv();
 		KeyedStream<Tuple2<String, PositionMessage>, Tuple> trajectoriesStream = TrajectoriesStreamUtils
 				.getTrajectoriesStream(env);
-
+		LoggerUtils.logMessage("Start Time:" + System.currentTimeMillis());
 		DataSet<Sector> sectorsDataSet = getSectorDataSet();
 
 		// assign sector for each trajectory, then check if there is change in
@@ -52,7 +52,7 @@ public class TrajectoriesSectorChangeDetector {
 			String outputLine = tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
 					+ trajectory.getSector().getNameAndAirBlock();
 
-			LoggerUtils.logMessage(outputLine);
+			// LoggerUtils.logMessage(outputLine);
 			return outputLine;
 
 		});

@@ -70,10 +70,10 @@ public class TrajectoriesStreamUtils {
 			// parse ADS-B messages and construct tuple of ID & position
 			// message for each message
 			StreamRecord streamRecord = StreamRecord.parseData(line);
-			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
-			trajectory.setStreamedTime(streamRecord.getStreamedTime());
-			trajectory.setNew(true);
-			return new Tuple2<>(trajectory.getID(), trajectory);
+			PositionMessage position = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
+			position.setStreamedTime(streamRecord.getStreamedTime());
+			position.setNew(true);
+			return new Tuple2<>(position.getID(), position);
 
 		}).filter(tuple -> {
 			// filter irrelevant messages

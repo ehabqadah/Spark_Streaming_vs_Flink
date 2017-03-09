@@ -14,6 +14,7 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.Configs;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.LoggerUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.SectorUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.TrajectoriesUtils;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
@@ -181,6 +182,7 @@ public class TrajectoriesSectorChangeDetector {
 				 */
 				appendTrajectoryAndAssignSector(aggregatedPositionsOfTrajectory, position);
 				position.setFinishProcessingTime(System.currentTimeMillis());
+				LoggerUtils.logMessage(System.currentTimeMillis() + "-");
 
 			}
 			// update state
