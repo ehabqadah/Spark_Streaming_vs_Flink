@@ -52,7 +52,7 @@ public class TrajectoriesSectorChangeDetector {
 			String outputLine = tuple.f0 + ": " + trajectory.getPrevSector().getNameAndAirBlock() + " --> "
 					+ trajectory.getSector().getNameAndAirBlock();
 
-			// LoggerUtils.logMessage(outputLine);
+			LoggerUtils.logMessage(outputLine);
 			return outputLine;
 
 		});

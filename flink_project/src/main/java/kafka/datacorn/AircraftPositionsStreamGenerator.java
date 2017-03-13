@@ -51,7 +51,7 @@ public class AircraftPositionsStreamGenerator implements SourceFunction<String> 
 					System.out.println("exp" + e);
 				}
 			}
-			// running = false;
+			running = false;
 
 		}
 	}

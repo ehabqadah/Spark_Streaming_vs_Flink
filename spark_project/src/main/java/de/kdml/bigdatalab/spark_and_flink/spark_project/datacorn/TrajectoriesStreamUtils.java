@@ -87,7 +87,7 @@ public class TrajectoriesStreamUtils {
 			PositionMessage trajectory = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			trajectory.setStreamedTime(streamRecord.getStreamedTime());
 			trajectory.setNew(true);
-
+			LoggerUtils.logMessage(System.currentTimeMillis() + "-=");
 			// create a tuple of Id & position message for each stream line
 			return new Tuple2<>(trajectory.getID(), trajectory);
 		}).filter(tuple -> {

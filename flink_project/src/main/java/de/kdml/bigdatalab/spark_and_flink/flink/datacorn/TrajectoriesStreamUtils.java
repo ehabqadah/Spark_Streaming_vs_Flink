@@ -45,7 +45,7 @@ public class TrajectoriesStreamUtils {
 		props.setProperty("zookeeper.connect", configs.getStringProp("zookeeper"));
 		props.setProperty("bootstrap.servers", configs.getStringProp("bootstrap.servers"));
 		props.setProperty("group.id", configs.getStringProp("kafkaGroupId"));
-		// Always read topicfrom start 
+		// Always read topicfrom start
 		props.setProperty("auto.offset.reset", "earliest");
 
 		// create a Kafka consumer
@@ -73,6 +73,8 @@ public class TrajectoriesStreamUtils {
 			PositionMessage position = TrajectoriesUtils.parseDataInput(streamRecord.getValue());
 			position.setStreamedTime(streamRecord.getStreamedTime());
 			position.setNew(true);
+
+			// LoggerUtils.logMessage("-=-" + System.currentTimeMillis());
 			return new Tuple2<>(position.getID(), position);
 
 		}).filter(tuple -> {

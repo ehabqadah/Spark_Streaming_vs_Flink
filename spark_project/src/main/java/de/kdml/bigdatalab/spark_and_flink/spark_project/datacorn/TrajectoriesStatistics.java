@@ -37,7 +37,6 @@ public class TrajectoriesStatistics {
 
 		// configure spark streaming context
 		JavaSparkContext sc = SparkConfigsUtils.getSparkContext("Trajectories Statistics Computation ");
-
 		long batchTime = configs.getIntProp("batchDuration");
 		// configure the stream batch interval
 		JavaStreamingContext jssc = new JavaStreamingContext(sc, Durations.milliseconds(batchTime));
@@ -81,8 +80,9 @@ public class TrajectoriesStatistics {
 				count += Iterators.size(tuple._2().iterator());
 			}
 
-			LoggerUtils.logMessage(time + " count=" + count + "Current throughput = " + (count / batchTimeInSeconds)
-					+ " records / second");
+			// LoggerUtils.logMessage(time + " count=" + count + "Current
+			// throughput = " + (count / batchTimeInSeconds)
+			// + " records / second");
 		});
 	}
 
@@ -129,7 +129,7 @@ public class TrajectoriesStatistics {
 				StatisticsUtils.computeStatistics(lastOldPosition, position);
 				long currentTime = System.currentTimeMillis();
 				position.setFinishProcessingTime(currentTime);
-				LoggerUtils.logMessage(currentTime + "-");
+
 				lastOldPosition = position;
 
 				/**

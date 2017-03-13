@@ -40,16 +40,9 @@ public class TrajectoriesStatistics {
 					Tuple2<String, PositionMessage> newTuple = tuple2.f1.getStreamedTime() < tuple1.f1.getStreamedTime()
 							? tuple1 : tuple2;
 
-					// to count first tuple in the throughput
-					// if (oldTuple.f1.getSpeed() == null) {
-
-					// LoggerUtils.logMessage("-" + System.currentTimeMillis());
-					// }
-
 					StatisticsUtils.computeStatistics(oldTuple.f1, newTuple.f1);
 					newTuple.f1.setNew(false);
 
-					LoggerUtils.logMessage("-" + System.currentTimeMillis());
 					return newTuple;
 				});
 
