@@ -2,8 +2,8 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils;
 
 import java.util.List;
 
-import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 import de.kdml.bigdatalab.spark_and_flink.common_utils.data.PositionMessage;
+import de.kdml.bigdatalab.spark_and_flink.common_utils.data.Sector;
 
 /**
  * 
@@ -29,7 +29,7 @@ public class SectorUtils {
 
 			}
 		}
-		return null;
+		return new Sector("UNKNOWN_SECTOR", "UNKNOWN_BLOCK");
 
 	}
 }

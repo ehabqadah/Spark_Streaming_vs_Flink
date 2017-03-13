@@ -2,8 +2,6 @@ package de.kdml.bigdatalab.spark_and_flink.common_utils.data;
 
 import java.io.Serializable;
 
-import javax.sound.sampled.Line;
-
 import com.vividsolutions.jts.geom.Polygon;
 
 import de.kdml.bigdatalab.spark_and_flink.common_utils.GeoUtils;
@@ -27,6 +25,12 @@ public class Sector implements Serializable {
 	private Polygon polygon;
 
 	public Sector() {
+	}
+
+	public Sector(String name, String airBlockName) {
+		setName(name);
+		setAirBlockName(airBlockName);
+
 	}
 
 	public String getName() {
