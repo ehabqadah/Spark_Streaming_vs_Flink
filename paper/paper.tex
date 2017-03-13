@@ -42,13 +42,13 @@ stream processing. The question of which platform is superior to the other still
 In this report, we provide a performance comparison of streaming data processing in Apache Spark and Apache Flink by measuring different performance metrics (latency and throughput). Furthermore, we cover some key aspects of streaming data applications and how they are handled in the two frameworks. The experiment is done using multiple streaming workloads over real-world datasets. Results show that Flink outperforms Spark streaming in term of latency. While Spark Streaming gives higher throughput rates than Flink. 
 \section{Introduction}
 
-\par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia. This attention is a result of the fact that the amount of data we generate is increasing exponentially \cite{idc}.  Different sources such as  social media platforms, mobile phones, Internet of things (IoT), financial transactions, etc.  create large volumes of data.  Moreover, many Big Data frameworks have been recently developed such as Apache Spark and Apache Flink that provide efficient data processing functionalities.
+\par In recent years, Big Data is considered as one of the most appealing topics in Information Technology, it has gained increasing attention of professionals in industry and academia. This attention is a result of the fact that the amount of data we generate is increasing exponentially \cite{idc}.  Different sources such as  social media platforms, mobile phones, Internet of things (IoT), financial transactions, etc.  create large volumes of data.  Moreover, many Big Data frameworks have been recently developed such as Apache Spark \cite{spark} and Apache Flink \cite{flink} that provide efficient data processing functionalities.
  \par Big Data is a term that does not only describe large datasets (volume), but also the data that arrives at a high rate (velocity), and it comes in a mix of different data format (variety) (i.e., 3Vs of Big Data (Volume, Velocity, Variety)) \cite{svs}.
 
 \par The processing models of Big Data are Batch processing and Stream processing. Batch processing involves handling  large and finite volumes of data (e.g., processing of historical transaction records), and is more concerned with throughput. While Stream processing  is a method to manage fast and continuously incoming data (real-time) as it arrives in the system (e.g., credit card fraud detection and network monitoring applications). Stream processing systems usually  provide low latency processing. Both processing models are capable of operating with structured or semi-structured data (i.e., variety).
 
 \par There exist some publications that compare Apache Spark and Apache Flink
- such as the Yahoo Streaming Benchmark \cite{yahoo}. But we believe that we still need to carry out our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
+ such as the Yahoo Streaming Benchmark \cite{yahoo}. The benchmarking provides a performance comparison of Apache Flink , Apache Storm \cite{sortm} and  Spark Streaming in terms of latency and throughput over a single data pipeline. The results show that Flink and Storm have similar and lower latency, while Spark Streaming has higher latency and it gives higher throughput by increasing the batch duration. But we believe that we still need to carry out our evaluation for two reasons: \begin{enumerate*}[label=(\roman*)]
 \item both frameworks are continuously improving in a short time 
 \item we aim to study the performance of some complex operations such as \texttt{groupByKey} \& \texttt{keyBy} in Apache Spark and Apache Flink, respectively.
 \end{enumerate*}
@@ -70,7 +70,7 @@ compares the performance results of the different workloads. And finally, Sectio
 
 \par Apache Spark is an open source project that provides a general framework for large-scale data processing \cite{spark}. It offers programming APIs in Java, Scala, Python and R. Its stack includes a set of built-in modules including Spark SQL, MLlib for machine learning, GraphX for graph processing, and Spark Streaming to process real-time data streams. It can access different data sources including Hadoop Distributed File System (HDFS), Apache Cassandra database, Apache HBase database etc.
 
-\par The main data abstraction of Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs support two categories of operations: transformations that drive new RDDs from the operated ones (e.g., \texttt{map}, \texttt{filter} and \texttt{groupByKey}), and actions which return a certain value (e.g., \texttt{count} and \texttt{collect}). Additionally, Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is a series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is a batch-based processing model, which processes the continuous stream of data by dividing it into micro-batches that are  processed by the Spark engine. Figure~\ref{fig:spark} illustrates the general process flow of Spark Streaming. 
+\par The main data abstraction of Spark core is the Resilient Distributed Datasets (RDDs), which is in-memory collection of elements partitioned across cluster of computers that can be processed in parallel \cite{rdd}. RDDs support two categories of operations: transformations that drive new RDDs from the operated ones (e.g., \texttt{map}, \texttt{filter} and \texttt{groupByKey}), and actions which return a certain value (e.g., \texttt{count} and \texttt{collect}). Additionally, Discretized Stream (DStream) is the data abstraction in Spark Streaming, which is a series of RDDs that represent an input stream of data \cite{spark_streaming}. In other words, the Spark Streaming is a batch-based processing model, which processes the continuous stream of data by dividing it into micro-batches that are  processed by the Spark engine. The operations of Spark Streaming are stateless due to the micro-batch design, the \texttt{updateStateByKey} transformation can be used to aggregate the state between stream's micro batches. Figure~\ref{fig:spark} illustrates the general process flow of Spark Streaming. 
 
 
 \begin{figure}[h]
@@ -88,7 +88,7 @@ It offers programming APIs in Java and Scala. Its software stack includes the co
 
 \par The main data abstractions of Flink are DataStream and DataSet that represent read-only collection of data elements. The list of elements is bounded (i.e., finite) in DataSet, while it is unbounded (i.e., infinite) in the case of DataStream.
 
-\par The Flink's core is a distributed streaming dataflow engine,  with each Flink program is represented by a dataflow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful, parallel operations and intermediate data stream partitions. Figure~\ref{fig:fstream} shows a data flow graph of a Flink program.
+\par The Flink's core is a distributed streaming dataflow engine,  with each Flink program is represented by a dataflow graph (i.e., directed acyclic graph - DAG) that executed by the Flink's engine \cite{flink_paper}. The data flow graphs are composed of stateful (state is maintained per partition), parallel operations and intermediate data stream partitions. Figure~\ref{fig:fstream} shows a data flow graph of a Flink program.
 
 
 \begin{figure}[h]
@@ -119,7 +119,7 @@ Apache Spark and Apache Flink can ingest Kafka streams.
 This section describes the data stream setup, the design of evaluation streaming workloads and the  implementation details of the proposed solution of Apache Spark and Apache Flink.
 
 \subsection{Data Stream Setup}
-The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance - Broadcast (ADS-B) messages that represent the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.  And  these datasets contain around \texttt{26 millions} messages.  
+The evaluation streaming workloads read an input data stream from Kafka. In order to simulate real-world use case we use datasets of Automatic Dependent Surveillance - Broadcast (ADS-B) messages that represent the aircraft's position over time. The message line comprises 22 fields of data such as aircraft ID, date message generated, longitude, latitude and altitude.  And  these datasets (2.4 GB) contain around \texttt{26 millions}  messages.  
 \par In our experiment a data stream producer component reads the ADS-B message datasets, then publishes them to the Kafka cluster to be consumed by the workloads in Apache Spark and Apache Flink. Figure~\ref{fig:data_stream} illustrates the data producer and the Kafka cluster setup in all experiments.
 The data stream is divided into four portions over two servers. The data producer publishes the stream records randomly to a Kafka partition and all ADS-B messages are published to the same topic (\texttt{datacorn}). Moreover, the data producer attaches the time of publishing to the ADS-B message line before publishing it to the Kafka topic.
 
@@ -152,7 +152,7 @@ The implementation details of this workload in Spark and Flink are presented in 
 \begin{itemize}
 \item {\bf{Implementation in Spark }}
 
-\par The implementation of trajectory statistics computation in Spark Streaming, first, it reads the Kafka stream using \texttt{KafkaUtils.createDirectStream} that creates \texttt{DStream}, which represents the stream of position messages, in order to scale up and have parallel Kafka stream receivers, multiple instances of \texttt{DStream} must be created and combined together using a \texttt{union} operation. The output stream of the \texttt{union} is further processed using a \texttt{mapToPair} transformation that  maps each position message to a tuple of aircraft ID and position message. Then,  irrelevant tuples are filtered based on the position message type using  a \texttt{filter} transformation.\par Afterward, tuples that share the same aircraft ID are grouped together to construct a stream of trajectories (tuples of ID and list of positions) by applying the \texttt{groupByKey} operation. Since the processing  model of Spark Streaming is micro-batch based and stateless an \texttt{updateStateByKey} operation must be used to maintain the state of the stream of trajectories. In the context of this workload, the state is the aggregated statistics of a trajectory, so the statistics computation is performed within the custom \texttt{updateStateByKey} function that is continuously applied for every batch.
+\par The implementation of trajectory statistics computation in Spark Streaming, first, it reads the Kafka stream using KafkaUtils.createDirectStream that creates \texttt{DStream}, which represents the stream of position messages, in order to scale up and have parallel Kafka stream receivers, multiple instances of \texttt{DStream} must be created and combined together using a \texttt{union} operation. The output stream of the \texttt{union} is further processed using a \texttt{mapToPair} transformation that  maps each position message to a tuple of aircraft ID and position message. Then,  irrelevant tuples are filtered based on the position message type using  a \texttt{filter} transformation.\par Afterward, tuples that share the same aircraft ID are grouped together to construct a stream of trajectories (tuples of ID and list of positions) by applying the \texttt{groupByKey} operation. Since the processing  model of Spark Streaming is micro-batch based and stateless an \texttt{updateStateByKey} operation must be used to maintain the state of the stream of trajectories. In the context of this workload, the state is the aggregated statistics of a trajectory, so the statistics computation is performed within the custom \texttt{updateStateByKey} function that is continuously applied for every batch.
  \par The state update function uses the last position of a trajectory from previous batch to aggregate and compute statistics quantities to the received positions within a new batch and new positions are kept as the new state. Inside the state update function  the new positions must be sorted to preserve the correct order, since the tuples after \texttt{groupByKey} operation are shuffled across the cluster's  nodes and sent to the state update function.
 
 \item {\bf{Implementation in Flink }}
@@ -163,7 +163,15 @@ a \texttt{reduce} transformation on the  \texttt{KeyedStream} is used to calcula
 
 \end{itemize}
 
-\par In summary, Flink  handles  the parallel consumers of Kafka stream implicitly, while multiple \texttt{DStream} must be created in Spark Streaming and union them to have parallel Kafka receivers. The Flink's stream processing is stateful, so  the  management of the stream's state is not required in contrast to the Spark streaming. A sort action is required in Spark Streaming to preserve the correct  order of the position messages inside the state update function.
+\par In summary, The following are the main key differences between the Flink and Spark Streaming implementation of the statistics computation workload:
+
+
+\begin{itemize}
+\item  Flink  handles  the parallel consumers of Kafka stream implicitly, while multiple \texttt{DStream} must be created in Spark Streaming and union them to have parallel Kafka receivers.
+\item The Flink's operations of the \texttt{KeyedStream} are stateful, so  the  management of the stream's state is not required as Spark Streaming that requires the usage of \texttt{updateStateByKey} to manage the state of the micro batches.
+\item A sort action is required in Spark Streaming to preserve the correct  order of the position messages inside the state update function. while in Flink the sort is not required by using a \texttt{reduce} transformation over the \texttt{KeyedStream} that processes the stream records item by item.
+\end{itemize}
+   
 
 \subsubsection{Air Sector Change Detection Workload}
 \label{sec:sectors}
@@ -174,8 +182,8 @@ The goal of sector change detection workload is to detect the  entering or leavi
  \begin{itemize}
  \item {\bf{Implementation in Spark }}
  
- We implemented the sector change detection workload in Spark Streaming by constructing the stream of trajectories and assigning a sector for each position of a trajectory. A change between the assigned sectors of two consecutive aircraft's positions is marked  as a sector's transition for a certain trajectory. \par First, multiple instances of \texttt{DStream} are created using the \texttt{KafkaUtils.create} \texttt{DirectStream} and combined using a \texttt{union} to read in  parallel from Kafka. Second, the records (i.e., ADS-B messages) of the resulting stream are parsed and mapped to tuples of (aircraft ID, position message) using \texttt{mapToPair} transformation. Third, the unrelated  tuples are filtered based on the message type using a \texttt{filter} operation. Fourth, the stream of trajectories is constructed by combining all tuples with the same ID using the \texttt{groupByKey} function. Then, to manage and aggregate the state of trajectories stream between the mini-batches a configured \texttt{updateStateByKey} function is applied. The state update function assigns the corresponding sector for each new position, the old positions of a certain trajectory from the previous batch are discarded, but only the last position of the old batch is kept to be used alongside with the new positions. In addition to that the new positions are sorted by the streaming time to maintain the correct order.
- \par The sector data set is provided using the built-in \texttt{Broadcast} feature that distributes a shared value for  all cluster nodes in an efficient matter. Finally, the detection of a sector change is done by an extra filtering transformation using a \texttt{filter} operator, which checks the sectors of consecutive positions in a trajectory to find the ones with a change in the sector assignment.
+ We implemented the sector change detection workload in Spark Streaming by constructing the stream of trajectories and assigning a sector for each position of a trajectory. A change between the assigned sectors of two consecutive aircraft's positions is marked  as a sector's transition for a certain trajectory. \par First, multiple instances of \texttt{DStream} are created using the KafkaUtils.create \texttt{DirectStream} and combined using a \texttt{union} to read in  parallel from Kafka. Second, the records (i.e., ADS-B messages) of the resulting stream are parsed and mapped to tuples of (aircraft ID, position message) using \texttt{mapToPair} transformation. Third, the unrelated  tuples are filtered based on the message type using a \texttt{filter} operation. Fourth, the stream of trajectories is constructed by combining all tuples with the same ID using the \texttt{groupByKey} function. Then, to manage and aggregate the state of trajectories stream between the mini-batches a configured \texttt{updateStateByKey} function is applied. The state update function assigns the corresponding sector for each new position, the old positions of a certain trajectory from the previous batch are discarded, but only the last position of the old batch is kept to be used alongside with the new positions. In addition to that the new positions are sorted by the streaming time to maintain the correct order.
+ \par The sector data set is provided using the built-in \texttt{Broadcast} feature that distributes a shared value for  all cluster nodes in an efficient matter, and it can be update at the driver program by using the \texttt{unpersist} function and then update the sectors. Finally, the detection of a sector change is done by an extra filtering transformation using a \texttt{filter} operator, which checks the sectors of consecutive positions in a trajectory to find the ones with a change in the sector assignment.
 
  
   
@@ -186,7 +194,17 @@ The goal of sector change detection workload is to detect the  entering or leavi
  \end{itemize}
  
  
- \par To sum up, in this workload we have the  same differences between Flink and Spark Streaming regarding the state management and parallel  consumers of Kafka stream as was discussed in Section~\ref{sec:statistics}. Another key difference between them is how  to provide a global data model (e.g., sectors) in a streaming workload. Spark Streaming offers the \texttt{Broadcast} feature to handle this issue in an efficient way, while the global data model is manually provided  to the stream operations in Flink.
+ \par To sum up, The following are the main key differences between the Flink and Spark Streaming implementation of the sector change detection workload:
+ 
+ 
+ \begin{itemize}
+ \item  In this workload we have the  same differences between Flink and Spark Streaming regarding the state management, parallel  consumers of Kafka stream and preserving the correct order of stream records as was discussed in Section~\ref{sec:statistics}.
+ \item Another key difference between them is how  to provide a global data model (e.g., sectors) in a streaming workload. Spark Streaming offers the \texttt{Broadcast} feature to handle this issue in an efficient way, while the global data model is manually provided  to the stream operations in Flink. 
+ \item The broadcast variable of sectors in Spark Streaming can be updated in the driver program by using the \texttt{unpersist} function and then update it. While in Flink the update of the sectors is not possible at run time (the program must be reloaded), since they are provided manually to the transformation.  
+ \end{itemize}
+ 
+ 
+
 \section{Performance Results}
 \label{sec:sec4}
 \par This section presents the results of performance evaluation in Spark (2.0.2) and Flink (1.1.3) for the streaming workloads that were described in Section 3.2. Specifically, we provide  the measurements of latency and throughput of the benchmarking workloads execution in Spark Streaming and Flink. We carried the experiment by setting up the Kafka stream as described in Section 3.1 on a local machine\footnote{ The experiments have been carried  on single machine with Ubuntu 16.04 LTS os, Intel® Core™ i5-6200U CPU @ 2.30GHz × 4  processor, and 16 GB of memory.} and execute the different workloads on the same machine (i.e., local mode) to obtain the performance results.  
@@ -197,11 +215,11 @@ of the Spark Streaming on the performance measurements.
 
 \subsection{Latency Results}
 
-Figure~\ref{fig:latency} shows the results of the latency measurements of the streaming workloads in Spark and Flink. The presented values present the average value of multiple trails and measurements. Measurements for different batch durations are given in Spark Streaming, we noticed that making the batch time too small does not give better latency results. Results show that Flink outperforms Spark Streaming in term of processing latency in the two evaluation workloads.
+Figure~\ref{fig:latency} shows the results of the latency measurements of the streaming workloads in Spark and Flink. The presented values present the average value of multiple trails and measurements. Measurements for different batch durations are given in Spark Streaming to find the optimal batch duration, since  the large batch times give higher latency rates, also we noticed that reducing the batch time to smaller values increases the latency because of the overhead of managing more micro batches by Spark, this behavior also was observed in \cite{yahoo}. Results show that Flink outperforms Spark Streaming in term of processing latency in the two evaluation workloads. The two framework give higher latency in the sectors change detection workload than statistics computation workload due to the sector assignment for each position by traversing the 20,000 sectors until a match is found.
 
 \begin{figure}[h]
 \centering
-\begin{subfigure}{.7\textwidth}
+\begin{subfigure}{.6\textwidth}
   \centering
   \includegraphics[width=\linewidth]{latency1.png}
   \caption{Latency of Statistics Computation}
@@ -209,7 +227,7 @@ Figure~\ref{fig:latency} shows the results of the latency measurements of the st
 \end{subfigure}%
 \vskip\baselineskip
 \centering
-\begin{subfigure}{.7\textwidth}
+\begin{subfigure}{.6\textwidth}
   \centering
   \includegraphics[width=\linewidth]{latency2.png}
 \caption{Latency of Sector Change Detection }
@@ -221,9 +239,8 @@ Figure~\ref{fig:latency} shows the results of the latency measurements of the st
 \newpage
 \subsection{Throughput Results}
 
-The  measurements of throughput for the two streaming workloads are given in Figure~\ref{fig:throughput}. The presented values reflect the average of throughput (message/minute) 
- in Spark streaming and Flink for multiple executions. Also for Spark streaming we tested different 
- batch times. Results show that Spark Streaming has higher throughput than Flink, also  increasing the batch duration of Spark Streaming gives better throughput.
+The  measurements of throughput for the two streaming workloads are given in Figure~\ref{fig:throughput}. The presented values reflect the average of throughput (message/minute) in Spark streaming and Flink for multiple executions. Also for Spark streaming we tested different 
+ batch times including the throughput of the best latency batch time. Results show that Spark Streaming has higher throughput than Flink; increasing the batch duration of Spark Streaming gives better throughput. Moreover, the throughput rates of Spark Streaming and Flink at the low latency are nearly similar (rates of Flink little higher). The two framework have a lower throughput in the second workload than the first one due to the sector assignment for each position. 
 
 \begin{figure}[h]
 \centering
@@ -250,7 +267,7 @@ The  measurements of throughput for the two streaming workloads are given in Fig
 \section{Conclusion}
 
 \label{sec:sec5}
-In this report, we present an experimental evaluation of the stream processing performance and capabilities of Apache Spark and Apache Flink. We carried our experiment over aircraft positions datasets provided by the Datacorn project, we developed two streaming workloads to cover general aspects of real-time stream processing tasks. Additionally,  we measured the latency and throughput of those workloads solution of Spark and Flink. Results show that Flink outperforms Spark Streaming in term of processing latency. In contrast, Spark Streaming provides better throughput rates than Flink. 
+In this report, we present an experimental evaluation of the stream processing performance and capabilities of Apache Spark and Apache Flink. We carried our experiment over aircraft positions datasets provided by the Datacorn project, we developed two streaming workloads to cover general aspects of real-time stream processing tasks. Additionally,  we measured the latency and throughput of those workloads solution of Spark and Flink. Results show that Flink outperforms Spark Streaming in term of processing latency. In contrast, Spark Streaming provides better throughput rates than Flink by increasing the batch duration, while Flink gives a similar throughput to Spark Streaming with small batch sizes.  Our results in terms of latency and throughput are consistent with the Yahoo Streaming Benchmark results. 
 \par To sum up, Flink's processing model is well-suited to the stream processing tasks that require low latency, also there is no need to manage the Stream's state and the batch interval comparing to Spark streaming. Moreover, Flink operates over the individual record of the data stream, while Spark Streaming  processes the input data stream as micro-batches. Thus we can state that  Flink is a true stream processing framework. A side remark, we have  noticed that finding online resources related to Spark is easier than to Flink.
 
 In future work, we plan to carry out our experiments over cluster of computers not just only on single computer. In addition, we will cover more aspects of real-time data stream processing and develop more evaluation workloads. 
@@ -264,27 +281,30 @@ Gantz, John, and David Reinsel. "The digital universe in 2020: Big data, bigger 
 \bibitem[2]{svs} 
 Laney, D 2001 3D Data Management: Controlling Data Volume, Velocity, and Variety. META Group.
 
-\bibitem[3]{yahoo} 
-Chintapalli, Sanket, et al. "Benchmarking streaming computation engines: Storm, Flink and Spark streaming." Parallel and Distributed Processing Symposium Workshops, 2016 IEEE International. IEEE, 2016.
-
-\bibitem[4]{spark} 
+\bibitem[3]{spark} 
 Apache Spark. Available: https://spark.apache.org/ [Accessed February 2017].
 
-\bibitem[5]{rdd}
-Zaharia, Matei, et al. "Resilient distributed datasets: A fault-tolerant abstraction for in-memory cluster computing." Proceedings of the 9th USENIX conference on Networked Systems Design and Implementation. USENIX Association, 2012.
-
-\bibitem[6]{spark_streaming}
-Spark Streaming. Available: http://spark.apache.org/docs/latest/streaming-programming-guide.html [Accessed March 2017].
-
-\bibitem[7]{flink} 
+\bibitem[4]{flink} 
 Apache Flink. Available: https://flink.apache.org/ [Accessed February 2017].
 
-\bibitem[8]{flink_paper} 
+\bibitem[5]{yahoo} 
+Chintapalli, Sanket, et al. "Benchmarking streaming computation engines: Storm, Flink and Spark streaming." Parallel and Distributed Processing Symposium Workshops, 2016 IEEE International. IEEE, 2016.
+
+\bibitem[6]{sortm} 
+Apache Storm. Available: http://storm.apache.org/ [Accessed March 2017].
+\bibitem[7]{rdd}
+Zaharia, Matei, et al. "Resilient distributed datasets: A fault-tolerant abstraction for in-memory cluster computing." Proceedings of the 9th USENIX conference on Networked Systems Design and Implementation. USENIX Association, 2012.
+
+\bibitem[8]{spark_streaming}
+Spark Streaming. Available: http://spark.apache.org/docs/latest/
+streaming-programming-guide.html [Accessed March 2017].
+
+\bibitem[9]{flink_paper} 
 Carbone, P., Katsifodimos, A., Ewen, S., Markl, V., Haridi, S. et al. (2015)
 Apache flink: Stream and batch processing in a single engine.
 Bulletin of the IEEE Computer Society Technical Committee on Data Engineering, 36(4).
 
-\bibitem[9]{kafka} 
+\bibitem[10]{kafka} 
 Apache Kafka. Available: https://kafka.apache.org/intro.html [Accessed February 2017].
 
 %
